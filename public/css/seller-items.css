@@ -1,0 +1,190 @@
+/* Seller Items Management Styles */
+
+/* Custom transitions for modern system feel */
+* {
+    transition: all 0.25s ease-in-out;
+}
+
+/* Glass morphism navigation */
+.glass-nav {
+    backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.8);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.glass-nav.scrolled {
+    background: rgba(255, 255, 255, 0.95);
+}
+
+/* Button interactions */
+.btn-system:active {
+    transform: scale(0.98);
+}
+
+/* Items management specific styles */
+.item-card {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    border: 1px solid #f3f4f6;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.item-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+}
+
+.item-image {
+    height: 120px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 36px;
+    color: white;
+}
+
+.item-status {
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.status-active {
+    background: #d1fae5;
+    color: #10b981;
+}
+
+.status-inactive {
+    background: #fee2e2;
+    color: #ef4444;
+}
+
+.status-draft {
+    background: #fef3c7;
+    color: #f59e0b;
+}
+
+.filter-section {
+    background: white;
+    border-radius: 16px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    border: 1px solid #f3f4f6;
+}
+
+.action-btn {
+    padding: 0.5rem;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+.action-btn:hover {
+    transform: scale(1.1);
+}
+
+.action-btn.edit {
+    background: #dbeafe;
+    color: #3b82f6;
+}
+
+.action-btn.delete {
+    background: #fee2e2;
+    color: #ef4444;
+}
+
+.action-btn.toggle {
+    background: #d1fae5;
+    color: #10b981;
+}
+
+.mobile-menu-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem;
+    background: none;
+    border: none;
+    color: #374151;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: all 0.25s ease;
+}
+
+.mobile-menu-btn:hover {
+    background: #f3f4f6;
+    color: #0A84FF;
+}
+
+.mobile-menu {
+    display: none;
+    z-index: 40;
+}
+
+.mobile-menu.show {
+    display: block;
+}
+
+.mobile-menu a {
+    text-decoration: none;
+}
+
+.nav-link {
+    position: relative;
+    transition: all 0.25s ease;
+}
+
+.nav-link:hover {
+    transform: translateY(-1px);
+}
+
+.nav-link.active {
+    font-weight: 600;
+    color: #0A84FF;
+}
+
+/* Modal styles */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal.show {
+    display: flex;
+}
+
+.modal-content {
+    background: white;
+    border-radius: 16px;
+    max-width: 500px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+.modal-header {
+    padding: 1.5rem 2rem;
+    border-bottom: 1px solid #e5e7eb;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-body {
+    padding: 2rem;
+}
+

@@ -1,0 +1,142 @@
+/* Auth Pages (Login & Register) Styles */
+
+body {
+    font-family: 'Noto Sans TC', sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+}
+
+.glass-card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.form-system {
+    border: 2px solid #f2f2f7;
+    border-radius: 8px;
+    padding: 0.75rem;
+    font-size: 0.875rem;
+    transition: all 0.25s ease;
+}
+
+.form-system:focus {
+    box-shadow: 0 0 0 4px rgba(10, 132, 255, 0.1);
+    border-color: #0A84FF;
+}
+
+.btn-system {
+    transition: all 0.25s ease;
+    border-radius: 8px;
+}
+
+.btn-system:active {
+    transform: scale(0.98);
+}
+
+.login-form-container,
+.register-form-container {
+    animation: slideUp 0.5s ease-out;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.floating-shape {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    animation: float 6s ease-in-out infinite;
+}
+
+.floating-shape:nth-child(1) {
+    width: 80px;
+    height: 80px;
+    top: 10%;
+    left: 10%;
+    animation-delay: 0s;
+}
+
+.floating-shape:nth-child(2) {
+    width: 60px;
+    height: 60px;
+    top: 20%;
+    right: 15%;
+    animation-delay: 2s;
+}
+
+.floating-shape:nth-child(3) {
+    width: 100px;
+    height: 100px;
+    bottom: 15%;
+    left: 20%;
+    animation-delay: 4s;
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0px);
+    }
+    50% {
+        transform: translateY(-20px);
+    }
+}
+
+/* User Type Selection Styles */
+.user-type-card {
+    padding: 1.5rem 1rem;
+    border: 2px solid #e5e7eb;
+    border-radius: 12px;
+    background: white;
+    text-align: center;
+    transition: all 0.25s ease;
+    min-width: 120px;
+}
+
+.user-type-card:hover {
+    border-color: #d1d5db;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.user-type-card.active {
+    border-color: #0A84FF;
+    background: #eff6ff;
+    box-shadow: 0 4px 12px rgba(10, 132, 255, 0.2);
+}
+
+.user-type-card.active i {
+    color: #0A84FF;
+}
+
+.user-type-card i {
+    color: #6b7280;
+    transition: color 0.25s ease;
+}
+
+/* Password strength indicator (for register page) */
+.password-strength {
+    display: flex;
+    gap: 4px;
+    margin-top: 8px;
+}
+
+.strength-bar {
+    height: 4px;
+    flex: 1;
+    border-radius: 2px;
+    background: #e5e7eb;
+    transition: all 0.25s ease;
+}
+
+.strength-bar.weak { background: #ef4444; }
+.strength-bar.medium { background: #f59e0b; }
+.strength-bar.strong { background: #10b981; }
+

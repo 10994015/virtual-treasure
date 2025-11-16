@@ -1,0 +1,164 @@
+/* Seller Dashboard Styles */
+
+/* Custom transitions for modern system feel */
+* {
+    transition: all 0.25s ease-in-out;
+}
+
+/* Glass morphism navigation */
+.glass-nav {
+    backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.8);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.glass-nav.scrolled {
+    background: rgba(255, 255, 255, 0.95);
+}
+
+/* Button interactions */
+.btn-system:active {
+    transform: scale(0.98);
+}
+
+/* Dashboard specific styles */
+.stat-card {
+    background: white;
+    border-radius: 16px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    border: 1px solid #f3f4f6;
+    transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+}
+
+.stat-value {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #0A84FF;
+    margin-bottom: 0.5rem;
+}
+
+.stat-change {
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.stat-change.positive {
+    color: #10b981;
+}
+
+.stat-change.negative {
+    color: #ef4444;
+}
+
+.chart-container {
+    background: white;
+    border-radius: 16px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    border: 1px solid #f3f4f6;
+}
+
+.order-item {
+    background: white;
+    border-radius: 12px;
+    padding: 1rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    border: 1px solid #f3f4f6;
+    transition: all 0.3s ease;
+}
+
+.order-item:hover {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+.status-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.status-pending {
+    background: #fef3c7;
+    color: #f59e0b;
+}
+
+.status-processing {
+    background: #dbeafe;
+    color: #3b82f6;
+}
+
+.status-completed {
+    background: #d1fae5;
+    color: #10b981;
+}
+
+.status-cancelled {
+    background: #fee2e2;
+    color: #ef4444;
+}
+
+.mobile-menu-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem;
+    background: none;
+    border: none;
+    color: #374151;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: all 0.25s ease;
+}
+
+.mobile-menu-btn:hover {
+    background: #f3f4f6;
+    color: #0A84FF;
+}
+
+.mobile-menu {
+    display: none;
+    z-index: 40;
+}
+
+.mobile-menu.show {
+    display: block;
+}
+
+.mobile-menu a {
+    text-decoration: none;
+}
+
+.nav-link {
+    position: relative;
+    transition: all 0.25s ease;
+}
+
+.nav-link:hover {
+    transform: translateY(-1px);
+}
+
+.nav-link.active {
+    font-weight: 600;
+    color: #0A84FF;
+}
+
+/* Simple chart placeholder */
+.chart-placeholder {
+    height: 200px;
+    background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #9ca3af;
+    font-weight: 500;
+}
+

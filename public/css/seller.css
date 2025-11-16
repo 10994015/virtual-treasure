@@ -1,0 +1,140 @@
+/* Seller Page Styles */
+
+/* Custom transitions for modern system feel */
+* {
+    transition: all 0.25s ease-in-out;
+}
+
+/* Glass morphism navigation */
+.glass-nav {
+    backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.8);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.glass-nav.scrolled {
+    background: rgba(255, 255, 255, 0.95);
+}
+
+/* Button interactions */
+.btn-system:active {
+    transform: scale(0.98);
+}
+
+/* Form focus states */
+.form-system:focus {
+    box-shadow: 0 0 0 4px rgba(10, 132, 255, 0.1);
+    border-color: #0A84FF;
+}
+
+/* Seller specific styles */
+.seller-card {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    overflow: hidden;
+}
+
+.seller-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+}
+
+.seller-card-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 2rem;
+    text-align: center;
+}
+
+.seller-card-content {
+    padding: 2rem;
+}
+
+.feature-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin-top: 2rem;
+}
+
+.quick-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin-top: 2rem;
+}
+
+.stat-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    border: 1px solid #f3f4f6;
+}
+
+.stat-value {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #0A84FF;
+    margin-bottom: 0.5rem;
+}
+
+.stat-label {
+    color: #6b7280;
+    font-size: 0.875rem;
+}
+
+/* Mobile Menu Styles */
+.mobile-menu-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem;
+    background: none;
+    border: none;
+    color: #374151;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: all 0.25s ease;
+}
+
+.mobile-menu-btn:hover {
+    background: #f3f4f6;
+    color: #0A84FF;
+}
+
+.mobile-menu {
+    display: none;
+    z-index: 40;
+}
+
+.mobile-menu.show {
+    display: block;
+}
+
+.mobile-menu a {
+    text-decoration: none;
+}
+
+.mobile-menu .cart-count {
+    margin-left: auto;
+}
+
+/* Navigation Consistency Styles */
+.nav-link {
+    position: relative;
+    transition: all 0.25s ease;
+}
+
+.nav-link:hover {
+    transform: translateY(-1px);
+}
+
+.nav-link.active {
+    font-weight: 600;
+    color: #0A84FF;
+}
+
