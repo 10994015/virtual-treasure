@@ -30,7 +30,7 @@ return [
             'path' => env('PUSHER_APP_PATH'),
             'capacity' => null,
             'enable_client_messages' => false,
-            'enable_statistics' => true,
+            'enable_statistics' => false,
             'allowed_origins' => [
                 '*',  // 或指定你的域名
             ],
@@ -78,6 +78,7 @@ return [
     ],
 
     'statistics' => [
+        'enabled'=> false,
         /*
          * This model will be used to store the statistics of the WebSocketsServer.
          * The only requirement is that the model should extend
