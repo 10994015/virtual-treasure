@@ -155,12 +155,12 @@
     </style>
 
     <!-- Header -->
-    <section class="bg-gradient-to-br from-blue-50 to-indigo-100 py-12">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+    <section class="py-12 bg-gradient-to-br from-blue-50 to-indigo-100">
+        <div class="max-w-6xl px-4 mx-auto sm:px-6 lg:px-8">
+            <div class="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
                 <div>
                     <div class="flex items-center gap-3 mb-2">
-                        <h1 class="text-3xl sm:text-4xl font-bold text-gray-900">
+                        <h1 class="text-3xl font-bold text-gray-900 sm:text-4xl">
                             {{ $adminMode ? '平台' : '銷售' }}儀表板
                         </h1>
                         <span class="mode-badge {{ $adminMode ? 'admin' : 'seller' }}">
@@ -175,7 +175,7 @@
                 <div class="flex flex-wrap gap-3">
                     <!-- 管理員切換按鈕 -->
                     @if(auth()->user()->is_admin)
-                        <button 
+                        <button
                             wire:click="toggleAdminMode"
                             class="mode-toggle-btn {{ $adminMode ? 'admin-mode' : 'seller-mode' }}">
                             <i class="fas fa-{{ $adminMode ? 'user' : 'globe' }}"></i>
@@ -183,13 +183,13 @@
                         </button>
                     @endif
 
-                    <select wire:model.live="period" class="px-4 py-2 border border-gray-300 rounded-lg bg-white">
+                    <select wire:model.live="period" class="px-4 py-2 bg-white border border-gray-300 rounded-lg">
                         <option value="7days">最近7天</option>
                         <option value="30days">最近30天</option>
                         <option value="90days">最近90天</option>
                         <option value="1year">最近一年</option>
                     </select>
-                   
+
                 </div>
             </div>
         </div>
@@ -197,13 +197,13 @@
 
     <!-- Stats Overview -->
     <section class="py-12 bg-white">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div class="max-w-6xl px-4 mx-auto sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 gap-6 mb-8 md:grid-cols-2 lg:grid-cols-4">
                 <!-- 總銷售額 -->
                 <div class="stat-card">
                     <div class="flex items-center justify-between mb-4">
-                        <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                            <i class="fas fa-dollar-sign text-blue-500 text-xl"></i>
+                        <div class="flex items-center justify-center w-12 h-12 bg-blue-100 rounded-lg">
+                            <i class="text-xl text-blue-500 fas fa-dollar-sign"></i>
                         </div>
                         @if(isset($stats['comparison']))
                             <div class="stat-change {{ $stats['comparison']['sales_change'] >= 0 ? 'positive' : 'negative' }}">
@@ -213,9 +213,9 @@
                         @endif
                     </div>
                     <div class="stat-value">$ {{ number_format($stats['total_sales'] ?? 0) }}</div>
-                    <div class="text-gray-600 font-medium">總銷售額</div>
+                    <div class="font-medium text-gray-600">總銷售額</div>
                     @if(isset($stats['comparison']['sales_diff']))
-                        <div class="text-gray-400 text-sm mt-1">
+                        <div class="mt-1 text-sm text-gray-400">
                             較上期 {{ $stats['comparison']['sales_diff'] >= 0 ? '+' : '' }}$ {{ number_format($stats['comparison']['sales_diff']) }}
                         </div>
                     @endif
@@ -224,8 +224,8 @@
                 <!-- 總訂單數 -->
                 <div class="stat-card">
                     <div class="flex items-center justify-between mb-4">
-                        <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-                            <i class="fas fa-shopping-cart text-green-600 text-xl"></i>
+                        <div class="flex items-center justify-center w-12 h-12 bg-green-100 rounded-lg">
+                            <i class="text-xl text-green-600 fas fa-shopping-cart"></i>
                         </div>
                         @if(isset($stats['comparison']))
                             <div class="stat-change {{ $stats['comparison']['orders_change'] >= 0 ? 'positive' : 'negative' }}">
@@ -235,9 +235,9 @@
                         @endif
                     </div>
                     <div class="stat-value">{{ $stats['total_orders'] ?? 0 }}</div>
-                    <div class="text-gray-600 font-medium">總訂單數</div>
+                    <div class="font-medium text-gray-600">總訂單數</div>
                     @if(isset($stats['comparison']['orders_diff']))
-                        <div class="text-gray-400 text-sm mt-1">
+                        <div class="mt-1 text-sm text-gray-400">
                             較上期 {{ $stats['comparison']['orders_diff'] >= 0 ? '+' : '' }}{{ $stats['comparison']['orders_diff'] }}
                         </div>
                     @endif
@@ -246,17 +246,17 @@
                 <!-- 在售商品 / 總用戶數 -->
                 <div class="stat-card">
                     <div class="flex items-center justify-between mb-4">
-                        <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+                        <div class="flex items-center justify-center w-12 h-12 bg-purple-100 rounded-lg">
                             <i class="fas fa-{{ $adminMode ? 'users' : 'box' }} text-purple-600 text-xl"></i>
                         </div>
                     </div>
                     <div class="stat-value">
                         {{ $adminMode ? ($stats['total_users'] ?? 0) : ($stats['active_products'] ?? 0) }}
                     </div>
-                    <div class="text-gray-600 font-medium">
+                    <div class="font-medium text-gray-600">
                         {{ $adminMode ? '總用戶數' : '在售商品' }}
                     </div>
-                    <div class="text-gray-400 text-sm mt-1">
+                    <div class="mt-1 text-sm text-gray-400">
                         @if($adminMode)
                             平台註冊用戶
                         @else
@@ -270,17 +270,17 @@
                 <!-- 平均評價 / 總賣家數 -->
                 <div class="stat-card">
                     <div class="flex items-center justify-between mb-4">
-                        <div class="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center">
+                        <div class="flex items-center justify-center w-12 h-12 bg-yellow-100 rounded-lg">
                             <i class="fas fa-{{ $adminMode ? 'store' : 'star' }} text-yellow-600 text-xl"></i>
                         </div>
                     </div>
                     <div class="stat-value">
                         {{ $adminMode ? ($stats['total_sellers'] ?? 0) : ($stats['average_rating']['average'] ?? 0) }}
                     </div>
-                    <div class="text-gray-600 font-medium">
+                    <div class="font-medium text-gray-600">
                         {{ $adminMode ? '總賣家數' : '平均評價' }}
                     </div>
-                    <div class="text-gray-400 text-sm mt-1">
+                    <div class="mt-1 text-sm text-gray-400">
                         {{ $adminMode ? '活躍賣家數量' : '共 ' . ($stats['average_rating']['total'] ?? 0) . ' 個評價' }}
                     </div>
                 </div>
@@ -289,44 +289,44 @@
                 @if($adminMode)
                     <div class="stat-card">
                         <div class="flex items-center justify-between mb-4">
-                            <div class="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center">
-                                <i class="fas fa-box text-indigo-600 text-xl"></i>
+                            <div class="flex items-center justify-center w-12 h-12 bg-indigo-100 rounded-lg">
+                                <i class="text-xl text-indigo-600 fas fa-box"></i>
                             </div>
                         </div>
                         <div class="stat-value">{{ $stats['active_products'] ?? 0 }}</div>
-                        <div class="text-gray-600 font-medium">在售商品</div>
-                        <div class="text-gray-400 text-sm mt-1">平台所有商品</div>
+                        <div class="font-medium text-gray-600">在售商品</div>
+                        <div class="mt-1 text-sm text-gray-400">平台所有商品</div>
                     </div>
 
                     <div class="stat-card">
                         <div class="flex items-center justify-between mb-4">
-                            <div class="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
-                                <i class="fas fa-clock text-orange-600 text-xl"></i>
+                            <div class="flex items-center justify-center w-12 h-12 bg-orange-100 rounded-lg">
+                                <i class="text-xl text-orange-600 fas fa-clock"></i>
                             </div>
                         </div>
                         <div class="stat-value">{{ $stats['pending_orders'] ?? 0 }}</div>
-                        <div class="text-gray-600 font-medium">待處理訂單</div>
-                        <div class="text-gray-400 text-sm mt-1">需要關注</div>
+                        <div class="font-medium text-gray-600">待處理訂單</div>
+                        <div class="mt-1 text-sm text-gray-400">需要關注</div>
                     </div>
 
                     <div class="stat-card">
                         <div class="flex items-center justify-between mb-4">
-                            <div class="w-12 h-12 bg-pink-100 rounded-lg flex items-center justify-center">
-                                <i class="fas fa-star text-pink-600 text-xl"></i>
+                            <div class="flex items-center justify-center w-12 h-12 bg-pink-100 rounded-lg">
+                                <i class="text-xl text-pink-600 fas fa-star"></i>
                             </div>
                         </div>
                         <div class="stat-value">{{ $stats['average_rating']['average'] ?? 0 }}</div>
-                        <div class="text-gray-600 font-medium">平台平均評價</div>
-                        <div class="text-gray-400 text-sm mt-1">共 {{ $stats['average_rating']['total'] ?? 0 }} 個評價</div>
+                        <div class="font-medium text-gray-600">平台平均評價</div>
+                        <div class="mt-1 text-sm text-gray-400">共 {{ $stats['average_rating']['total'] ?? 0 }} 個評價</div>
                     </div>
                 @endif
             </div>
 
             <!-- Charts Row -->
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+            <div class="grid grid-cols-1 gap-6 mb-8 lg:grid-cols-2">
                 <!-- 銷售趨勢圖表 -->
                 <div class="chart-container">
-                    <h3 class="text-lg font-semibold text-gray-900 mb-4">
+                    <h3 class="mb-4 text-lg font-semibold text-gray-900">
                         {{ $adminMode ? '平台' : '' }}銷售趨勢
                     </h3>
                     @if(count($salesTrend) > 0)
@@ -334,7 +334,7 @@
                     @else
                         <div style="height: 300px; background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #9ca3af; font-weight: 500;">
                             <div class="text-center">
-                                <i class="fas fa-chart-line text-3xl mb-2"></i>
+                                <i class="mb-2 text-3xl fas fa-chart-line"></i>
                                 <div>此期間暫無銷售數據</div>
                             </div>
                         </div>
@@ -343,7 +343,7 @@
 
                 <!-- 熱門商品 -->
                 <div class="chart-container">
-                    <h3 class="text-lg font-semibold text-gray-900 mb-4">
+                    <h3 class="mb-4 text-lg font-semibold text-gray-900">
                         {{ $adminMode ? '平台' : '' }}熱門商品
                     </h3>
                     @if(count($topProducts) > 0)
@@ -351,11 +351,11 @@
                             @foreach($topProducts as $product)
                                 <div class="flex items-center justify-between py-3 border-b border-gray-100">
                                     <div class="flex items-center space-x-3">
-                                        <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center overflow-hidden">
+                                        <div class="flex items-center justify-center w-10 h-10 overflow-hidden bg-blue-100 rounded-lg">
                                             @if(isset($product['product_image']) && $product['product_image'])
-                                                <img src="/storage/{{ $product['product_image'] }}" alt="{{ $product['product_name'] }}" class="w-full h-full object-cover">
+                                                <img src="/storage/{{ $product['product_image'] }}" alt="{{ $product['product_name'] }}" class="object-cover w-full h-full">
                                             @else
-                                                <i class="fas fa-box text-blue-600"></i>
+                                                <i class="text-blue-600 fas fa-box"></i>
                                             @endif
                                         </div>
                                         <div>
@@ -378,7 +378,7 @@
                     @else
                         <div style="height: 300px; background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #9ca3af; font-weight: 500;">
                             <div class="text-center">
-                                <i class="fas fa-box-open text-3xl mb-2"></i>
+                                <i class="mb-2 text-3xl fas fa-box-open"></i>
                                 <div>此期間暫無銷售商品</div>
                             </div>
                         </div>
@@ -388,22 +388,22 @@
                 <!-- 管理員模式: 頂級賣家 -->
                 @if($adminMode && count($topSellers) > 0 && false)
                     <div class="chart-container lg:col-span-2">
-                        <h3 class="text-lg font-semibold text-gray-900 mb-4">
-                            <i class="fas fa-trophy text-yellow-500 mr-2"></i>賣家銷售排行
+                        <h3 class="mb-4 text-lg font-semibold text-gray-900">
+                            <i class="mr-2 text-yellow-500 fas fa-trophy"></i>賣家銷售排行
                         </h3>
-                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+                        <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-5">
                             @foreach($topSellers as $index => $seller)
-                                <div class="bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg p-4 text-center border border-gray-200">
+                                <div class="p-4 text-center border border-gray-200 rounded-lg bg-gradient-to-br from-gray-50 to-gray-100">
                                     <div class="text-3xl font-bold {{ $index === 0 ? 'text-yellow-500' : ($index === 1 ? 'text-gray-400' : ($index === 2 ? 'text-orange-600' : 'text-gray-600')) }} mb-2">
                                         #{{ $index + 1 }}
                                     </div>
-                                    <div class="font-semibold text-gray-900 mb-1">{{ $seller['seller_name'] }}</div>
-                                    <div class="text-sm text-gray-600 mb-2">
+                                    <div class="mb-1 font-semibold text-gray-900">{{ $seller['seller_name'] }}</div>
+                                    <div class="mb-2 text-sm text-gray-600">
                                         <div>$ {{ number_format($seller['total_sales']) }}</div>
                                         <div class="text-xs">{{ $seller['total_orders'] }} 筆訂單</div>
                                     </div>
                                     <div class="flex items-center justify-center text-xs text-yellow-600">
-                                        <i class="fas fa-star mr-1"></i>
+                                        <i class="mr-1 fas fa-star"></i>
                                         {{ $seller['avg_rating'] }}
                                     </div>
                                 </div>
@@ -417,13 +417,13 @@
 
     <!-- Recent Orders & Activity -->
     <section class="py-12 bg-gray-50">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div class="max-w-6xl px-4 mx-auto sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 gap-8 lg:grid-cols-2">
                 <!-- Recent Orders -->
                 <div class="chart-container">
                     <div class="flex items-center justify-between mb-6">
                         <h3 class="text-lg font-semibold text-gray-900">最新訂單</h3>
-                        <a href="{{ route('seller.orders.index') }}" class="text-blue-500 hover:underline text-sm">
+                        <a href="{{ route('seller.orders.index') }}" class="text-sm text-blue-500 hover:underline">
                             查看全部
                         </a>
                     </div>
@@ -438,7 +438,7 @@
                                             {{ $this->getStatusText($order['status']) }}
                                         </span>
                                     </div>
-                                    <div class="flex items-center justify-between text-sm text-gray-600 mb-2">
+                                    <div class="flex items-center justify-between mb-2 text-sm text-gray-600">
                                         <span>{{ Str::limit($order['product_name'], 25) }}</span>
                                         <span>$ {{ number_format($order['price']) }}</span>
                                     </div>
@@ -453,8 +453,8 @@
                             @endforeach
                         </div>
                     @else
-                        <div class="text-center py-8 text-gray-400">
-                            <i class="fas fa-inbox text-4xl mb-2"></i>
+                        <div class="py-8 text-center text-gray-400">
+                            <i class="mb-2 text-4xl fas fa-inbox"></i>
                             <p>暫無訂單</p>
                         </div>
                     @endif
@@ -464,9 +464,9 @@
                 <div class="chart-container">
                     <div class="flex items-center justify-between mb-6">
                         <h3 class="text-lg font-semibold text-gray-900">最新活動</h3>
-                        <button 
+                        <button
                             wire:click="clearNotifications"
-                            class="text-blue-500 hover:underline text-sm">
+                            class="text-sm text-blue-500 hover:underline">
                             清除通知
                         </button>
                     </div>
@@ -474,21 +474,21 @@
                     @if(count($recentActivities) > 0)
                         <div class="space-y-4">
                             @foreach($recentActivities as $activity)
-                                <div class="flex items-start space-x-3 py-3">
+                                <div class="flex items-start py-3 space-x-3">
                                     <div class="w-8 h-8 bg-{{ $activity['color'] }}-100 rounded-full flex items-center justify-center flex-shrink-0">
                                         <i class="fas fa-{{ $activity['icon'] }} text-{{ $activity['color'] }}-600 text-sm"></i>
                                     </div>
                                     <div class="flex-1">
-                                        <p class="text-gray-900 text-sm font-medium">{{ $activity['title'] }}</p>
-                                        <p class="text-gray-600 text-sm">{{ $activity['description'] }}</p>
-                                        <p class="text-gray-400 text-xs">{{ $activity['time']->diffForHumans() }}</p>
+                                        <p class="text-sm font-medium text-gray-900">{{ $activity['title'] }}</p>
+                                        <p class="text-sm text-gray-600">{{ $activity['description'] }}</p>
+                                        <p class="text-xs text-gray-400">{{ $activity['time']->diffForHumans() }}</p>
                                     </div>
                                 </div>
                             @endforeach
                         </div>
                     @else
-                        <div class="text-center py-8 text-gray-400">
-                            <i class="fas fa-bell-slash text-4xl mb-2"></i>
+                        <div class="py-8 text-center text-gray-400">
+                            <i class="mb-2 text-4xl fas fa-bell-slash"></i>
                             <p>暫無最新活動</p>
                         </div>
                     @endif
@@ -500,7 +500,7 @@
     <!-- Loading Indicator -->
     <div wire:loading.flex style="position:fixed;top:0;left:0;width:100%;height:100%;z-index:9999;background:rgba(0,0,0,0.5);align-items:center;justify-content:center;">
         <div style="background:white;padding:2rem;border-radius:12px;text-align:center;">
-            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto"></div>
+            <div class="w-12 h-12 mx-auto border-b-2 border-blue-500 rounded-full animate-spin"></div>
             <p style="margin-top:1rem;color:#666;">載入中...</p>
         </div>
     </div>
@@ -515,7 +515,7 @@
                 if (!canvas) return;
 
                 const salesData = @json($salesTrend);
-                
+
                 if (salesData.length === 0) return;
 
                 // Destroy existing chart
@@ -528,7 +528,7 @@
                 const orders = salesData.map(item => parseInt(item.orders));
 
                 const ctx = canvas.getContext('2d');
-                
+
                 salesChart = new Chart(ctx, {
                     type: 'line',
                     data: {
@@ -669,7 +669,7 @@
 
                 let bgColor = 'bg-blue-500';
                 let icon = 'info-circle';
-                
+
                 if (data.type === 'success') {
                     bgColor = 'bg-green-500';
                     icon = 'check-circle';
@@ -686,7 +686,7 @@
                 toast.className = `fixed top-4 right-4 ${bgColor} text-white px-6 py-3 rounded-lg shadow-lg z-50 flex items-center gap-2`;
                 toast.innerHTML = `<i class="fas fa-${icon}"></i>${data.message}`;
                 document.body.appendChild(toast);
-                
+
                 setTimeout(() => {
                     toast.style.opacity = '0';
                     setTimeout(() => toast.remove(), 300);
