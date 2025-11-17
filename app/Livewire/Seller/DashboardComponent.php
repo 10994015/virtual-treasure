@@ -69,11 +69,11 @@ class DashboardComponent extends Component
 
         $this->stats = $this->dashboardService->getStats($sellerId, $this->period, $this->adminMode);
         $this->topProducts = $this->dashboardService->getTopProducts($sellerId, 5, $this->adminMode);
-        
+
         if ($this->adminMode) {
             $this->topSellers = $this->dashboardService->getTopSellers(5);
         }
-        
+
         $this->recentOrders = $this->dashboardService->getRecentOrders($sellerId, 5, $this->adminMode);
         $this->recentActivities = $this->dashboardService->getRecentActivities($sellerId, 10, $this->adminMode);
         $this->salesTrend = $this->dashboardService->getSalesTrend($sellerId, $this->period, $this->adminMode);
@@ -119,7 +119,7 @@ class DashboardComponent extends Component
     }
 
     #[Title('銷售儀表板')]
-    #[Layout('livewire.layouts.app')]
+    #[Layout('livewire.layouts.seller')]
     public function render()
     {
         return view('livewire.seller.dashboard-component');
