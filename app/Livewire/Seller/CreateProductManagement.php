@@ -6,6 +6,7 @@ use App\Models\Product;
 use App\Models\ProductImage;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
@@ -29,7 +30,8 @@ class CreateProductManagement extends Component
 
     // 圖片
     public $images = [];
-    public $newImages = []; // 新增：暫存新選擇的圖片
+    public $newImages = [];
+    public $imagePreviewUrls = []; // 新增：用於存儲預覽 URL
 
     // 其他設定
     public $delivery_instructions = '';
@@ -126,13 +128,16 @@ class CreateProductManagement extends Component
         ];
     }
 
-    // 新增：處理新圖片上傳
+    // 修改：處理新圖片上傳
     public function updatedNewImages()
     {
         // 驗證新圖片
         $this->validate([
             'newImages' => 'nullable|array',
             'newImages.*' => 'image|max:5120',
+        ], [
+            'newImages.*.image' => '檔案必須為圖片格式',
+            'newImages.*.max' => '圖片大小不可超過 5MB',
         ]);
 
         // 檢查總數量限制
@@ -146,9 +151,25 @@ class CreateProductManagement extends Component
             return;
         }
 
-        // 將新圖片追加到現有圖片陣列
+        // 將新圖片保存到 public disk 用於預覽
         foreach ($this->newImages as $newImage) {
-            $this->images[] = $newImage;
+            try {
+                // 保存到臨時目錄用於預覽
+                $tempPath = $newImage->store('temp-products', 'public');
+
+                // 將圖片和預覽路徑都保存
+                $this->images[] = $newImage;
+                $this->imagePreviewUrls[] = $tempPath;
+
+                Log::info('圖片已保存到臨時目錄', ['path' => $tempPath]);
+
+            } catch (\Exception $e) {
+                Log::error('圖片上傳失敗', ['error' => $e->getMessage()]);
+                $this->dispatch('notify', [
+                    'type' => 'error',
+                    'message' => '圖片上傳失敗：' . $e->getMessage()
+                ]);
+            }
         }
 
         // 清空暫存
@@ -162,12 +183,27 @@ class CreateProductManagement extends Component
 
     public function removeImage($index)
     {
-        array_splice($this->images, $index, 1);
+        try {
+            // 刪除臨時預覽文件
+            if (isset($this->imagePreviewUrls[$index])) {
+                Storage::disk('public')->delete($this->imagePreviewUrls[$index]);
+                Log::info('已刪除臨時預覽圖片', ['path' => $this->imagePreviewUrls[$index]]);
+                array_splice($this->imagePreviewUrls, $index, 1);
+            }
 
-        $this->dispatch('notify', [
-            'type' => 'success',
-            'message' => '圖片已移除'
-        ]);
+            array_splice($this->images, $index, 1);
+
+            $this->dispatch('notify', [
+                'type' => 'success',
+                'message' => '圖片已移除'
+            ]);
+        } catch (\Exception $e) {
+            Log::error('移除圖片失敗', ['error' => $e->getMessage()]);
+            $this->dispatch('notify', [
+                'type' => 'error',
+                'message' => '移除失敗：' . $e->getMessage()
+            ]);
+        }
     }
 
     public function saveAsDraft()
@@ -186,6 +222,7 @@ class CreateProductManagement extends Component
 
         } catch (\Exception $e) {
             DB::rollBack();
+            Log::error('儲存草稿失敗', ['error' => $e->getMessage()]);
             $this->dispatch('notify', [
                 'type' => 'error',
                 'message' => '儲存失敗：' . $e->getMessage()
@@ -213,6 +250,7 @@ class CreateProductManagement extends Component
 
         } catch (\Exception $e) {
             DB::rollBack();
+            Log::error('儲存商品失敗', ['error' => $e->getMessage()]);
             $this->dispatch('notify', [
                 'type' => 'error',
                 'message' => '儲存失敗：' . $e->getMessage()
@@ -244,10 +282,15 @@ class CreateProductManagement extends Component
             'verification_status' => 'pending',
         ]);
 
+        Log::info('商品已建立', ['product_id' => $product->id]);
+
         // 上傳圖片
         if (!empty($this->images)) {
             $this->uploadImages($product);
         }
+
+        // 清理臨時預覽文件
+        $this->cleanupTempFiles();
 
         return $product;
     }
@@ -255,21 +298,59 @@ class CreateProductManagement extends Component
     protected function uploadImages($product)
     {
         foreach ($this->images as $index => $image) {
-            // 生成唯一檔名
-            $filename = Str::random(40) . '.' . $image->getClientOriginalExtension();
+            try {
+                // 生成唯一檔名
+                $filename = Str::random(40) . '.' . $image->getClientOriginalExtension();
 
-            // 儲存圖片
-            $path = $image->storeAs('products/' . $product->id, $filename, 'public');
+                // 儲存圖片到正式目錄
+                $path = $image->storeAs('products/' . $product->id, $filename, 'public');
 
-            // 建立圖片記錄
-            ProductImage::create([
-                'product_id' => $product->id,
-                'image_path' => $path,
-                'thumbnail_path' => null,
-                'order' => $index,
-                'is_primary' => $index === 0,
-                'alt_text' => $product->name,
-            ]);
+                // 建立圖片記錄
+                ProductImage::create([
+                    'product_id' => $product->id,
+                    'image_path' => $path,
+                    'thumbnail_path' => null,
+                    'order' => $index,
+                    'is_primary' => $index === 0,
+                    'alt_text' => $product->name,
+                ]);
+
+                Log::info('產品圖片已保存', [
+                    'product_id' => $product->id,
+                    'path' => $path,
+                    'is_primary' => $index === 0
+                ]);
+
+            } catch (\Exception $e) {
+                Log::error('上傳產品圖片失敗', [
+                    'product_id' => $product->id,
+                    'index' => $index,
+                    'error' => $e->getMessage()
+                ]);
+                // 繼續處理其他圖片
+            }
+        }
+    }
+
+    // 新增：清理臨時文件
+    protected function cleanupTempFiles()
+    {
+        foreach ($this->imagePreviewUrls as $path) {
+            try {
+                Storage::disk('public')->delete($path);
+                Log::info('已清理臨時文件', ['path' => $path]);
+            } catch (\Exception $e) {
+                Log::warning('清理臨時文件失敗', ['path' => $path, 'error' => $e->getMessage()]);
+            }
+        }
+        $this->imagePreviewUrls = [];
+    }
+
+    // 組件銷毀時清理臨時文件
+    public function __destruct()
+    {
+        if (!empty($this->imagePreviewUrls)) {
+            $this->cleanupTempFiles();
         }
     }
 

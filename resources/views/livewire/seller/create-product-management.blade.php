@@ -1,23 +1,23 @@
 <div>
     <!-- Header -->
-    <section class="bg-gradient-to-br from-blue-50 to-indigo-100 py-12">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+    <section class="py-12 bg-gradient-to-br from-blue-50 to-indigo-100">
+        <div class="max-w-6xl px-4 mx-auto sm:px-6 lg:px-8">
+            <div class="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
                 <div>
-                    <h1 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-2">新增商品</h1>
+                    <h1 class="mb-2 text-3xl font-bold text-gray-900 sm:text-4xl">新增商品</h1>
                     <p class="text-lg text-gray-600">填寫商品資訊，讓您的商品更容易被買家發現</p>
                 </div>
                 <div class="flex gap-3">
                     <button
                         wire:click="saveAsDraft"
                         type="button"
-                        class="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
-                        <i class="fas fa-save mr-2"></i>儲存草稿
+                        class="px-6 py-3 text-gray-700 transition-colors border border-gray-300 rounded-lg hover:bg-gray-50">
+                        <i class="mr-2 fas fa-save"></i>儲存草稿
                     </button>
                     <a href="{{ route('seller.products.index') }}"
                         style="background: #3d4045;"
-                        class="px-6 py-3 text-white hover:text-gray-800 inline-flex items-center">
-                        <i class="fas fa-times mr-2"></i>取消
+                        class="inline-flex items-center px-6 py-3 text-white hover:text-gray-800">
+                        <i class="mr-2 fas fa-times"></i>取消
                     </a>
                 </div>
             </div>
@@ -26,19 +26,19 @@
 
     <!-- Form -->
     <section class="py-12 bg-white">
-        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="max-w-4xl px-4 mx-auto sm:px-6 lg:px-8">
             <form wire:submit="save" class="space-y-8">
                 <!-- Basic Information -->
-                <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                    <h2 class="text-xl font-semibold text-gray-900 mb-6 flex items-center">
-                        <i class="fas fa-info-circle text-blue-500 mr-3"></i>
+                <div class="p-6 bg-white border border-gray-200 rounded-lg shadow-sm">
+                    <h2 class="flex items-center mb-6 text-xl font-semibold text-gray-900">
+                        <i class="mr-3 text-blue-500 fas fa-info-circle"></i>
                         基本資訊
                     </h2>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
                         <!-- 商品名稱 -->
                         <div class="md:col-span-2">
-                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                            <label class="block mb-2 text-sm font-medium text-gray-700">
                                 商品名稱 <span class="text-red-500">*</span>
                             </label>
                             <input
@@ -53,7 +53,7 @@
 
                         <!-- 商品類別 -->
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                            <label class="block mb-2 text-sm font-medium text-gray-700">
                                 商品類別 <span class="text-red-500">*</span>
                             </label>
                             <select
@@ -71,7 +71,7 @@
 
                         <!-- 遊戲類型 -->
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                            <label class="block mb-2 text-sm font-medium text-gray-700">
                                 遊戲類型 <span class="text-red-500">*</span>
                             </label>
                             <select
@@ -89,12 +89,12 @@
 
                         <!-- 稀有度 -->
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                            <label class="block mb-2 text-sm font-medium text-gray-700">
                                 稀有度 <span class="text-red-500">*</span>
                             </label>
                             <select
                                 wire:model="rarity"
-                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all">
+                                class="w-full px-4 py-2 transition-all border border-gray-300 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200">
                                 @foreach($rarities as $value => $label)
                                     <option value="{{ $value }}">{{ $label }}</option>
                                 @endforeach
@@ -106,7 +106,7 @@
 
                         <!-- 商品描述 -->
                         <div class="md:col-span-2">
-                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                            <label class="block mb-2 text-sm font-medium text-gray-700">
                                 商品描述 <span class="text-red-500">*</span>
                             </label>
                             <textarea
@@ -122,16 +122,16 @@
                 </div>
 
                 <!-- Pricing and Inventory -->
-                <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                    <h2 class="text-xl font-semibold text-gray-900 mb-6 flex items-center">
-                        <i class="fas fa-dollar-sign text-green-600 mr-3"></i>
+                <div class="p-6 bg-white border border-gray-200 rounded-lg shadow-sm">
+                    <h2 class="flex items-center mb-6 text-xl font-semibold text-gray-900">
+                        <i class="mr-3 text-green-600 fas fa-dollar-sign"></i>
                         價格與庫存
                     </h2>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
                         <!-- 售價 -->
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                            <label class="block mb-2 text-sm font-medium text-gray-700">
                                 售價 (NT$) <span class="text-red-500">*</span>
                             </label>
                             <div class="relative">
@@ -150,8 +150,8 @@
 
                         <!-- 原價（選填） -->
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">
-                                原價 (NT$) <span class="text-gray-400 text-xs">選填</span>
+                            <label class="block mb-2 text-sm font-medium text-gray-700">
+                                原價 (NT$) <span class="text-xs text-gray-400">選填</span>
                             </label>
                             <div class="relative">
                                 <input
@@ -159,7 +159,7 @@
                                     wire:model="original_price"
                                     step="0.01"
                                     min="1"
-                                    class="w-full px-4 py-2 pr-16 border border-gray-300 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all"
+                                    class="w-full px-4 py-2 pr-16 transition-all border border-gray-300 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
                                     placeholder="0">
                             </div>
                             <p class="mt-1 text-xs text-gray-500">用於顯示折扣標籤</p>
@@ -167,7 +167,7 @@
 
                         <!-- 庫存數量 -->
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                            <label class="block mb-2 text-sm font-medium text-gray-700">
                                 庫存數量 <span class="text-red-500">*</span>
                             </label>
                             <input
@@ -185,15 +185,15 @@
                 </div>
 
                 <!-- Images -->
-                <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                    <h2 class="text-xl font-semibold text-gray-900 mb-6 flex items-center">
-                        <i class="fas fa-images text-purple-600 mr-3"></i>
+                <div class="p-6 bg-white border border-gray-200 rounded-lg shadow-sm">
+                    <h2 class="flex items-center mb-6 text-xl font-semibold text-gray-900">
+                        <i class="mr-3 text-purple-600 fas fa-images"></i>
                         商品圖片
                     </h2>
 
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">
-                            上傳圖片 <span class="text-gray-400 text-xs">最多5張，目前已選 {{ count($images) }} 張</span>
+                        <label class="block mb-2 text-sm font-medium text-gray-700">
+                            上傳圖片 <span class="text-xs text-gray-400">最多5張，目前已選 {{ count($images) }} 張</span>
                         </label>
 
                         <!-- 上傳區域 -->
@@ -208,8 +208,8 @@
                                 {{ count($images) >= 5 ? 'disabled' : '' }}>
 
                             <label for="imageUpload" class="cursor-pointer {{ count($images) >= 5 ? 'pointer-events-none' : '' }}">
-                                <i class="fas fa-cloud-upload-alt text-4xl text-gray-400 mb-3"></i>
-                                <p class="text-gray-600 mb-2">
+                                <i class="mb-3 text-4xl text-gray-400 fas fa-cloud-upload-alt"></i>
+                                <p class="mb-2 text-gray-600">
                                     {{ count($images) >= 5 ? '已達圖片上限' : '拖曳圖片到此處，或點擊選擇檔案' }}
                                 </p>
                                 <p class="text-sm text-gray-500">支援 JPG、PNG 格式，單張最大 5MB</p>
@@ -281,8 +281,8 @@
                         @endif
 
                         <div wire:loading wire:target="newImages" class="mt-4 text-center">
-                            <div class="inline-flex items-center px-4 py-2 bg-blue-50 text-blue-600 rounded-lg">
-                                <i class="fas fa-spinner fa-spin mr-2"></i>
+                            <div class="inline-flex items-center px-4 py-2 text-blue-600 rounded-lg bg-blue-50">
+                                <i class="mr-2 fas fa-spinner fa-spin"></i>
                                 上傳中...
                             </div>
                         </div>
@@ -290,21 +290,21 @@
                 </div>
 
                 <!-- Additional Settings -->
-                <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                    <h2 class="text-xl font-semibold text-gray-900 mb-6 flex items-center">
-                        <i class="fas fa-cog text-gray-600 mr-3"></i>
+                <div class="p-6 bg-white border border-gray-200 rounded-lg shadow-sm">
+                    <h2 class="flex items-center mb-6 text-xl font-semibold text-gray-900">
+                        <i class="mr-3 text-gray-600 fas fa-cog"></i>
                         其他設定
                     </h2>
 
                     <div class="space-y-6">
                         <!-- 交易方式 -->
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                            <label class="block mb-2 text-sm font-medium text-gray-700">
                                 交付方式
                             </label>
                             <select
                                 wire:model="delivery_method"
-                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all">
+                                class="w-full px-4 py-2 transition-all border border-gray-300 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200">
                                 @foreach($deliveryMethods as $value => $label)
                                     <option value="{{ $value }}">{{ $label }}</option>
                                 @endforeach
@@ -313,36 +313,36 @@
 
                         <!-- 交易條件 -->
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                            <label class="block mb-2 text-sm font-medium text-gray-700">
                                 交易說明
                             </label>
                             <textarea
                                 wire:model="delivery_instructions"
                                 rows="3"
-                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all"
+                                class="w-full px-4 py-2 transition-all border border-gray-300 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
                                 placeholder="描述交易條件、交付方式等資訊..."></textarea>
                         </div>
 
                         <!-- 關鍵字標籤 -->
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                            <label class="block mb-2 text-sm font-medium text-gray-700">
                                 關鍵字標籤
                             </label>
                             <input
                                 type="text"
                                 wire:model="tags"
-                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all"
+                                class="w-full px-4 py-2 transition-all border border-gray-300 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
                                 placeholder="輸入關鍵字，用逗號分隔 (例如: 武器,史詩,攻擊力)">
                             <p class="mt-1 text-xs text-gray-500">幫助買家更容易找到您的商品</p>
                         </div>
 
                         <!-- 選項 -->
-                        <div class="flex flex-col sm:flex-row sm:items-center gap-4">
+                        <div class="flex flex-col gap-4 sm:flex-row sm:items-center">
                             <label class="flex items-center">
                                 <input
                                     type="checkbox"
                                     wire:model="is_negotiable"
-                                    class="rounded border-gray-300 text-blue-500 focus:ring-blue-500">
+                                    class="text-blue-500 border-gray-300 rounded focus:ring-blue-500">
                                 <span class="ml-2 text-sm text-gray-700">允許議價</span>
                             </label>
 
@@ -350,7 +350,7 @@
                                 <input
                                     type="checkbox"
                                     wire:model="auto_publish"
-                                    class="rounded border-gray-300 text-blue-500 focus:ring-blue-500">
+                                    class="text-blue-500 border-gray-300 rounded focus:ring-blue-500">
                                 <span class="ml-2 text-sm text-gray-700">立即上架</span>
                             </label>
                         </div>
@@ -358,23 +358,23 @@
                 </div>
 
                 <!-- Action Buttons -->
-                <div class="flex flex-col sm:flex-row justify-end gap-4 pt-8 border-t">
+                <div class="flex flex-col justify-end gap-4 pt-8 border-t sm:flex-row">
                     <a href="{{ route('seller.products.index') }}"
                         style="background: #3d4045"
-                       class="px-6 py-3 text-center text-white  transition-colors">
-                        <i class="fas fa-times mr-2"></i>取消
+                       class="px-6 py-3 text-center text-white transition-colors">
+                        <i class="mr-2 fas fa-times"></i>取消
                     </a>
                     <button
                         type="button"
                         wire:click="saveAsDraft"
-                        class="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
-                        <i class="fas fa-save mr-2"></i>儲存草稿
+                        class="px-6 py-3 text-gray-700 transition-colors border border-gray-300 rounded-lg hover:bg-gray-50">
+                        <i class="mr-2 fas fa-save"></i>儲存草稿
                     </button>
                     <button
                         type="submit"
                         style="background-color: #3B82F6;"
-                        class="px-8 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors font-semibold">
-                        <i class="fas fa-plus mr-2"></i>{{ $auto_publish ? '上架商品' : '儲存商品' }}
+                        class="px-8 py-3 font-semibold text-white transition-colors bg-blue-500 rounded-lg hover:bg-blue-600">
+                        <i class="mr-2 fas fa-plus"></i>{{ $auto_publish ? '上架商品' : '儲存商品' }}
                     </button>
                 </div>
             </form>
@@ -382,9 +382,9 @@
     </section>
 
     <!-- Loading Overlay -->
-    <div wire:loading.flex wire:target="save,saveAsDraft" class="fixed inset-0 bg-black bg-opacity-50 items-center justify-center z-50">
-        <div class="bg-white rounded-lg p-6 flex flex-col items-center">
-            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mb-4"></div>
+    <div wire:loading.flex wire:target="save,saveAsDraft" class="fixed inset-0 z-50 items-center justify-center bg-black bg-opacity-50">
+        <div class="flex flex-col items-center p-6 bg-white rounded-lg">
+            <div class="w-12 h-12 mb-4 border-b-2 border-blue-500 rounded-full animate-spin"></div>
             <p class="text-gray-600">處理中，請稍候...</p>
         </div>
     </div>

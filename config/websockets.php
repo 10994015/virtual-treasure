@@ -23,14 +23,18 @@ return [
      */
     'apps' => [
         [
-            'id' => env('PUSHER_APP_ID'),
-            'name' => env('APP_NAME'),
-            'key' => env('PUSHER_APP_KEY'),
-            'secret' => env('PUSHER_APP_SECRET'),
+            'id' => env('PUSHER_APP_ID', 'local'),
+            'name' => env('APP_NAME', 'Laravel'),
+            'key' => env('PUSHER_APP_KEY', 'local-app-key'),
+            'secret' => env('PUSHER_APP_SECRET', 'local-app-secret'),
             'path' => env('PUSHER_APP_PATH'),
             'capacity' => null,
             'enable_client_messages' => false,
             'enable_statistics' => true,
+            'allowed_origins' => [
+                '*',  // 或指定你的域名
+            ],
+            'max_request_size_in_kb' => 250,
         ],
     ],
 
