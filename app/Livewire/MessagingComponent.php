@@ -7,6 +7,7 @@ use App\Models\Message;
 use App\Models\BargainHistory;
 use App\Events\NewMessageEvent;
 use App\Events\ConversationUpdated;
+use App\Models\OrderItem;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
@@ -34,6 +35,8 @@ class MessagingComponent extends Component
     public $counterPrice = null;
     public $counterQuantity = null;
 
+    public $showPriceHistoryModal = false;
+
     // 圖片上傳
     public $uploadedImage = null;
 
@@ -46,6 +49,59 @@ class MessagingComponent extends Component
             $this->selectConversation($conversationId);
         }
 
+    }
+    public function togglePriceHistoryModal()
+    {
+        $this->showPriceHistoryModal = !$this->showPriceHistoryModal;
+    }
+    #[Computed]
+    public function priceHistory()
+    {
+        if (!$this->selectedConversation) {
+            return collect([]);
+        }
+
+        try {
+            return OrderItem::where('product_id', $this->selectedConversation->product_id)
+                ->with(['order' => function($query) {
+                    $query->select('id', 'user_id', 'created_at', 'status');
+                }])
+                ->whereHas('order', function($query) {
+                    $query->where('status', 'completed'); // 只顯示已完成的訂單
+                })
+                ->select('id', 'order_id', 'product_id', 'price', 'quantity', 'created_at')
+                ->latest()
+                ->limit(10)
+                ->get()
+                ->map(function($item) {
+                    return [
+                        'price' => $item->price,
+                        'quantity' => $item->quantity,
+                        'total' => $item->price * $item->quantity,
+                        'date' => $item->created_at,
+                        'is_bargain' => $item->price < $this->selectedConversation->product->price, // 判斷是否為議價
+                    ];
+                });
+        } catch (\Exception $e) {
+            Log::error('Get price history error: ' . $e->getMessage());
+            return collect([]);
+        }
+    }
+    #[Computed]
+    public function priceStats()
+    {
+        if (!$this->priceHistory || $this->priceHistory->isEmpty()) {
+            return null;
+        }
+
+        $prices = $this->priceHistory->pluck('price');
+
+        return [
+            'min' => $prices->min(),
+            'max' => $prices->max(),
+            'avg' => round($prices->avg()),
+            'count' => $this->priceHistory->count(),
+        ];
     }
     protected function checkProductInCart()
     {

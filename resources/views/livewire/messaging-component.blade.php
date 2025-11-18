@@ -533,9 +533,20 @@
 
                             <!-- 商品資訊 -->
                             <div style="flex: 1; min-width: 0;">
-                                <h4 style="margin: 0 0 0.5rem 0; font-size: 1rem; font-weight: 600; color: #333;">
-                                    {{ $selectedConversation->product->name }}
-                                </h4>
+                                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 0.5rem;">
+                                    <h4 style="margin: 0; font-size: 1rem; font-weight: 600; color: #333;">
+                                        {{ $selectedConversation->product->name }}
+                                    </h4>
+
+                                    {{-- 🔥 歷史價格按鈕 --}}
+                                    <button
+                                        wire:click="togglePriceHistoryModal"
+                                        type="button"
+                                        style="padding: 0.4rem 0.75rem; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 0.75rem; font-weight: 600; white-space: nowrap; box-shadow: 0 2px 4px rgba(102, 126, 234, 0.3);">
+                                        <i class="mr-1 fas fa-chart-line"></i>歷史價格
+                                    </button>
+                                </div>
+
                                 <div style="display: flex; gap: 1.5rem; align-items: center; margin-bottom: 0.5rem;">
                                     <div>
                                         <span style="font-size: 0.75rem; color: #666;">賣家</span>
@@ -564,14 +575,14 @@
                                 <!-- 🔥 統一的加入購物車/成交按鈕 -->
                                 @if($isBuyer)
                                     @if($isProductInCart)
-                                        {{-- 🔥 已從此對話加入購物車 --}}
+                                        {{-- 已從此對話加入購物車 --}}
                                         <a href="{{ route('cart') }}" style="display: inline-block; padding: 0.6rem 1.5rem; background: linear-gradient(135deg, #34C759 0%, #2FA84A 100%); color: white; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 0.9rem; box-shadow: 0 2px 6px rgba(52, 199, 89, 0.3);">
                                             <i class="mr-1 fas fa-check-circle"></i>
                                             已成交 - 前往購物車結帳
                                         </a>
                                     @else
                                         @if($this->bestPrice['is_bargain'])
-                                            {{-- 🔥 議價商品：顯示成交確認按鈕 --}}
+                                            {{-- 議價商品：顯示成交確認按鈕 --}}
                                             <button
                                                 wire:click="addProductToCart"
                                                 wire:confirm="⚠️ 確認成交並加入購物車？
@@ -590,8 +601,8 @@
                                                 💡 議價成功！點擊按鈕確認成交並結束議價
                                             </p>
                                         @else
-                                            {{-- 🔥 無議價：可以繼續議價或回商品頁以原價購買 --}}
-                                            <a
+                                            {{-- 無議價：可以繼續議價或回商品頁以原價購買 --}}
+
                                                 href="{{ route('products.show', $selectedConversation->product->slug) }}"
                                                 style="display: inline-block; padding: 0.6rem 1.5rem; background: linear-gradient(135deg, #0A84FF 0%, #007AFF 100%); color: white; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 0.9rem; box-shadow: 0 2px 6px rgba(10, 132, 255, 0.3); text-decoration: none;">
                                                 <i class="mr-1 fas fa-shopping-cart"></i>
@@ -1036,7 +1047,112 @@
             <p class="mt-4 text-gray-600">載入中...</p>
         </div>
     </div>
+    {{-- 🔥 歷史價格彈窗 --}}
+    @if($showPriceHistoryModal)
+        <div
+            style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.5); z-index: 9999; display: flex; align-items: center; justify-content: center; padding: 1rem;">
+            <div
+                style="background: white; border-radius: 16px; max-width: 600px; width: 100%; max-height: 80vh; overflow: hidden; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3); display: flex; flex-direction: column;">
+                {{-- 標題 --}}
+                <div style="padding: 1.5rem; border-bottom: 2px solid #f0f0f0; display: flex; justify-content: space-between; align-items: center; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                    <h3 style="margin: 0; font-size: 1.3rem; font-weight: 700; color: white; display: flex; align-items: center; gap: 0.5rem;">
+                        <i class="fas fa-chart-line"></i>
+                        歷史成交價格
+                    </h3>
+                    <button
+                        wire:click="togglePriceHistoryModal"
+                        type="button"
+                        style="background: rgba(255, 255, 255, 0.2); border: none; color: white; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; font-size: 1.2rem; display: flex; align-items: center; justify-content: center; transition: background 0.2s;">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
 
+                {{-- 統計資訊 --}}
+                @if($this->priceStats)
+                    <div style="padding: 1rem; background: linear-gradient(135deg, #f8f9ff 0%, #f0f4ff 100%); border-bottom: 1px solid #e5e5ea;">
+                        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.75rem;">
+                            <div style="text-align: center; padding: 0.75rem; background: white; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                                <div style="font-size: 0.7rem; color: #666; margin-bottom: 0.25rem;">成交筆數</div>
+                                <div style="font-size: 1.3rem; font-weight: 700; color: #667eea;">{{ $this->priceStats['count'] }}</div>
+                            </div>
+                            <div style="text-align: center; padding: 0.75rem; background: white; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                                <div style="font-size: 0.7rem; color: #666; margin-bottom: 0.25rem;">最低價</div>
+                                <div style="font-size: 1.1rem; font-weight: 700; color: #34C759;">NT$ {{ number_format($this->priceStats['min']) }}</div>
+                            </div>
+                            <div style="text-align: center; padding: 0.75rem; background: white; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                                <div style="font-size: 0.7rem; color: #666; margin-bottom: 0.25rem;">最高價</div>
+                                <div style="font-size: 1.1rem; font-weight: 700; color: #FF3B30;">NT$ {{ number_format($this->priceStats['max']) }}</div>
+                            </div>
+                            <div style="text-align: center; padding: 0.75rem; background: white; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                                <div style="font-size: 0.7rem; color: #666; margin-bottom: 0.25rem;">平均價</div>
+                                <div style="font-size: 1.1rem; font-weight: 700; color: #0A84FF;">NT$ {{ number_format($this->priceStats['avg']) }}</div>
+                            </div>
+                        </div>
+                    </div>
+                @endif
+
+                {{-- 歷史記錄列表 --}}
+                <div style="flex: 1; overflow-y: auto; padding: 1rem;">
+                    @if($this->priceHistory && $this->priceHistory->isNotEmpty())
+                        <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                            @foreach($this->priceHistory as $index => $item)
+                                <div style="background: {{ $item['is_bargain'] ? 'linear-gradient(135deg, #fff5e6 0%, #ffe6cc 100%)' : '#f9f9f9' }}; padding: 1rem; border-radius: 10px; border-left: 4px solid {{ $item['is_bargain'] ? '#FF9500' : '#0A84FF' }}; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                            <span style="background: {{ $item['is_bargain'] ? '#FF9500' : '#0A84FF' }}; color: white; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 700;">
+                                                {{ $index + 1 }}
+                                            </span>
+                                            @if($item['is_bargain'])
+                                                <span style="background: #FF9500; color: white; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.7rem; font-weight: 600;">
+                                                    <i class="mr-1 fas fa-handshake"></i>議價
+                                                </span>
+                                            @else
+                                                <span style="background: #0A84FF; color: white; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.7rem; font-weight: 600;">
+                                                    <i class="mr-1 fas fa-tag"></i>原價
+                                                </span>
+                                            @endif
+                                        </div>
+                                        <span style="font-size: 0.75rem; color: #999;">
+                                            <i class="mr-1 far fa-clock"></i>{{ $item['date']->diffForHumans() }}
+                                        </span>
+                                    </div>
+
+                                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                                        <div>
+                                            <div style="font-size: 0.75rem; color: #666; margin-bottom: 0.25rem;">單價 x 數量</div>
+                                            <div style="font-size: 0.9rem; font-weight: 600; color: #333;">
+                                                NT$ {{ number_format($item['price']) }} x {{ $item['quantity'] }}
+                                            </div>
+                                        </div>
+                                        <div style="text-align: right;">
+                                            <div style="font-size: 0.75rem; color: #666; margin-bottom: 0.25rem;">總價</div>
+                                            <div style="font-size: 1.1rem; font-weight: 700; color: {{ $item['is_bargain'] ? '#FF9500' : '#0A84FF' }};">
+                                                NT$ {{ number_format($item['total']) }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    @else
+                        <div style="text-align: center; padding: 3rem 1rem; color: #999;">
+                            <i class="fas fa-inbox" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.3;"></i>
+                            <p style="font-size: 0.9rem; margin: 0;">暫無歷史成交記錄</p>
+                            <p style="font-size: 0.8rem; margin: 0.5rem 0 0 0;">成為第一個購買的人吧！</p>
+                        </div>
+                    @endif
+                </div>
+
+                {{-- 底部說明 --}}
+                <div style="padding: 1rem; background: #f9f9f9; border-top: 1px solid #e5e5ea;">
+                    <p style="margin: 0; font-size: 0.75rem; color: #666; text-align: center;">
+                        <i class="mr-1 fas fa-info-circle"></i>
+                        顯示最近 10 筆已完成的訂單成交價格供參考
+                    </p>
+                </div>
+            </div>
+        </div>
+    @endif
     <script>
         function scrollToBottom() {
             try {
