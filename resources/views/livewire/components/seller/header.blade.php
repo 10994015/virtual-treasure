@@ -26,11 +26,12 @@
                 </a>
             </div>
 
-            <div class="flex items-center space-x-3">
-                <a href="login.html" class="hidden px-4 py-2 transition-colors border sm:block text-system-blue border-system-blue rounded-system hover:bg-system-blue hover:text-white btn-system">
-                    登出
-                </a>
-            </div>
+           <form method="POST" action="{{ route('logout') }}">
+                @csrf
+                <button type="submit" class="w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-100">
+                    <i class="mr-2 fas fa-sign-out-alt"></i>登出
+                </button>
+            </form>
         </div>
 
         <!-- Mobile Menu -->
