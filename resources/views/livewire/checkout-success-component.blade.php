@@ -64,7 +64,7 @@
                     <a
                         href="{{ route('orders.show', $order->id) }}"
                         class="px-6 py-3 font-semibold text-center text-gray-700 transition-colors bg-gray-200 rounded-lg hover:bg-gray-300">
-                        <i class="mr-2 fas fa-home"></i>查看訂單
+                        <i class="mr-2 fas fa-eye"></i>查看訂單
                     </a>
                 </div>
 
