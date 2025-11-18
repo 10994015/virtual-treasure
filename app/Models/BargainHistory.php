@@ -25,6 +25,14 @@ class BargainHistory extends Model
         'offered_at',
         'responded_at',
         'expired_at',
+        'buyer_quantity',
+        'buyer_total',
+        'seller_quantity',
+        'seller_total',
+        'final_quantity',
+        'final_total',
+        'added_to_cart_at',
+        'completed_at',
     ];
 
     protected $casts = [
@@ -35,6 +43,8 @@ class BargainHistory extends Model
         'offered_at' => 'datetime',
         'responded_at' => 'datetime',
         'expired_at' => 'datetime',
+        'added_to_cart_at' => 'datetime',
+        'completed_at' => 'datetime',
     ];
 
     // Relationships
@@ -114,4 +124,14 @@ class BargainHistory extends Model
             'responded_at' => now(),
         ]);
     }
+    public function isCompleted()
+    {
+        return $this->status === 'completed' && !is_null($this->completed_at);
+    }
+
+    public function isAddedToCart()
+    {
+        return !is_null($this->added_to_cart_at);
+    }
+
 }

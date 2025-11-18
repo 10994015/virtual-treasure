@@ -1,22 +1,22 @@
 <div>
     <!-- Hero Section -->
-    <section class="bg-gradient-to-br from-blue-50 to-indigo-100 py-24 sm:py-32">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <div class="mx-auto max-w-3xl">
-                <h1 class="text-4xl sm:text-6xl lg:text-7xl font-bold text-gray-900 mb-6">
+    <section class="py-24 bg-gradient-to-br from-blue-50 to-indigo-100 sm:py-32">
+        <div class="max-w-6xl px-4 mx-auto text-center sm:px-6 lg:px-8">
+            <div class="max-w-3xl mx-auto">
+                <h1 class="mb-6 text-4xl font-bold text-gray-900 sm:text-6xl lg:text-7xl">
                     虛擬寶物
                     <span class="text-system-blue">交易平台</span>
                 </h1>
-                <p class="text-lg sm:text-xl text-gray-600 mb-8 max-w-2xl mx-auto leading-relaxed">
+                <p class="max-w-2xl mx-auto mb-8 text-lg leading-relaxed text-gray-600 sm:text-xl">
                     使用 AI 智能技術，讓您的遊戲交易更加安全、透明、高效
                 </p>
-                <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                    <a href="market.html" class="inline-flex items-center px-8 py-4 bg-system-blue text-white rounded-system-lg font-semibold hover:bg-blue-600 btn-system shadow-system transition-all">
-                        <i class="fas fa-shopping-bag mr-2"></i>
+                <div class="flex flex-col justify-center gap-4 sm:flex-row">
+                    <a href="{{ route('products.index') }}" class="inline-flex items-center px-8 py-4 font-semibold text-white transition-all bg-system-blue rounded-system-lg hover:bg-blue-600 btn-system shadow-system">
+                        <i class="mr-2 fas fa-shopping-bag"></i>
                         探索市場
                     </a>
-                    <button onclick="openChat()" class="inline-flex items-center px-8 py-4 border-2 border-system-blue text-system-blue rounded-system-lg font-semibold hover:bg-system-blue hover:text-white btn-system transition-all">
-                        <i class="fas fa-robot mr-2"></i>
+                    <button onclick="openChat()" class="inline-flex items-center px-8 py-4 font-semibold transition-all border-2 border-system-blue text-system-blue rounded-system-lg hover:bg-system-blue hover:text-white btn-system">
+                        <i class="mr-2 fas fa-robot"></i>
                         AI 客服
                     </button>
                 </div>
@@ -26,58 +26,58 @@
 
     <!-- Features Section -->
     <section class="py-20 bg-card-white">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-16">
-                <h2 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">核心功能</h2>
-                <p class="text-lg text-gray-600 max-w-2xl mx-auto">我們提供最先進的AI技術和用戶友好的介面</p>
+        <div class="max-w-6xl px-4 mx-auto sm:px-6 lg:px-8">
+            <div class="mb-16 text-center">
+                <h2 class="mb-4 text-3xl font-bold text-gray-900 sm:text-4xl">核心功能</h2>
+                <p class="max-w-2xl mx-auto text-lg text-gray-600">我們提供最先進的AI技術和用戶友好的介面</p>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <div class="bg-card-white p-8 rounded-system-lg shadow-system hover:shadow-system-lg transition-all">
-                    <div class="w-12 h-12 bg-system-blue rounded-system-lg flex items-center justify-center mb-6">
-                        <i class="fas fa-robot text-white text-xl"></i>
+            <div class="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+                <div class="p-8 transition-all bg-card-white rounded-system-lg shadow-system hover:shadow-system-lg">
+                    <div class="flex items-center justify-center w-12 h-12 mb-6 bg-system-blue rounded-system-lg">
+                        <i class="text-xl text-white fas fa-robot"></i>
                     </div>
-                    <h3 class="text-xl font-semibold text-gray-900 mb-3">AI 智能客服</h3>
-                    <p class="text-gray-600 leading-relaxed">24小時在線 AI 客服，解答您的所有問題，提供即時支援</p>
+                    <h3 class="mb-3 text-xl font-semibold text-gray-900">AI 智能客服</h3>
+                    <p class="leading-relaxed text-gray-600">24小時在線 AI 客服，解答您的所有問題，提供即時支援</p>
                 </div>
 
-                <div class="bg-card-white p-8 rounded-system-lg shadow-system hover:shadow-system-lg transition-all">
-                    <div class="w-12 h-12 bg-system-blue rounded-system-lg flex items-center justify-center mb-6">
-                        <i class="fas fa-shield-alt text-white text-xl"></i>
+                <div class="p-8 transition-all bg-card-white rounded-system-lg shadow-system hover:shadow-system-lg">
+                    <div class="flex items-center justify-center w-12 h-12 mb-6 bg-system-blue rounded-system-lg">
+                        <i class="text-xl text-white fas fa-shield-alt"></i>
                     </div>
-                    <h3 class="text-xl font-semibold text-gray-900 mb-3">安全交易</h3>
-                    <p class="text-gray-600 leading-relaxed">多重安全措施，保障您的交易安全，保護個人隱私</p>
+                    <h3 class="mb-3 text-xl font-semibold text-gray-900">安全交易</h3>
+                    <p class="leading-relaxed text-gray-600">多重安全措施，保障您的交易安全，保護個人隱私</p>
                 </div>
 
-                <div class="bg-card-white p-8 rounded-system-lg shadow-system hover:shadow-system-lg transition-all">
-                    <div class="w-12 h-12 bg-system-blue rounded-system-lg flex items-center justify-center mb-6">
-                        <i class="fas fa-chart-line text-white text-xl"></i>
+                <div class="p-8 transition-all bg-card-white rounded-system-lg shadow-system hover:shadow-system-lg">
+                    <div class="flex items-center justify-center w-12 h-12 mb-6 bg-system-blue rounded-system-lg">
+                        <i class="text-xl text-white fas fa-chart-line"></i>
                     </div>
-                    <h3 class="text-xl font-semibold text-gray-900 mb-3">價格預測</h3>
-                    <p class="text-gray-600 leading-relaxed">AI 分析市場趨勢，提供準確價格建議，優化交易決策</p>
+                    <h3 class="mb-3 text-xl font-semibold text-gray-900">價格預測</h3>
+                    <p class="leading-relaxed text-gray-600">AI 分析市場趨勢，提供準確價格建議，優化交易決策</p>
                 </div>
 
-                <div class="bg-card-white p-8 rounded-system-lg shadow-system hover:shadow-system-lg transition-all">
-                    <div class="w-12 h-12 bg-system-blue rounded-system-lg flex items-center justify-center mb-6">
-                        <i class="fas fa-crosshairs text-white text-xl"></i>
+                <div class="p-8 transition-all bg-card-white rounded-system-lg shadow-system hover:shadow-system-lg">
+                    <div class="flex items-center justify-center w-12 h-12 mb-6 bg-system-blue rounded-system-lg">
+                        <i class="text-xl text-white fas fa-crosshairs"></i>
                     </div>
-                    <h3 class="text-xl font-semibold text-gray-900 mb-3">風險評估</h3>
-                    <p class="text-gray-600 leading-relaxed">智能風險評估，識別潛在交易風險，保障交易安全</p>
+                    <h3 class="mb-3 text-xl font-semibold text-gray-900">風險評估</h3>
+                    <p class="leading-relaxed text-gray-600">智能風險評估，識別潛在交易風險，保障交易安全</p>
                 </div>
 
-                <div class="bg-card-white p-8 rounded-system-lg shadow-system hover:shadow-system-lg transition-all">
-                    <div class="w-12 h-12 bg-system-blue rounded-system-lg flex items-center justify-center mb-6">
-                        <i class="fas fa-gamepad text-white text-xl"></i>
+                <div class="p-8 transition-all bg-card-white rounded-system-lg shadow-system hover:shadow-system-lg">
+                    <div class="flex items-center justify-center w-12 h-12 mb-6 bg-system-blue rounded-system-lg">
+                        <i class="text-xl text-white fas fa-gamepad"></i>
                     </div>
-                    <h3 class="text-xl font-semibold text-gray-900 mb-3">多平台支援</h3>
-                    <p class="text-gray-600 leading-relaxed">支援多個遊戲平台和虛擬物品交易，一站式解決方案</p>
+                    <h3 class="mb-3 text-xl font-semibold text-gray-900">多平台支援</h3>
+                    <p class="leading-relaxed text-gray-600">支援多個遊戲平台和虛擬物品交易，一站式解決方案</p>
                 </div>
 
-                <div class="bg-card-white p-8 rounded-system-lg shadow-system hover:shadow-system-lg transition-all">
-                    <div class="w-12 h-12 bg-system-blue rounded-system-lg flex items-center justify-center mb-6">
-                        <i class="fas fa-bell text-white text-xl"></i>
+                <div class="p-8 transition-all bg-card-white rounded-system-lg shadow-system hover:shadow-system-lg">
+                    <div class="flex items-center justify-center w-12 h-12 mb-6 bg-system-blue rounded-system-lg">
+                        <i class="text-xl text-white fas fa-bell"></i>
                     </div>
-                    <h3 class="text-xl font-semibold text-gray-900 mb-3">個人化推薦</h3>
-                    <p class="text-gray-600 leading-relaxed">根據您的偏好提供個性化商品推薦，發現心儀物品</p>
+                    <h3 class="mb-3 text-xl font-semibold text-gray-900">個人化推薦</h3>
+                    <p class="leading-relaxed text-gray-600">根據您的偏好提供個性化商品推薦，發現心儀物品</p>
                 </div>
             </div>
         </div>
@@ -85,64 +85,64 @@
 
     <!-- Market Preview Section -->
     <section class="py-20 bg-system-gray">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-16">
-                <h2 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">熱門商品</h2>
+        <div class="max-w-6xl px-4 mx-auto sm:px-6 lg:px-8">
+            <div class="mb-16 text-center">
+                <h2 class="mb-4 text-3xl font-bold text-gray-900 sm:text-4xl">熱門商品</h2>
                 <p class="text-lg text-gray-600">探索最受歡迎的虛擬物品，開始您的遊戲冒險</p>
             </div>
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+            <div class="grid grid-cols-1 gap-6 mb-12 sm:grid-cols-2 lg:grid-cols-4">
                 <!-- Sample items for demo -->
-                <div class="bg-card-white rounded-system-lg shadow-system hover:shadow-system-lg transition-all p-6">
-                    <div class="w-full h-32 bg-gradient-to-br from-blue-100 to-blue-200 rounded-system-lg mb-4 flex items-center justify-center">
-                        <i class="fas fa-sword text-system-blue text-3xl"></i>
+                <div class="p-6 transition-all bg-card-white rounded-system-lg shadow-system hover:shadow-system-lg">
+                    <div class="flex items-center justify-center w-full h-32 mb-4 bg-gradient-to-br from-blue-100 to-blue-200 rounded-system-lg">
+                        <i class="text-3xl fas fa-sword text-system-blue"></i>
                     </div>
-                    <h3 class="font-semibold text-gray-900 mb-2">傳說之劍</h3>
-                    <p class="text-sm text-gray-600 mb-3">稀有武器，攻擊力 +50</p>
-                    <div class="flex justify-between items-center">
+                    <h3 class="mb-2 font-semibold text-gray-900">傳說之劍</h3>
+                    <p class="mb-3 text-sm text-gray-600">稀有武器，攻擊力 +50</p>
+                    <div class="flex items-center justify-between">
                         <span class="text-lg font-bold text-system-blue">NT$ 2,500</span>
-                        <button class="px-3 py-1 bg-system-blue text-white rounded-system text-sm hover:bg-blue-600 btn-system transition-colors">
+                        <button class="px-3 py-1 text-sm text-white transition-colors bg-system-blue rounded-system hover:bg-blue-600 btn-system">
                             加入購物車
                         </button>
                     </div>
                 </div>
 
-                <div class="bg-card-white rounded-system-lg shadow-system hover:shadow-system-lg transition-all p-6">
-                    <div class="w-full h-32 bg-gradient-to-br from-purple-100 to-purple-200 rounded-system-lg mb-4 flex items-center justify-center">
-                        <i class="fas fa-shield text-purple-600 text-3xl"></i>
+                <div class="p-6 transition-all bg-card-white rounded-system-lg shadow-system hover:shadow-system-lg">
+                    <div class="flex items-center justify-center w-full h-32 mb-4 bg-gradient-to-br from-purple-100 to-purple-200 rounded-system-lg">
+                        <i class="text-3xl text-purple-600 fas fa-shield"></i>
                     </div>
-                    <h3 class="font-semibold text-gray-900 mb-2">神聖護盾</h3>
-                    <p class="text-sm text-gray-600 mb-3">史詩防具，防禦力 +40</p>
-                    <div class="flex justify-between items-center">
+                    <h3 class="mb-2 font-semibold text-gray-900">神聖護盾</h3>
+                    <p class="mb-3 text-sm text-gray-600">史詩防具，防禦力 +40</p>
+                    <div class="flex items-center justify-between">
                         <span class="text-lg font-bold text-system-blue">NT$ 1,800</span>
-                        <button class="px-3 py-1 bg-system-blue text-white rounded-system text-sm hover:bg-blue-600 btn-system transition-colors">
+                        <button class="px-3 py-1 text-sm text-white transition-colors bg-system-blue rounded-system hover:bg-blue-600 btn-system">
                             加入購物車
                         </button>
                     </div>
                 </div>
 
-                <div class="bg-card-white rounded-system-lg shadow-system hover:shadow-system-lg transition-all p-6">
-                    <div class="w-full h-32 bg-gradient-to-br from-green-100 to-green-200 rounded-system-lg mb-4 flex items-center justify-center">
-                        <i class="fas fa-flask text-green-600 text-3xl"></i>
+                <div class="p-6 transition-all bg-card-white rounded-system-lg shadow-system hover:shadow-system-lg">
+                    <div class="flex items-center justify-center w-full h-32 mb-4 bg-gradient-to-br from-green-100 to-green-200 rounded-system-lg">
+                        <i class="text-3xl text-green-600 fas fa-flask"></i>
                     </div>
-                    <h3 class="font-semibold text-gray-900 mb-2">魔法藥水包</h3>
-                    <p class="text-sm text-gray-600 mb-3">恢復藥水組合，HP +200</p>
-                    <div class="flex justify-between items-center">
+                    <h3 class="mb-2 font-semibold text-gray-900">魔法藥水包</h3>
+                    <p class="mb-3 text-sm text-gray-600">恢復藥水組合，HP +200</p>
+                    <div class="flex items-center justify-between">
                         <span class="text-lg font-bold text-system-blue">NT$ 450</span>
-                        <button class="px-3 py-1 bg-system-blue text-white rounded-system text-sm hover:bg-blue-600 btn-system transition-colors">
+                        <button class="px-3 py-1 text-sm text-white transition-colors bg-system-blue rounded-system hover:bg-blue-600 btn-system">
                             加入購物車
                         </button>
                     </div>
                 </div>
 
-                <div class="bg-card-white rounded-system-lg shadow-system hover:shadow-system-lg transition-all p-6">
-                    <div class="w-full h-32 bg-gradient-to-br from-yellow-100 to-yellow-200 rounded-system-lg mb-4 flex items-center justify-center">
-                        <i class="fas fa-dragon text-yellow-600 text-3xl"></i>
+                <div class="p-6 transition-all bg-card-white rounded-system-lg shadow-system hover:shadow-system-lg">
+                    <div class="flex items-center justify-center w-full h-32 mb-4 bg-gradient-to-br from-yellow-100 to-yellow-200 rounded-system-lg">
+                        <i class="text-3xl text-yellow-600 fas fa-dragon"></i>
                     </div>
-                    <h3 class="font-semibold text-gray-900 mb-2">飛龍坐騎</h3>
-                    <p class="text-sm text-gray-600 mb-3">稀有坐騎，飛行速度 +30</p>
-                    <div class="flex justify-between items-center">
+                    <h3 class="mb-2 font-semibold text-gray-900">飛龍坐騎</h3>
+                    <p class="mb-3 text-sm text-gray-600">稀有坐騎，飛行速度 +30</p>
+                    <div class="flex items-center justify-between">
                         <span class="text-lg font-bold text-system-blue">NT$ 3,200</span>
-                        <button class="px-3 py-1 bg-system-blue text-white rounded-system text-sm hover:bg-blue-600 btn-system transition-colors">
+                        <button class="px-3 py-1 text-sm text-white transition-colors bg-system-blue rounded-system hover:bg-blue-600 btn-system">
                             加入購物車
                         </button>
                     </div>
@@ -150,8 +150,8 @@
             </div>
 
             <div class="text-center">
-                <a href="market.html" class="inline-flex items-center px-8 py-4 bg-system-blue text-white rounded-system-lg font-semibold hover:bg-blue-600 btn-system shadow-system transition-all">
-                    <i class="fas fa-store mr-2"></i>
+                <a href="{{ route('products.index') }}" class="inline-flex items-center px-8 py-4 font-semibold text-white transition-all bg-system-blue rounded-system-lg hover:bg-blue-600 btn-system shadow-system">
+                    <i class="mr-2 fas fa-store"></i>
                     探索完整市場
                 </a>
             </div>
@@ -160,23 +160,23 @@
 
     <!-- Stats Section -->
     <section class="py-16 bg-system-blue">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-2 lg:grid-cols-4 gap-8">
+        <div class="max-w-6xl px-4 mx-auto sm:px-6 lg:px-8">
+            <div class="grid grid-cols-2 gap-8 lg:grid-cols-4">
                 <div class="text-center">
-                    <div class="text-4xl lg:text-5xl font-bold text-white mb-2">10K+</div>
-                    <div class="text-blue-100 text-sm lg:text-base">活躍用戶</div>
+                    <div class="mb-2 text-4xl font-bold text-white lg:text-5xl">10K+</div>
+                    <div class="text-sm text-blue-100 lg:text-base">活躍用戶</div>
                 </div>
                 <div class="text-center">
-                    <div class="text-4xl lg:text-5xl font-bold text-white mb-2">50K+</div>
-                    <div class="text-blue-100 text-sm lg:text-base">成功交易</div>
+                    <div class="mb-2 text-4xl font-bold text-white lg:text-5xl">50K+</div>
+                    <div class="text-sm text-blue-100 lg:text-base">成功交易</div>
                 </div>
                 <div class="text-center">
-                    <div class="text-4xl lg:text-5xl font-bold text-white mb-2">99.9%</div>
-                    <div class="text-blue-100 text-sm lg:text-base">安全率</div>
+                    <div class="mb-2 text-4xl font-bold text-white lg:text-5xl">99.9%</div>
+                    <div class="text-sm text-blue-100 lg:text-base">安全率</div>
                 </div>
                 <div class="text-center">
-                    <div class="text-4xl lg:text-5xl font-bold text-white mb-2">24/7</div>
-                    <div class="text-blue-100 text-sm lg:text-base">客服支援</div>
+                    <div class="mb-2 text-4xl font-bold text-white lg:text-5xl">24/7</div>
+                    <div class="text-sm text-blue-100 lg:text-base">客服支援</div>
                 </div>
             </div>
         </div>
@@ -184,9 +184,9 @@
 
     <!-- About Section -->
     <section class="py-20 bg-card-white">
-        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <h2 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-8">關於我們</h2>
-            <div class="space-y-6 text-lg text-gray-600 leading-relaxed">
+        <div class="max-w-4xl px-4 mx-auto text-center sm:px-6 lg:px-8">
+            <h2 class="mb-8 text-3xl font-bold text-gray-900 sm:text-4xl">關於我們</h2>
+            <div class="space-y-6 text-lg leading-relaxed text-gray-600">
                 <p class="max-w-3xl mx-auto">
                     我們是專注於虛擬寶物交易的創新平台，整合先進的 AI 技術，
                     為遊戲玩家提供安全、透明、高效的交易體驗。
@@ -202,38 +202,38 @@
 
     <!-- Contact Section -->
     <section class="py-20 bg-system-gray">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-16">
-                <h2 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">聯絡我們</h2>
+        <div class="max-w-6xl px-4 mx-auto sm:px-6 lg:px-8">
+            <div class="mb-16 text-center">
+                <h2 class="mb-4 text-3xl font-bold text-gray-900 sm:text-4xl">聯絡我們</h2>
                 <p class="text-lg text-gray-600">有任何問題？我們隨時為您提供幫助</p>
             </div>
 
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div class="grid grid-cols-1 gap-8 lg:grid-cols-3">
                 <!-- Contact Info Cards -->
-                <div class="bg-card-white p-8 rounded-system-lg shadow-system text-center">
-                    <div class="w-12 h-12 bg-system-blue rounded-system-lg flex items-center justify-center mx-auto mb-4">
-                        <i class="fas fa-envelope text-white text-xl"></i>
+                <div class="p-8 text-center bg-card-white rounded-system-lg shadow-system">
+                    <div class="flex items-center justify-center w-12 h-12 mx-auto mb-4 bg-system-blue rounded-system-lg">
+                        <i class="text-xl text-white fas fa-envelope"></i>
                     </div>
-                    <h3 class="text-lg font-semibold text-gray-900 mb-2">電子郵件</h3>
-                    <p class="text-gray-600">support@gameplatform.com</p>
+                    <h3 class="mb-2 text-lg font-semibold text-gray-900">電子郵件</h3>
+                    <p class="text-gray-600">support@cyim.com</p>
                 </div>
 
-                <div class="bg-card-white p-8 rounded-system-lg shadow-system text-center">
-                    <div class="w-12 h-12 bg-system-blue rounded-system-lg flex items-center justify-center mx-auto mb-4">
-                        <i class="fas fa-clock text-white text-xl"></i>
+                <div class="p-8 text-center bg-card-white rounded-system-lg shadow-system">
+                    <div class="flex items-center justify-center w-12 h-12 mx-auto mb-4 bg-system-blue rounded-system-lg">
+                        <i class="text-xl text-white fas fa-clock"></i>
                     </div>
-                    <h3 class="text-lg font-semibold text-gray-900 mb-2">服務時間</h3>
+                    <h3 class="mb-2 text-lg font-semibold text-gray-900">服務時間</h3>
                     <p class="text-gray-600">24/7 在線客服</p>
                 </div>
 
-                <div class="bg-system-blue p-8 rounded-system-lg text-white text-center">
-                    <div class="w-12 h-12 bg-white rounded-system-lg flex items-center justify-center mx-auto mb-4">
-                        <i class="fas fa-robot text-system-blue text-xl"></i>
+                <div class="p-8 text-center text-white bg-system-blue rounded-system-lg">
+                    <div class="flex items-center justify-center w-12 h-12 mx-auto mb-4 bg-white rounded-system-lg">
+                        <i class="text-xl fas fa-robot text-system-blue"></i>
                     </div>
-                    <h3 class="text-lg font-semibold mb-2">AI 客服</h3>
+                    <h3 class="mb-2 text-lg font-semibold">AI 客服</h3>
                     <p class="mb-4 opacity-90">即時智能回應</p>
-                    <a href="#" onclick="openChat()" class="inline-flex items-center px-6 py-2 bg-white text-system-blue rounded-system font-semibold hover:bg-gray-50 btn-system transition-all text-sm">
-                        <i class="fas fa-comments mr-2"></i>開始對話
+                    <a href="{{ route('ai-chat') }}" class="inline-flex items-center px-6 py-2 text-sm font-semibold transition-all bg-white text-system-blue rounded-system hover:bg-gray-50 btn-system">
+                        <i class="mr-2 fas fa-comments"></i>開始對話
                     </a>
                 </div>
             </div>
@@ -242,82 +242,82 @@
 
     <!-- Quick Actions Section -->
     <section class="py-20 bg-card-white">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-16">
-                <h2 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">探索我們的平台</h2>
+        <div class="max-w-6xl px-4 mx-auto sm:px-6 lg:px-8">
+            <div class="mb-16 text-center">
+                <h2 class="mb-4 text-3xl font-bold text-gray-900 sm:text-4xl">探索我們的平台</h2>
                 <p class="text-lg text-gray-600">從這裡開始您的遊戲物品交易之旅</p>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
-                <div class="bg-system-gray p-8 rounded-system-lg text-center hover:bg-gray-100 transition-all">
-                    <div class="w-16 h-16 bg-system-blue rounded-system-lg flex items-center justify-center mx-auto mb-6">
-                        <i class="fas fa-shopping-bag text-white text-2xl"></i>
+            <div class="grid grid-cols-1 gap-8 mb-12 md:grid-cols-3">
+                <div class="p-8 text-center transition-all bg-system-gray rounded-system-lg hover:bg-gray-100">
+                    <div class="flex items-center justify-center w-16 h-16 mx-auto mb-6 bg-system-blue rounded-system-lg">
+                        <i class="text-2xl text-white fas fa-shopping-bag"></i>
                     </div>
-                    <h3 class="text-xl font-semibold text-gray-900 mb-3">商品市場</h3>
-                    <p class="text-gray-600 mb-6">瀏覽數千種遊戲虛擬物品，找到您心儀的寶物</p>
-                    <a href="market.html" class="inline-flex items-center px-6 py-3 bg-system-blue text-white rounded-system-lg font-semibold hover:bg-blue-600 btn-system transition-all">
-                        <i class="fas fa-arrow-right mr-2"></i>立即瀏覽
+                    <h3 class="mb-3 text-xl font-semibold text-gray-900">商品市場</h3>
+                    <p class="mb-6 text-gray-600">瀏覽數千種遊戲虛擬物品，找到您心儀的寶物</p>
+                    <a href="{{ route('products.index') }}" class="inline-flex items-center px-6 py-3 font-semibold text-white transition-all bg-system-blue rounded-system-lg hover:bg-blue-600 btn-system">
+                        <i class="mr-2 fas fa-arrow-right"></i>立即瀏覽
                     </a>
                 </div>
 
-                <div class="bg-system-gray p-8 rounded-system-lg text-center hover:bg-gray-100 transition-all">
-                    <div class="w-16 h-16 bg-system-blue rounded-system-lg flex items-center justify-center mx-auto mb-6">
-                        <i class="fas fa-question-circle text-white text-2xl"></i>
+                <div class="p-8 text-center transition-all bg-system-gray rounded-system-lg hover:bg-gray-100">
+                    <div class="flex items-center justify-center w-16 h-16 mx-auto mb-6 bg-system-blue rounded-system-lg">
+                        <i class="text-2xl text-white fas fa-question-circle"></i>
                     </div>
-                    <h3 class="text-xl font-semibold text-gray-900 mb-3">幫助中心</h3>
-                    <p class="text-gray-600 mb-6">AI智能客服和完整幫助文檔，隨時為您解答</p>
-                    <a href="help.html" class="inline-flex items-center px-6 py-3 bg-system-blue text-white rounded-system-lg font-semibold hover:bg-blue-600 btn-system transition-all">
-                        <i class="fas fa-question-circle mr-2"></i>獲取幫助
+                    <h3 class="mb-3 text-xl font-semibold text-gray-900">幫助中心</h3>
+                    <p class="mb-6 text-gray-600">AI智能客服和完整幫助文檔，隨時為您解答</p>
+                    <a href="{{ route('ai-chat') }}" class="inline-flex items-center px-6 py-3 font-semibold text-white transition-all bg-system-blue rounded-system-lg hover:bg-blue-600 btn-system">
+                        <i class="mr-2 fas fa-question-circle"></i>獲取幫助
                     </a>
                 </div>
 
-                <div class="bg-system-gray p-8 rounded-system-lg text-center hover:bg-gray-100 transition-all">
-                    <div class="w-16 h-16 bg-system-blue rounded-system-lg flex items-center justify-center mx-auto mb-6">
-                        <i class="fas fa-robot text-white text-2xl"></i>
+                <div class="p-8 text-center transition-all bg-system-gray rounded-system-lg hover:bg-gray-100">
+                    <div class="flex items-center justify-center w-16 h-16 mx-auto mb-6 bg-system-blue rounded-system-lg">
+                        <i class="text-2xl text-white fas fa-robot"></i>
                     </div>
-                    <h3 class="text-xl font-semibold text-gray-900 mb-3">AI 客服</h3>
-                    <p class="text-gray-600 mb-6">24小時在線AI助手，提供即時問題解答</p>
-                    <button onclick="openChat()" class="inline-flex items-center px-6 py-3 bg-system-blue text-white rounded-system-lg font-semibold hover:bg-blue-600 btn-system transition-all">
-                        <i class="fas fa-comments mr-2"></i>開始對話
+                    <h3 class="mb-3 text-xl font-semibold text-gray-900">AI 客服</h3>
+                    <p class="mb-6 text-gray-600">24小時在線AI助手，提供即時問題解答</p>
+                    <button onclick="openChat()" class="inline-flex items-center px-6 py-3 font-semibold text-white transition-all bg-system-blue rounded-system-lg hover:bg-blue-600 btn-system">
+                        <i class="mr-2 fas fa-comments"></i>開始對話
                     </button>
                 </div>
             </div>
 
             <div class="text-center">
-                <p class="text-gray-600 mb-6">準備開始您的遊戲物品交易嗎？</p>
-                <a href="market.html" class="inline-flex items-center px-8 py-4 bg-system-blue text-white rounded-system-lg font-semibold hover:bg-blue-600 btn-system shadow-system transition-all">
-                    <i class="fas fa-rocket mr-2"></i>立即開始交易
+                <p class="mb-6 text-gray-600">準備開始您的遊戲物品交易嗎？</p>
+                <a href="{{ route('products.index') }}" class="inline-flex items-center px-8 py-4 font-semibold text-white transition-all bg-system-blue rounded-system-lg hover:bg-blue-600 btn-system shadow-system">
+                    <i class="mr-2 fas fa-rocket"></i>立即開始交易
                 </a>
             </div>
         </div>
     </section>
 
     <!-- Login Modal -->
-    <div id="loginModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+    <div id="loginModal" class="fixed inset-0 z-50 flex items-center justify-center hidden bg-black bg-opacity-50">
         <div class="bg-card-white rounded-system-lg shadow-system-lg max-w-md w-full mx-4 max-h-[90vh] overflow-y-auto">
             <div class="p-8">
                 <!-- Header -->
-                <div class="flex justify-between items-center mb-8">
-                    <div class="text-center flex-1">
-                        <div class="w-16 h-16 bg-system-blue rounded-system-lg flex items-center justify-center mx-auto mb-4">
-                            <i class="fas fa-user text-white text-2xl"></i>
+                <div class="flex items-center justify-between mb-8">
+                    <div class="flex-1 text-center">
+                        <div class="flex items-center justify-center w-16 h-16 mx-auto mb-4 bg-system-blue rounded-system-lg">
+                            <i class="text-2xl text-white fas fa-user"></i>
                         </div>
                         <h3 class="text-2xl font-bold text-gray-900">歡迎回來</h3>
-                        <p class="text-gray-600 mt-1">登入您的帳號</p>
+                        <p class="mt-1 text-gray-600">登入您的帳號</p>
                     </div>
-                    <button onclick="closeLoginModal()" class="text-gray-400 hover:text-gray-600 -mt-4 -mr-4">
-                        <i class="fas fa-times text-xl"></i>
+                    <button onclick="closeLoginModal()" class="-mt-4 -mr-4 text-gray-400 hover:text-gray-600">
+                        <i class="text-xl fas fa-times"></i>
                     </button>
                 </div>
 
                 <!-- Social Login Options -->
-                <div class="space-y-3 mb-6">
-                    <button class="w-full flex items-center justify-center px-4 py-3 border border-gray-300 rounded-system-lg hover:bg-gray-50 transition-colors">
-                        <i class="fab fa-google text-red-500 mr-3"></i>
+                <div class="mb-6 space-y-3">
+                    <button class="flex items-center justify-center w-full px-4 py-3 transition-colors border border-gray-300 rounded-system-lg hover:bg-gray-50">
+                        <i class="mr-3 text-red-500 fab fa-google"></i>
                         <span class="text-gray-700">使用 Google 登入</span>
                     </button>
-                    <button class="w-full flex items-center justify-center px-4 py-3 border border-gray-300 rounded-system-lg hover:bg-gray-50 transition-colors">
-                        <i class="fab fa-facebook text-blue-600 mr-3"></i>
+                    <button class="flex items-center justify-center w-full px-4 py-3 transition-colors border border-gray-300 rounded-system-lg hover:bg-gray-50">
+                        <i class="mr-3 text-blue-600 fab fa-facebook"></i>
                         <span class="text-gray-700">使用 Facebook 登入</span>
                     </button>
                 </div>
@@ -325,30 +325,30 @@
                 <!-- Divider -->
                 <div class="flex items-center mb-6">
                     <div class="flex-1 border-t border-gray-200"></div>
-                    <span class="px-4 text-gray-500 text-sm">或</span>
+                    <span class="px-4 text-sm text-gray-500">或</span>
                     <div class="flex-1 border-t border-gray-200"></div>
                 </div>
 
                 <!-- Login Form -->
                 <form id="loginForm" class="space-y-6">
                     <div>
-                        <label for="loginEmail" class="block text-sm font-medium text-gray-700 mb-2">
-                            <i class="fas fa-envelope mr-2 text-system-blue"></i>電子郵件
+                        <label for="loginEmail" class="block mb-2 text-sm font-medium text-gray-700">
+                            <i class="mr-2 fas fa-envelope text-system-blue"></i>電子郵件
                         </label>
                         <input type="email" id="loginEmail" name="email" required
-                                class="w-full px-4 py-3 border-2 border-gray-200 rounded-system-lg focus:border-system-blue focus:ring-0 form-system transition-all"
+                                class="w-full px-4 py-3 transition-all border-2 border-gray-200 rounded-system-lg focus:border-system-blue focus:ring-0 form-system"
                                 placeholder="輸入您的電子郵件">
                     </div>
                     <div>
-                        <label for="loginPassword" class="block text-sm font-medium text-gray-700 mb-2">
-                            <i class="fas fa-lock mr-2 text-system-blue"></i>密碼
+                        <label for="loginPassword" class="block mb-2 text-sm font-medium text-gray-700">
+                            <i class="mr-2 fas fa-lock text-system-blue"></i>密碼
                         </label>
                         <div class="relative">
                             <input type="password" id="loginPassword" name="password" required
-                                    class="w-full px-4 py-3 pr-12 border-2 border-gray-200 rounded-system-lg focus:border-system-blue focus:ring-0 form-system transition-all"
+                                    class="w-full px-4 py-3 pr-12 transition-all border-2 border-gray-200 rounded-system-lg focus:border-system-blue focus:ring-0 form-system"
                                     placeholder="輸入您的密碼">
                             <button type="button" onclick="togglePassword('loginPassword')"
-                                    class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                                    class="absolute text-gray-400 transform -translate-y-1/2 right-3 top-1/2 hover:text-gray-600">
                                 <i class="fas fa-eye" id="loginPasswordIcon"></i>
                             </button>
                         </div>
@@ -357,29 +357,29 @@
                     <!-- Remember Me & Forgot Password -->
                     <div class="flex items-center justify-between">
                         <label class="flex items-center">
-                            <input type="checkbox" class="rounded border-gray-300 text-system-blue focus:ring-system-blue">
+                            <input type="checkbox" class="border-gray-300 rounded text-system-blue focus:ring-system-blue">
                             <span class="ml-2 text-sm text-gray-600">記住我</span>
                         </label>
                         <a href="#" class="text-sm text-system-blue hover:underline">忘記密碼？</a>
                     </div>
 
                     <!-- Error Message -->
-                    <div id="loginError" class="hidden bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-system text-sm">
-                        <i class="fas fa-exclamation-triangle mr-2"></i>
+                    <div id="loginError" class="hidden px-4 py-3 text-sm text-red-600 border border-red-200 bg-red-50 rounded-system">
+                        <i class="mr-2 fas fa-exclamation-triangle"></i>
                         <span id="loginErrorText"></span>
                     </div>
 
                     <button type="submit" id="loginSubmitBtn"
-                            class="w-full bg-system-blue text-white py-3 px-6 rounded-system-lg font-semibold hover:bg-blue-600 btn-system transition-all disabled:opacity-50 disabled:cursor-not-allowed">
-                        <i class="fas fa-sign-in-alt mr-2"></i>
+                            class="w-full px-6 py-3 font-semibold text-white transition-all bg-system-blue rounded-system-lg hover:bg-blue-600 btn-system disabled:opacity-50 disabled:cursor-not-allowed">
+                        <i class="mr-2 fas fa-sign-in-alt"></i>
                         <span id="loginBtnText">登入</span>
                     </button>
                 </form>
 
                 <!-- Switch to Register -->
-                <p class="text-center text-gray-600 mt-6">
+                <p class="mt-6 text-center text-gray-600">
                     還沒有帳號？
-                    <button type="button" onclick="switchToRegister()" class="text-system-blue hover:underline font-medium ml-1">
+                    <button type="button" onclick="switchToRegister()" class="ml-1 font-medium text-system-blue hover:underline">
                         立即註冊
                     </button>
                 </p>
@@ -388,31 +388,31 @@
     </div>
 
     <!-- Register Modal -->
-    <div id="registerModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+    <div id="registerModal" class="fixed inset-0 z-50 flex items-center justify-center hidden bg-black bg-opacity-50">
         <div class="bg-card-white rounded-system-lg shadow-system-lg max-w-md w-full mx-4 max-h-[90vh] overflow-y-auto">
             <div class="p-8">
                 <!-- Header -->
-                <div class="flex justify-between items-center mb-8">
-                    <div class="text-center flex-1">
-                        <div class="w-16 h-16 bg-system-blue rounded-system-lg flex items-center justify-center mx-auto mb-4">
-                            <i class="fas fa-user-plus text-white text-2xl"></i>
+                <div class="flex items-center justify-between mb-8">
+                    <div class="flex-1 text-center">
+                        <div class="flex items-center justify-center w-16 h-16 mx-auto mb-4 bg-system-blue rounded-system-lg">
+                            <i class="text-2xl text-white fas fa-user-plus"></i>
                         </div>
                         <h3 class="text-2xl font-bold text-gray-900">加入我們</h3>
-                        <p class="text-gray-600 mt-1">創建您的帳號</p>
+                        <p class="mt-1 text-gray-600">創建您的帳號</p>
                     </div>
-                    <button onclick="closeRegisterModal()" class="text-gray-400 hover:text-gray-600 -mt-4 -mr-4">
-                        <i class="fas fa-times text-xl"></i>
+                    <button onclick="closeRegisterModal()" class="-mt-4 -mr-4 text-gray-400 hover:text-gray-600">
+                        <i class="text-xl fas fa-times"></i>
                     </button>
                 </div>
 
                 <!-- Social Register Options -->
-                <div class="space-y-3 mb-6">
-                    <button class="w-full flex items-center justify-center px-4 py-3 border border-gray-300 rounded-system-lg hover:bg-gray-50 transition-colors">
-                        <i class="fab fa-google text-red-500 mr-3"></i>
+                <div class="mb-6 space-y-3">
+                    <button class="flex items-center justify-center w-full px-4 py-3 transition-colors border border-gray-300 rounded-system-lg hover:bg-gray-50">
+                        <i class="mr-3 text-red-500 fab fa-google"></i>
                         <span class="text-gray-700">使用 Google 註冊</span>
                     </button>
-                    <button class="w-full flex items-center justify-center px-4 py-3 border border-gray-300 rounded-system-lg hover:bg-gray-50 transition-colors">
-                        <i class="fab fa-facebook text-blue-600 mr-3"></i>
+                    <button class="flex items-center justify-center w-full px-4 py-3 transition-colors border border-gray-300 rounded-system-lg hover:bg-gray-50">
+                        <i class="mr-3 text-blue-600 fab fa-facebook"></i>
                         <span class="text-gray-700">使用 Facebook 註冊</span>
                     </button>
                 </div>
@@ -420,40 +420,40 @@
                 <!-- Divider -->
                 <div class="flex items-center mb-6">
                     <div class="flex-1 border-t border-gray-200"></div>
-                    <span class="px-4 text-gray-500 text-sm">或</span>
+                    <span class="px-4 text-sm text-gray-500">或</span>
                     <div class="flex-1 border-t border-gray-200"></div>
                 </div>
 
                 <!-- Register Form -->
                 <form id="registerForm" class="space-y-6">
                     <div>
-                        <label for="registerUsername" class="block text-sm font-medium text-gray-700 mb-2">
-                            <i class="fas fa-user mr-2 text-system-blue"></i>用戶名稱
+                        <label for="registerUsername" class="block mb-2 text-sm font-medium text-gray-700">
+                            <i class="mr-2 fas fa-user text-system-blue"></i>用戶名稱
                         </label>
                         <input type="text" id="registerUsername" name="username" required
-                                class="w-full px-4 py-3 border-2 border-gray-200 rounded-system-lg focus:border-system-blue focus:ring-0 form-system transition-all"
+                                class="w-full px-4 py-3 transition-all border-2 border-gray-200 rounded-system-lg focus:border-system-blue focus:ring-0 form-system"
                                 placeholder="選擇您的用戶名稱">
                     </div>
 
                     <div>
-                        <label for="registerEmail" class="block text-sm font-medium text-gray-700 mb-2">
-                            <i class="fas fa-envelope mr-2 text-system-blue"></i>電子郵件
+                        <label for="registerEmail" class="block mb-2 text-sm font-medium text-gray-700">
+                            <i class="mr-2 fas fa-envelope text-system-blue"></i>電子郵件
                         </label>
                         <input type="email" id="registerEmail" name="email" required
-                                class="w-full px-4 py-3 border-2 border-gray-200 rounded-system-lg focus:border-system-blue focus:ring-0 form-system transition-all"
+                                class="w-full px-4 py-3 transition-all border-2 border-gray-200 rounded-system-lg focus:border-system-blue focus:ring-0 form-system"
                                 placeholder="輸入您的電子郵件">
                     </div>
 
                     <div>
-                        <label for="registerPassword" class="block text-sm font-medium text-gray-700 mb-2">
-                            <i class="fas fa-lock mr-2 text-system-blue"></i>密碼
+                        <label for="registerPassword" class="block mb-2 text-sm font-medium text-gray-700">
+                            <i class="mr-2 fas fa-lock text-system-blue"></i>密碼
                         </label>
                         <div class="relative">
                             <input type="password" id="registerPassword" name="password" required
-                                    class="w-full px-4 py-3 pr-12 border-2 border-gray-200 rounded-system-lg focus:border-system-blue focus:ring-0 form-system transition-all"
+                                    class="w-full px-4 py-3 pr-12 transition-all border-2 border-gray-200 rounded-system-lg focus:border-system-blue focus:ring-0 form-system"
                                     placeholder="設定密碼（至少6個字符）">
                             <button type="button" onclick="togglePassword('registerPassword')"
-                                    class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                                    class="absolute text-gray-400 transform -translate-y-1/2 right-3 top-1/2 hover:text-gray-600">
                                 <i class="fas fa-eye" id="registerPasswordIcon"></i>
                             </button>
                         </div>
@@ -465,23 +465,23 @@
                                 <div id="strength3" class="w-1/4 h-1 bg-gray-200 rounded-full"></div>
                                 <div id="strength4" class="w-1/4 h-1 bg-gray-200 rounded-full"></div>
                             </div>
-                            <p class="text-xs text-gray-500 mt-1" id="passwordStrength">密碼強度</p>
+                            <p class="mt-1 text-xs text-gray-500" id="passwordStrength">密碼強度</p>
                         </div>
                     </div>
 
                     <div>
-                        <label for="registerConfirmPassword" class="block text-sm font-medium text-gray-700 mb-2">
-                            <i class="fas fa-lock mr-2 text-system-blue"></i>確認密碼
+                        <label for="registerConfirmPassword" class="block mb-2 text-sm font-medium text-gray-700">
+                            <i class="mr-2 fas fa-lock text-system-blue"></i>確認密碼
                         </label>
                         <input type="password" id="registerConfirmPassword" name="confirmPassword" required
-                                class="w-full px-4 py-3 border-2 border-gray-200 rounded-system-lg focus:border-system-blue focus:ring-0 form-system transition-all"
+                                class="w-full px-4 py-3 transition-all border-2 border-gray-200 rounded-system-lg focus:border-system-blue focus:ring-0 form-system"
                                 placeholder="再次輸入密碼">
                     </div>
 
                     <!-- Terms and Privacy -->
                     <div>
                         <label class="flex items-start">
-                            <input type="checkbox" id="termsAgree" required class="mt-1 rounded border-gray-300 text-system-blue focus:ring-system-blue">
+                            <input type="checkbox" id="termsAgree" required class="mt-1 border-gray-300 rounded text-system-blue focus:ring-system-blue">
                             <span class="ml-2 text-sm text-gray-600">
                                 我同意
                                 <a href="#" class="text-system-blue hover:underline">服務條款</a>
@@ -493,34 +493,34 @@
 
                     <div>
                         <label class="flex items-center">
-                            <input type="checkbox" id="newsletterSubscribe" class="rounded border-gray-300 text-system-blue focus:ring-system-blue">
+                            <input type="checkbox" id="newsletterSubscribe" class="border-gray-300 rounded text-system-blue focus:ring-system-blue">
                             <span class="ml-2 text-sm text-gray-600">訂閱電子報，接收最新優惠資訊</span>
                         </label>
                     </div>
 
                     <!-- Error Message -->
-                    <div id="registerError" class="hidden bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-system text-sm">
-                        <i class="fas fa-exclamation-triangle mr-2"></i>
+                    <div id="registerError" class="hidden px-4 py-3 text-sm text-red-600 border border-red-200 bg-red-50 rounded-system">
+                        <i class="mr-2 fas fa-exclamation-triangle"></i>
                         <span id="registerErrorText"></span>
                     </div>
 
                     <!-- Success Message -->
-                    <div id="registerSuccess" class="hidden bg-green-50 border border-green-200 text-green-600 px-4 py-3 rounded-system text-sm">
-                        <i class="fas fa-check-circle mr-2"></i>
+                    <div id="registerSuccess" class="hidden px-4 py-3 text-sm text-green-600 border border-green-200 bg-green-50 rounded-system">
+                        <i class="mr-2 fas fa-check-circle"></i>
                         <span id="registerSuccessText"></span>
                     </div>
 
                     <button type="submit" id="registerSubmitBtn"
-                            class="w-full bg-system-blue text-white py-3 px-6 rounded-system-lg font-semibold hover:bg-blue-600 btn-system transition-all disabled:opacity-50 disabled:cursor-not-allowed">
-                        <i class="fas fa-user-plus mr-2"></i>
+                            class="w-full px-6 py-3 font-semibold text-white transition-all bg-system-blue rounded-system-lg hover:bg-blue-600 btn-system disabled:opacity-50 disabled:cursor-not-allowed">
+                        <i class="mr-2 fas fa-user-plus"></i>
                         <span id="registerBtnText">創建帳號</span>
                     </button>
                 </form>
 
                 <!-- Switch to Login -->
-                <p class="text-center text-gray-600 mt-6">
+                <p class="mt-6 text-center text-gray-600">
                     已有帳號？
-                    <button type="button" onclick="switchToLogin()" class="text-system-blue hover:underline font-medium ml-1">
+                    <button type="button" onclick="switchToLogin()" class="ml-1 font-medium text-system-blue hover:underline">
                         立即登入
                     </button>
                 </p>

@@ -353,7 +353,7 @@
                                     <div class="flex items-center space-x-3">
                                         <div class="flex items-center justify-center w-10 h-10 overflow-hidden bg-blue-100 rounded-lg">
                                             @if(isset($product['product_image']) && $product['product_image'])
-                                                <img src="/storage/{{ $product['product_image'] }}" alt="{{ $product['product_name'] }}" class="object-cover w-full h-full">
+                                                <img src="{{ $product['product_image'] }}" alt="{{ $product['product_name'] }}" class="object-cover w-full h-full">
                                             @else
                                                 <i class="text-blue-600 fas fa-box"></i>
                                             @endif
@@ -506,6 +506,7 @@
     </div>
 
     @push('scripts')
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         document.addEventListener('livewire:init', () => {
             let salesChart = null;

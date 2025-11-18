@@ -9,12 +9,12 @@ use Illuminate\Support\Facades\Cache;
 class AICustomerService
 {
     protected $localFAQ;
-    
+
     public function __construct(LocalFAQService $localFAQ)
     {
         $this->localFAQ = $localFAQ;
     }
-    
+
     /**
      * 處理使用者訊息
      */
@@ -28,13 +28,13 @@ class AICustomerService
 
         // 1️⃣ 先嘗試本地知識庫
         $localResponse = $this->localFAQ->getResponse($userMessage);
-        
+
         if ($localResponse) {
             Log::info('Local FAQ matched', [
                 'category' => $localResponse['category'],
                 'user_id' => $userId,
             ]);
-            
+
             return [
                 'response' => $localResponse['response'],
                 'source' => 'local',
@@ -42,16 +42,16 @@ class AICustomerService
                 'confidence' => 0.95,
             ];
         }
-        
+
         // 2️⃣ 本地無法回答,使用 OpenAI (如果啟用)
         if (config('services.openai.enabled', false)) {
             return $this->getOpenAIResponse($userMessage, $userId);
         }
-        
+
         // 3️⃣ 預設回覆
         return $this->getFallbackResponse();
     }
-    
+
     /**
      * OpenAI 回覆 (可選功能)
      */
@@ -76,15 +76,15 @@ class AICustomerService
                 'temperature' => 0.7,
                 'max_tokens' => 500,
             ]);
-            
+
             if ($response->successful()) {
                 $data = $response->json();
-                
+
                 Log::info('OpenAI response received', [
                     'user_id' => $userId,
                     'tokens' => $data['usage']['total_tokens'] ?? 0,
                 ]);
-                
+
                 return [
                     'response' => $data['choices'][0]['message']['content'] ?? '無法取得回應',
                     'source' => 'openai',
@@ -92,22 +92,22 @@ class AICustomerService
                     'tokens_used' => $data['usage']['total_tokens'] ?? 0,
                 ];
             }
-            
+
             Log::error('OpenAI API Error', [
                 'status' => $response->status(),
                 'user_id' => $userId,
             ]);
-            
+
         } catch (\Exception $e) {
             Log::error('OpenAI Exception', [
                 'error' => $e->getMessage(),
                 'user_id' => $userId,
             ]);
         }
-        
+
         return $this->getFallbackResponse();
     }
-    
+
     /**
      * 預設回覆
      */
@@ -116,7 +116,7 @@ class AICustomerService
         $responses = [
             '抱歉，我目前無法回答這個問題。讓我為您轉接人工客服！
 
-📧 Email: support@example.com
+📧 Email: support@cyim.com
 💬 線上客服: 週一至週五 09:00-18:00
 📞 客服專線: (02) 1234-5678
 
@@ -129,7 +129,7 @@ class AICustomerService
             'confidence' => 0,
         ];
     }
-    
+
     /**
      * OpenAI 系統提示詞
      */

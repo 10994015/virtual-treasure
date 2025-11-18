@@ -10,6 +10,7 @@ use App\Livewire\MyOrdersComponent;
 use App\Livewire\OrderDetailComponent;
 use App\Livewire\ProductDetailComponent;
 use App\Livewire\AIChatComponent;
+use App\Livewire\ProfileComponent;
 use App\Livewire\Seller\CreateProductManagement;
 use App\Livewire\Seller\DashboardComponent;
 use App\Livewire\Seller\EditProductManagement;
@@ -36,7 +37,9 @@ Route::middleware([
     Route::get('/order-detail/{order}', OrderDetailComponent::class)->name('orders.show');
     Route::get('/checkout', CheckoutComponent::class)->name('checkout');
     Route::get('/checkout/success/{order}', CheckoutSuccessComponent::class)->name('checkout.success');
-    Route::get('/messages', MessagingComponent::class)->name('messages');
+    Route::get('/messages/{conversationId?}', MessagingComponent::class)->name('messages');
+    Route::get('/profile', ProfileComponent::class)->name('profile');
+
     Route::get('/dashboard', function () {
         return view('dashboard');
     })->name('dashboard');

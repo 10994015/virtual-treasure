@@ -173,4 +173,17 @@ class Order extends Model
             'cancelled_at' => now(),
         ]);
     }
+    public function productCodes()
+    {
+        return $this->hasMany(ProductCode::class, 'order_id');
+    }
+
+    // 獲取訂單的所有序號（按商品分組）
+    public function getCodesGroupedByProduct()
+    {
+        return $this->productCodes()
+            ->with('product')
+            ->get()
+            ->groupBy('product_id');
+    }
 }

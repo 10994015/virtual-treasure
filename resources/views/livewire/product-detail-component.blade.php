@@ -1,39 +1,39 @@
 <div>
     <!-- Breadcrumb -->
-    <section class="bg-gray-50 py-4">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section class="py-4 bg-gray-50">
+        <div class="max-w-6xl px-4 mx-auto sm:px-6 lg:px-8">
             <nav class="flex items-center space-x-2 text-sm text-gray-600">
                 <a href="{{ route('home') }}" class="hover:text-blue-600">
                     <i class="fas fa-home"></i>
                 </a>
-                <i class="fas fa-chevron-right text-xs"></i>
+                <i class="text-xs fas fa-chevron-right"></i>
                 <a href="{{ route('products.index') }}" class="hover:text-blue-600">商城</a>
-                <i class="fas fa-chevron-right text-xs"></i>
+                <i class="text-xs fas fa-chevron-right"></i>
                 <a href="{{ route('products.index', ['game_type' => $product->game_type]) }}" class="hover:text-blue-600">
                     {{ $product->game_type }}
                 </a>
-                <i class="fas fa-chevron-right text-xs"></i>
-                <span class="text-gray-900 font-medium truncate max-w-xs">{{ $product->name }}</span>
+                <i class="text-xs fas fa-chevron-right"></i>
+                <span class="max-w-xs font-medium text-gray-900 truncate">{{ $product->name }}</span>
             </nav>
         </div>
     </section>
 
     <!-- Product Detail -->
     <section class="py-12 bg-white">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+        <div class="max-w-6xl px-4 mx-auto sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 gap-12 lg:grid-cols-2">
                 <!-- Left Column - Images -->
                 <div>
                     <!-- Main Image -->
-                    <div class="mb-4 bg-gray-100 rounded-lg overflow-hidden aspect-square">
+                    <div class="mb-4 overflow-hidden bg-gray-100 rounded-lg aspect-square">
                         @if($selectedImage)
                             <img
                                 src="/storage/{{ $selectedImage }}"
                                 alt="{{ $product->name }}"
-                                class="w-full h-full object-cover">
+                                class="object-cover w-full h-full">
                         @else
-                            <div class="w-full h-full flex items-center justify-center">
-                                <i class="fas fa-image text-gray-400 text-6xl"></i>
+                            <div class="flex items-center justify-center w-full h-full">
+                                <i class="text-6xl text-gray-400 fas fa-image"></i>
                             </div>
                         @endif
                     </div>
@@ -48,20 +48,20 @@
                                     <img
                                         src="/storage/{{ $image->image_path }}"
                                         alt="{{ $product->name }}"
-                                        class="w-full h-full object-cover">
+                                        class="object-cover w-full h-full">
                                 </button>
                             @endforeach
                         </div>
                     @endif
 
                     <!-- Product Info Cards (Desktop) -->
-                    <div class="mt-6 hidden lg:block">
+                    <div class="hidden mt-6 lg:block">
                         <div class="grid grid-cols-2 gap-4">
                             <!-- Seller Card -->
-                            <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
-                                <div class="text-sm text-gray-500 mb-2">賣家</div>
+                            <div class="p-4 border border-gray-200 rounded-lg bg-gray-50">
+                                <div class="mb-2 text-sm text-gray-500">賣家</div>
                                 <div class="flex items-center gap-2">
-                                    <div class="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white font-semibold">
+                                    <div class="flex items-center justify-center w-10 h-10 font-semibold text-white bg-blue-500 rounded-full">
                                         {{ substr($product->user->name, 0, 1) }}
                                     </div>
                                     <div>
@@ -72,8 +72,8 @@
                             </div>
 
                             <!-- Delivery Info -->
-                            <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
-                                <div class="text-sm text-gray-500 mb-2">交付方式</div>
+                            <div class="p-4 border border-gray-200 rounded-lg bg-gray-50">
+                                <div class="mb-2 text-sm text-gray-500">交付方式</div>
                                 <div class="flex items-center gap-2">
                                     <i class="fas fa-{{ $deliveryMethods[$product->delivery_method]['icon'] ?? 'box' }} text-blue-500 text-xl"></i>
                                     <div>
@@ -98,32 +98,32 @@
                             <span class="px-3 py-1 {{ $rarityColors[$product->rarity]['bg'] }} {{ $rarityColors[$product->rarity]['text'] }} rounded-full text-sm font-medium">
                                 {{ $rarityColors[$product->rarity]['label'] }}
                             </span>
-                            <span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">
+                            <span class="px-3 py-1 text-sm text-blue-800 bg-blue-100 rounded-full">
                                 {{ $product->game_type }}
                             </span>
                             @if($product->is_featured)
-                                <span class="px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full text-sm">
-                                    <i class="fas fa-star mr-1"></i>精選
+                                <span class="px-3 py-1 text-sm text-yellow-800 bg-yellow-100 rounded-full">
+                                    <i class="mr-1 fas fa-star"></i>精選
                                 </span>
                             @endif
                         </div>
-                        <h1 class="text-3xl font-bold text-gray-900 mb-2">{{ $product->name }}</h1>
+                        <h1 class="mb-2 text-3xl font-bold text-gray-900">{{ $product->name }}</h1>
                         <div class="flex items-center gap-4 text-sm text-gray-600">
-                            <span><i class="fas fa-tag mr-1"></i>{{ $product->category }}</span>
+                            <span><i class="mr-1 fas fa-tag"></i>{{ $product->category }}</span>
                             @if($product->game_server)
-                                <span><i class="fas fa-server mr-1"></i>{{ $product->game_server }}</span>
+                                <span><i class="mr-1 fas fa-server"></i>{{ $product->game_server }}</span>
                             @endif
                             @if($product->game_region)
-                                <span><i class="fas fa-globe mr-1"></i>{{ $product->game_region }}</span>
+                                <span><i class="mr-1 fas fa-globe"></i>{{ $product->game_region }}</span>
                             @endif
                         </div>
                     </div>
 
                     <!-- Price -->
-                    <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg p-6 mb-6">
+                    <div class="p-6 mb-6 rounded-lg bg-gradient-to-br from-blue-50 to-indigo-50">
                         <div class="flex items-end gap-3">
                             <div>
-                                <div class="text-sm text-gray-600 mb-1">售價</div>
+                                <div class="mb-1 text-sm text-gray-600">售價</div>
                                 <div class="text-4xl font-bold text-blue-600">
                                     NT$ {{ number_format($product->price) }}
                                 </div>
@@ -133,7 +133,7 @@
                                     <div class="text-lg text-gray-500 line-through">
                                         NT$ {{ number_format($product->original_price) }}
                                     </div>
-                                    <div class="text-sm text-red-600 font-medium">
+                                    <div class="text-sm font-medium text-red-600">
                                         省下 {{ $product->discount_percentage }}%
                                     </div>
                                 </div>
@@ -141,7 +141,7 @@
                         </div>
 
                         @if($product->is_negotiable)
-                            <div class="mt-3 flex items-center gap-2 text-sm text-green-700">
+                            <div class="flex items-center gap-2 mt-3 text-sm text-green-700">
                                 <i class="fas fa-comments-dollar"></i>
                                 <span>此商品支援議價</span>
                             </div>
@@ -151,47 +151,42 @@
                     <!-- Stock Info -->
                     <div class="mb-6">
                         <div class="flex items-center justify-between mb-2">
-                            <span class="text-gray-700 font-medium">庫存狀態</span>
-                            @if($product->stock === 0)
-                                <span class="text-green-600 font-medium">
-                                    <i class="fas fa-infinity mr-1"></i>無限庫存
-                                </span>
-                            @elseif($product->stock > 10)
-                                <span class="text-green-600 font-medium">
-                                    <i class="fas fa-check-circle mr-1"></i>庫存充足
-                                </span>
-                            @elseif($product->stock > 0)
-                                <span class="text-yellow-600 font-medium">
-                                    <i class="fas fa-exclamation-circle mr-1"></i>僅剩 {{ $product->stock }} 件
-                                </span>
-                            @else
-                                <span class="text-red-600 font-medium">
-                                    <i class="fas fa-times-circle mr-1"></i>已售完
-                                </span>
-                            @endif
+                            <span class="font-medium text-gray-700">庫存狀態</span>
+                            <span class="font-medium {{ $product->stockStatusColor }}">
+                                @if($product->stock === 0)
+                                    <i class="mr-1 fas fa-times-circle"></i>已售完
+                                @elseif($product->stock > 10)
+                                    <i class="mr-1 fas fa-check-circle"></i>庫存充足
+                                @else
+                                    <i class="mr-1 fas fa-exclamation-circle"></i>僅剩 {{ $product->stock }} 件
+                                @endif
+                            </span>
                         </div>
                     </div>
 
                     <!-- Quantity Selector -->
                     <div class="mb-6">
-                        <label class="block text-gray-700 font-medium mb-2">購買數量</label>
+                        <label class="block mb-2 font-medium text-gray-700">購買數量</label>
                         <div class="flex items-center gap-4">
                             <div class="flex items-center border-2 border-gray-300 rounded-lg">
                                 <button
                                     wire:click="decreaseQuantity"
-                                    class="px-4 py-3 hover:bg-gray-100 transition-colors">
+                                    @if(!$product->is_in_stock) disabled @endif
+                                    class="px-4 py-3 transition-colors hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed">
                                     <i class="fas fa-minus"></i>
                                 </button>
                                 <input
                                     type="number"
                                     wire:model="quantity"
                                     min="1"
-                                    max="{{ $product->stock > 0 ? $product->stock : 999 }}"
-                                    class="w-20 text-center py-3 border-x-2 border-gray-300 focus:outline-none text-lg font-semibold"
+                                    max="{{ $product->stock }}"
+                                    @if(!$product->is_in_stock) disabled @endif
+                                    class="w-20 py-3 text-lg font-semibold text-center border-gray-300 border-x-2 focus:outline-none disabled:bg-gray-100"
                                     readonly>
                                 <button
                                     wire:click="increaseQuantity"
-                                    class="px-4 py-3 hover:bg-gray-100 transition-colors">
+                                    @if(!$product->is_in_stock) disabled @endif
+                                    class="px-4 py-3 transition-colors hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed">
                                     <i class="fas fa-plus"></i>
                                 </button>
                             </div>
@@ -202,37 +197,41 @@
                     </div>
 
                     <!-- Action Buttons -->
-                    <div class="space-y-3 mb-6">
+                    <div class="mb-6 space-y-3">
                         @if($product->user_id !== auth()->id())
-                            <!-- 聯繫賣家按鈕 -->
                             <livewire:start-conversation-button
                                 :product-id="$product->id"
                                 :seller-id="$product->user_id"
                                 button-text="聯繫賣家"
-                                button-class="w-full px-6 py-3 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors font-semibold text-lg" />
+                                button-class="w-full px-6 py-3 text-lg font-semibold text-white transition-colors bg-green-500 rounded-lg hover:bg-green-600" />
                         @endif
-                        <button
-                            wire:click="buyNow"
-                            @if(!$product->is_in_stock) disabled @endif
-                            class="w-full px-6 py-4 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors font-semibold text-lg disabled:bg-gray-300 disabled:cursor-not-allowed">
-                            <i class="fas fa-bolt mr-2"></i>立即購買
-                        </button>
-                        <button
-                            wire:click="addToCart"
-                            @if(!$product->is_in_stock) disabled @endif
-                            class="w-full px-6 py-4 bg-white text-blue-500 border-2 border-blue-500 rounded-lg hover:bg-blue-50 transition-colors font-semibold text-lg disabled:border-gray-300 disabled:text-gray-300 disabled:cursor-not-allowed">
-                            <i class="fas fa-shopping-cart mr-2"></i>加入購物車
-                        </button>
+
+                        @if($product->is_in_stock)
+                            <button
+                                wire:click="buyNow"
+                                class="w-full px-6 py-4 text-lg font-semibold text-white transition-colors bg-blue-500 rounded-lg hover:bg-blue-600">
+                                <i class="mr-2 fas fa-bolt"></i>立即購買
+                            </button>
+                            <button
+                                wire:click="addToCart"
+                                class="w-full px-6 py-4 text-lg font-semibold text-blue-500 transition-colors bg-white border-2 border-blue-500 rounded-lg hover:bg-blue-50">
+                                <i class="mr-2 fas fa-shopping-cart"></i>加入購物車
+                            </button>
+                        @else
+                            <div class="w-full px-6 py-4 text-lg font-semibold text-center text-white bg-gray-400 rounded-lg cursor-not-allowed">
+                                <i class="mr-2 fas fa-times-circle"></i>已售完
+                            </div>
+                        @endif
                     </div>
 
                     <!-- Product Info Cards (Mobile) -->
-                    <div class="lg:hidden mb-6">
+                    <div class="mb-6 lg:hidden">
                         <div class="grid grid-cols-1 gap-4">
                             <!-- Seller Card -->
-                            <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
-                                <div class="text-sm text-gray-500 mb-2">賣家資訊</div>
+                            <div class="p-4 border border-gray-200 rounded-lg bg-gray-50">
+                                <div class="mb-2 text-sm text-gray-500">賣家資訊</div>
                                 <div class="flex items-center gap-3">
-                                    <div class="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center text-white font-semibold text-lg">
+                                    <div class="flex items-center justify-center w-12 h-12 text-lg font-semibold text-white bg-blue-500 rounded-full">
                                         {{ substr($product->user->name, 0, 1) }}
                                     </div>
                                     <div class="flex-1">
@@ -243,8 +242,8 @@
                             </div>
 
                             <!-- Delivery Info -->
-                            <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
-                                <div class="text-sm text-gray-500 mb-2">交付方式</div>
+                            <div class="p-4 border border-gray-200 rounded-lg bg-gray-50">
+                                <div class="mb-2 text-sm text-gray-500">交付方式</div>
                                 <div class="flex items-center gap-3">
                                     <i class="fas fa-{{ $deliveryMethods[$product->delivery_method]['icon'] ?? 'box' }} text-blue-500 text-2xl"></i>
                                     <div>
@@ -261,9 +260,9 @@
                     </div>
 
                     <!-- Safety Badge -->
-                    <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+                    <div class="p-4 border border-green-200 rounded-lg bg-green-50">
                         <div class="flex items-center gap-3">
-                            <i class="fas fa-shield-check text-green-600 text-2xl"></i>
+                            <i class="text-2xl text-green-600 fas fa-shield-check"></i>
                             <div>
                                 <div class="font-semibold text-green-900">安全交易保障</div>
                                 <div class="text-sm text-green-700">平台保障，安心購買</div>
@@ -277,21 +276,21 @@
 
     <!-- Product Description -->
     <section class="py-12 bg-gray-50">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+        <div class="max-w-6xl px-4 mx-auto sm:px-6 lg:px-8">
+            <div class="bg-white border border-gray-200 rounded-lg shadow-sm">
                 <!-- Tabs -->
                 <div class="border-b border-gray-200">
                     <nav class="flex -mb-px">
-                        <button class="px-6 py-4 border-b-2 border-blue-500 text-blue-600 font-medium">
+                        <button class="px-6 py-4 font-medium text-blue-600 border-b-2 border-blue-500">
                             商品說明
                         </button>
                         @if($product->specifications)
-                            <button class="px-6 py-4 border-b-2 border-transparent text-gray-600 hover:text-gray-900 hover:border-gray-300 font-medium">
+                            <button class="px-6 py-4 font-medium text-gray-600 border-b-2 border-transparent hover:text-gray-900 hover:border-gray-300">
                                 商品規格
                             </button>
                         @endif
                         @if($product->delivery_instructions)
-                            <button class="px-6 py-4 border-b-2 border-transparent text-gray-600 hover:text-gray-900 hover:border-gray-300 font-medium">
+                            <button class="px-6 py-4 font-medium text-gray-600 border-b-2 border-transparent hover:text-gray-900 hover:border-gray-300">
                                 交付說明
                             </button>
                         @endif
@@ -302,28 +301,28 @@
                 <div class="p-6">
                     <!-- Description -->
                     <div class="prose max-w-none">
-                        <div class="text-gray-700 leading-relaxed whitespace-pre-line">
+                        <div class="leading-relaxed text-gray-700 whitespace-pre-line">
                             {{ $product->description }}
                         </div>
                     </div>
 
                     <!-- Specifications -->
                     @if($product->specifications && is_array($product->specifications))
-                        <div class="mt-8 pt-8 border-t">
-                            <h3 class="text-xl font-semibold text-gray-900 mb-4">商品規格</h3>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="pt-8 mt-8 border-t">
+                            <h3 class="mb-4 text-xl font-semibold text-gray-900">商品規格</h3>
+                            <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
                                 @foreach($product->specifications as $key => $value)
-                                    <div class="flex items-start gap-3 bg-gray-50 p-3 rounded">
-                                        <i class="fas fa-check-circle text-blue-500 mt-1"></i>
+                                    <div class="flex items-start gap-3 p-3 rounded bg-gray-50">
+                                        <i class="mt-1 text-blue-500 fas fa-check-circle"></i>
                                         <div class="flex-1">
-                                            <div class="text-sm text-gray-500 mb-1">{{ $key }}</div>
+                                            <div class="mb-1 text-sm text-gray-500">{{ $key }}</div>
                                             <div class="font-medium text-gray-900">
                                                 @if(is_array($value))
                                                     <!-- 如果是陣列，用逗號分隔或換行顯示 -->
                                                     <div class="space-y-1">
                                                         @foreach($value as $item)
                                                             <div class="flex items-center gap-1">
-                                                                <i class="fas fa-angle-right text-xs text-gray-400"></i>
+                                                                <i class="text-xs text-gray-400 fas fa-angle-right"></i>
                                                                 <span>{{ is_string($item) ? $item : json_encode($item) }}</span>
                                                             </div>
                                                         @endforeach
@@ -350,10 +349,10 @@
 
                     <!-- Delivery Instructions -->
                     @if($product->delivery_instructions)
-                        <div class="mt-8 pt-8 border-t">
-                            <h3 class="text-xl font-semibold text-gray-900 mb-4">交付說明</h3>
-                            <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                                <div class="text-gray-700 leading-relaxed whitespace-pre-line">
+                        <div class="pt-8 mt-8 border-t">
+                            <h3 class="mb-4 text-xl font-semibold text-gray-900">交付說明</h3>
+                            <div class="p-4 border border-blue-200 rounded-lg bg-blue-50">
+                                <div class="leading-relaxed text-gray-700 whitespace-pre-line">
                                     {{ $product->delivery_instructions }}
                                 </div>
                             </div>
@@ -367,15 +366,15 @@
     <!-- Related Products -->
     @if($relatedProducts->count() > 0)
         <section class="py-12 bg-white">
-            <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-                <h2 class="text-2xl font-bold text-gray-900 mb-8">相關商品</h2>
+            <div class="max-w-6xl px-4 mx-auto sm:px-6 lg:px-8">
+                <h2 class="mb-8 text-2xl font-bold text-gray-900">相關商品</h2>
 
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+                <div class="grid grid-cols-2 gap-4 md:grid-cols-4 md:gap-6">
                     @foreach($relatedProducts as $relatedProduct)
                         <a href="{{ route('products.show', $relatedProduct->slug) }}" class="group">
-                            <div class="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg transition-all">
+                            <div class="overflow-hidden transition-all bg-white border border-gray-200 rounded-lg hover:shadow-lg">
                                 <!-- Image -->
-                                <div class="aspect-square bg-gray-100 overflow-hidden">
+                                <div class="overflow-hidden bg-gray-100 aspect-square">
                                     @php
                                         $relatedImage = $relatedProduct->images->where('is_primary', true)->first()
                                                      ?? $relatedProduct->images->first();
@@ -384,18 +383,18 @@
                                         <img
                                             src="/storage/{{ $relatedImage->image_path }}"
                                             alt="{{ $relatedProduct->name }}"
-                                            class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300">
+                                            class="object-cover w-full h-full transition-transform duration-300 group-hover:scale-110">
                                     @else
-                                        <div class="w-full h-full flex items-center justify-center">
-                                            <i class="fas fa-image text-gray-400 text-4xl"></i>
+                                        <div class="flex items-center justify-center w-full h-full">
+                                            <i class="text-4xl text-gray-400 fas fa-image"></i>
                                         </div>
                                     @endif
                                 </div>
 
                                 <!-- Info -->
                                 <div class="p-4">
-                                    <div class="text-xs text-gray-500 mb-1">{{ $relatedProduct->game_type }}</div>
-                                    <h3 class="font-semibold text-gray-900 mb-2 line-clamp-2 group-hover:text-blue-600 transition-colors">
+                                    <div class="mb-1 text-xs text-gray-500">{{ $relatedProduct->game_type }}</div>
+                                    <h3 class="mb-2 font-semibold text-gray-900 transition-colors line-clamp-2 group-hover:text-blue-600">
                                         {{ $relatedProduct->name }}
                                     </h3>
                                     <div class="flex items-center justify-between">
@@ -403,7 +402,7 @@
                                             NT$ {{ number_format($relatedProduct->price) }}
                                         </span>
                                         @if($relatedProduct->original_price && $relatedProduct->original_price > $relatedProduct->price)
-                                            <span class="text-xs text-red-600 font-medium">
+                                            <span class="text-xs font-medium text-red-600">
                                                 -{{ $relatedProduct->discount_percentage }}%
                                             </span>
                                         @endif
@@ -418,8 +417,8 @@
     @endif
 
     <!-- Loading Indicator -->
-    <div wire:loading.flex style="width:100%;height:100%;position:fixed;top:0;left:0;z-index:9999;;align-items:center;justify-content:center;background-color:rgba(0, 0, 0, 0.5);" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-        <div class="bg-white rounded-lg p-6 flex flex-col items-center justify-center">
+    <div wire:loading.flex style="width:100%;height:100%;position:fixed;top:0;left:0;z-index:9999;;align-items:center;justify-content:center;background-color:rgba(0, 0, 0, 0.5);" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+        <div class="flex flex-col items-center justify-center p-6 bg-white rounded-lg">
             <div class="mx-auto">
                 <img src="{{ asset('images/loading.gif') }}" width="150" />
             </div>

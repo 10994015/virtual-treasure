@@ -33,7 +33,6 @@ class CheckoutComponent extends Component
         'buyer_name' => 'required|min:2',
         'buyer_email' => 'required|email',
         'buyer_phone' => 'nullable|regex:/^09[0-9]{8}$/',
-        'buyer_game_id' => 'required|min:3',
         'payment_method' => 'required|in:credit_card,atm,convenience_store,wallet',
         'order_note' => 'nullable|max:500',
         'agreed_terms' => 'accepted',
@@ -45,8 +44,6 @@ class CheckoutComponent extends Component
         'buyer_email.required' => '請輸入電子郵件',
         'buyer_email.email' => '電子郵件格式不正確',
         'buyer_phone.regex' => '手機號碼格式不正確',
-        'buyer_game_id.required' => '請輸入遊戲ID/角色名稱',
-        'buyer_game_id.min' => '遊戲ID至少需要3個字元',
         'payment_method.required' => '請選擇付款方式',
         'order_note.max' => '訂單備註不可超過500字',
         'agreed_terms.accepted' => '請同意服務條款',
@@ -111,12 +108,25 @@ class CheckoutComponent extends Component
                 continue;
             }
 
-            if ($item['price'] != $product->price) {
+            if ($product->stock === 0) {
+                $hasChanges = true;
+                $removedProducts[] = $item['name'] . '（已售完）';
+                continue;
+            }
+
+            // 🔥 關鍵修改：議價商品不更新價格
+            $isBargainItem = isset($item['is_bargain']) && $item['is_bargain'] === true;
+
+            // 🔥 只有「一般商品」才更新價格
+            if (!$isBargainItem && $item['price'] != $product->price) {
                 $item['price'] = $product->price;
                 $hasChanges = true;
             }
 
-            if ($product->stock > 0 && $item['quantity'] > $product->stock) {
+            // 🔥 議價商品數量已鎖定，不檢查庫存
+            $isLocked = isset($item['locked_quantity']) && $item['locked_quantity'] === true;
+
+            if (!$isLocked && $product->stock > 0 && $item['quantity'] > $product->stock) {
                 $item['quantity'] = $product->stock;
                 $hasChanges = true;
             }
@@ -126,6 +136,7 @@ class CheckoutComponent extends Component
             $item['game_server'] = $product->game_server;
             $item['game_region'] = $product->game_region;
             $item['seller_id'] = $product->user_id;
+
             $updatedCart[] = $item;
         }
 
@@ -145,6 +156,7 @@ class CheckoutComponent extends Component
             return redirect()->route('cart');
         }
     }
+
 
     protected function saveCartToCookie()
     {
@@ -183,22 +195,45 @@ class CheckoutComponent extends Component
         try {
             DB::beginTransaction();
 
-            // 建立訂單
+            // 🔥 先檢查所有商品是否有足夠的序號
+            foreach ($this->cart as $item) {
+                $product = Product::with('availableCodes')->find($item['id']);
+
+                if (!$product) {
+                    throw new \Exception("商品 {$item['name']} 不存在");
+                }
+
+                // 🔥 檢查是否有足夠的可用序號（庫存 > 0 且有實體序號的商品）
+                if ($product->stock > 0) {
+                    $availableCodesCount = $product->availableCodes()->count();
+
+                    if ($availableCodesCount < $item['quantity']) {
+                        throw new \Exception("商品「{$product->name}」的可用序號不足（需要 {$item['quantity']} 個，剩餘 {$availableCodesCount} 個）");
+                    }
+                }
+            }
+
+            // 🔥 建立訂單 - 直接設置為已付款和已完成
+            $now = now();
+
             $order = Order::create([
                 'user_id' => auth()->id() ?? null,
                 'subtotal' => $this->subtotal,
                 'total' => $this->total,
                 'payment_method' => $this->payment_method,
-                'payment_status' => 'pending',
-                'status' => 'pending',
+                'payment_status' => 'paid', // 🔥 直接標記為已付款
+                'status' => 'completed', // 🔥 直接標記為已完成
                 'buyer_name' => $this->buyer_name,
                 'buyer_email' => $this->buyer_email,
                 'buyer_phone' => $this->buyer_phone,
                 'buyer_game_id' => $this->buyer_game_id,
                 'buyer_note' => $this->order_note,
+                // 🔥 設置所有時間戳
+                'paid_at' => $now, // 付款時間
+                'completed_at' => $now, // 完成時間
             ]);
 
-            // 建立訂單項目
+            // 建立訂單項目並分配序號
             foreach ($this->cart as $item) {
                 $product = Product::find($item['id']);
 
@@ -206,7 +241,16 @@ class CheckoutComponent extends Component
                     continue;
                 }
 
-                OrderItem::create([
+                // 🔥 檢查是否為議價商品
+                $isBargainItem = isset($item['is_bargain']) && $item['is_bargain'];
+                $bargainId = $isBargainItem && isset($item['bargain_id']) ? $item['bargain_id'] : null;
+                $conversationId = isset($item['conversation_id']) ? $item['conversation_id'] : null;
+
+                // 🔥 判斷是否有虛寶序號（自動交付）
+                $hasProductCodes = $product->stock > 0 && $product->availableCodes()->exists();
+
+                // 建立訂單項目
+                $orderItem = OrderItem::create([
                     'order_id' => $order->id,
                     'product_id' => $product->id,
                     'seller_id' => $product->user_id,
@@ -218,16 +262,53 @@ class CheckoutComponent extends Component
                     'price' => $item['price'],
                     'quantity' => $item['quantity'],
                     'subtotal' => $item['price'] * $item['quantity'],
-                    'trade_type' => $product->trade_type,
+                    'trade_type' => $product->trade_type ?? 'in_game',
                     'trade_instructions' => $product->trade_instructions,
                     'game_server' => $product->game_server,
                     'game_region' => $product->game_region,
-                    'delivery_status' => 'pending',
+                    'delivery_status' => 'delivered', // 🔥 直接標記為已交付
+                    'delivered_at' => $now, // 🔥 設置交付時間
+                    'is_bargain' => $isBargainItem,
+                    'bargain_id' => $bargainId,
+                    'conversation_id' => $conversationId,
                 ]);
 
-                // 扣除庫存
+                // 🔥 分配虛寶序號
+                if ($product->stock > 0) {
+                    $codes = $product->availableCodes()
+                        ->take($item['quantity'])
+                        ->get();
+
+                    foreach ($codes as $code) {
+                        $code->markAsSold($order->id, auth()->id());
+
+                        \Illuminate\Support\Facades\Log::info('虛寶序號已分配', [
+                            'order_id' => $order->id,
+                            'order_item_id' => $orderItem->id,
+                            'code_id' => $code->id,
+                            'product_name' => $product->name,
+                        ]);
+                    }
+                }
+
+                // 🔥 扣除庫存
                 if ($product->stock > 0) {
                     $product->decrement('stock', $item['quantity']);
+                }
+
+                // 🔥 如果是議價商品，更新議價狀態
+                if ($bargainId) {
+                    try {
+                        $bargain = \App\Models\BargainHistory::find($bargainId);
+                        if ($bargain) {
+                            $bargain->update([
+                                'status' => 'completed',
+                                'completed_at' => now(),
+                            ]);
+                        }
+                    } catch (\Exception $e) {
+                        \Illuminate\Support\Facades\Log::error('Failed to update bargain status: ' . $e->getMessage());
+                    }
                 }
             }
 
@@ -238,19 +319,26 @@ class CheckoutComponent extends Component
             $this->cartCount = 0;
             cookie()->queue(cookie()->forget('shopping_cart'));
 
-            session()->flash('success', '訂單已成立！訂單編號：' . $order->order_number);
+            session()->flash('success', '訂單已成立並完成！訂單編號：' . $order->order_number);
             session()->flash('order_number', $order->order_number);
 
             return redirect()->route('checkout.success', ['order' => $order->order_number]);
 
         } catch (\Exception $e) {
             DB::rollBack();
+
+            \Illuminate\Support\Facades\Log::error('訂單建立失敗', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
             $this->dispatch('notify', [
                 'type' => 'error',
                 'message' => '訂單建立失敗：' . $e->getMessage()
             ]);
         }
     }
+
 
     #[Layout('livewire.layouts.app')]
     public function render()

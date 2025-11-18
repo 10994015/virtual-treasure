@@ -50,7 +50,8 @@ class ProductDetailComponent extends Component
 
     public function increaseQuantity()
     {
-        if ($this->product->stock > 0 && $this->quantity >= $this->product->stock) {
+        // 🔥 檢查庫存上限
+        if ($this->quantity >= $this->product->stock) {
             $this->dispatch('notify', [
                 'type' => 'warning',
                 'message' => '已達庫存上限'
@@ -61,6 +62,7 @@ class ProductDetailComponent extends Component
         $this->quantity++;
     }
 
+
     public function decreaseQuantity()
     {
         if ($this->quantity > 1) {
@@ -70,8 +72,16 @@ class ProductDetailComponent extends Component
 
     public function addToCart()
     {
-        // 檢查庫存
-        if ($this->product->stock > 0 && $this->quantity > $this->product->stock) {
+        // 🔥 檢查庫存（庫存 0 = 已售完）
+        if ($this->product->stock === 0) {
+            $this->dispatch('notify', [
+                'type' => 'error',
+                'message' => '商品已售完'
+            ]);
+            return;
+        }
+
+        if ($this->quantity > $this->product->stock) {
             $this->dispatch('notify', [
                 'type' => 'error',
                 'message' => '商品庫存不足'
@@ -86,10 +96,11 @@ class ProductDetailComponent extends Component
             $cart = json_decode($cartCookie, true) ?? [];
         }
 
-        // 檢查商品是否已在購物車
+        // 🔥 只檢查「原價商品」是否已在購物車（不檢查議價商品）
         $existingIndex = null;
         foreach ($cart as $index => $item) {
-            if ($item['id'] == $this->product->id) {
+            // 🔥 關鍵：只檢查 ID 相同且沒有 conversation_id 的商品
+            if ($item['id'] == $this->product->id && !isset($item['conversation_id'])) {
                 $existingIndex = $index;
                 break;
             }
@@ -103,7 +114,7 @@ class ProductDetailComponent extends Component
         }
 
         if ($existingIndex !== null) {
-            // 更新數量
+            // 🔥 更新「原價商品」的數量
             $newQuantity = $cart[$existingIndex]['quantity'] + $this->quantity;
 
             // 檢查庫存
@@ -116,8 +127,13 @@ class ProductDetailComponent extends Component
             }
 
             $cart[$existingIndex]['quantity'] = $newQuantity;
+
+            $this->dispatch('notify', [
+                'type' => 'success',
+                'message' => '已更新購物車數量'
+            ]);
         } else {
-            // 新增商品
+            // 🔥 新增「原價商品」（不綁定 conversation_id）
             $cart[] = [
                 'id' => $this->product->id,
                 'name' => $this->product->name,
@@ -127,22 +143,24 @@ class ProductDetailComponent extends Component
                 'stock' => $this->product->stock,
                 'game_type' => $this->product->game_type,
                 'category' => $this->product->category,
+                // 🔥 關鍵：原價商品不設置 conversation_id、is_bargain、bargain_id
             ];
+
+            $this->dispatch('notify', [
+                'type' => 'success',
+                'message' => '已加入購物車'
+            ]);
         }
 
         // 儲存到 Cookie
         cookie()->queue('shopping_cart', json_encode($cart), 43200); // 30 天
-
-        $this->dispatch('notify', [
-            'type' => 'success',
-            'message' => '已加入購物車'
-        ]);
 
         $this->dispatch('cart-updated', ['count' => count($cart)]);
 
         // 重置數量
         $this->quantity = 1;
     }
+
 
     public function buyNow()
     {

@@ -140,12 +140,13 @@
 
         .chat-messages {
             flex: 1;
-            overflow-y: auto;
+            overflow-y: scroll !important;
             padding: 1rem;
             display: flex;
             flex-direction: column;
             gap: 1rem;
             background: #f9f9f9;
+            max-height: 500px !important;
         }
 
         .message-group {
@@ -174,14 +175,16 @@
 
         .message-content {
             max-width: 60%;
-            width:auto;
+            width: auto;
             display: flex;
             flex-direction: column;
             gap: 0.25rem;
         }
-        .message-content.bargain-message-content{
+
+        .message-content.bargain-message-content {
             min-width: 40%;
         }
+
         .message-bubble {
             padding: 0.75rem 1rem;
             border-radius: 18px;
@@ -239,15 +242,48 @@
             display: flex;
             align-items: center;
             gap: 0.5rem;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.75rem;
             font-weight: 600;
+            color: #FF9500;
+            font-size: 0.95rem;
+        }
+
+        .bargain-details {
+            background: rgba(255, 255, 255, 0.6);
+            padding: 0.75rem;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+        }
+
+        .bargain-detail-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.4rem 0;
+            font-size: 0.9rem;
+        }
+
+        .bargain-detail-row.total {
+            border-top: 2px solid #FF9500;
+            margin-top: 0.5rem;
+            padding-top: 0.75rem;
+            font-weight: 700;
+            font-size: 1.1rem;
             color: #FF9500;
         }
 
-        .bargain-message-price {
-            font-size: 1.5rem;
-            font-weight: 700;
+        .bargain-detail-label {
+            color: #666;
+        }
+
+        .bargain-detail-value {
+            color: #333;
+            font-weight: 600;
+        }
+
+        .bargain-detail-row.total .bargain-detail-value {
             color: #FF9500;
+            font-size: 1.3rem;
         }
 
         .chat-input {
@@ -270,6 +306,74 @@
             background-color: white;
         }
 
+        .bargain-input-group {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+
+        .bargain-input-wrapper {
+            flex: 1;
+            position: relative;
+        }
+
+        .bargain-input-prefix {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #666;
+            font-size: 0.9rem;
+            pointer-events: none;
+            font-weight: 500;
+        }
+
+        .bargain-input {
+            width: 100%;
+            padding: 0.75rem 0.75rem 0.75rem 2.5rem;
+            border: 2px solid #e5e5ea;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            transition: border-color 0.2s;
+        }
+
+        .bargain-input:focus {
+            outline: none;
+            border-color: #0A84FF;
+        }
+
+        .bargain-input-suffix {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #999;
+            font-size: 0.85rem;
+            pointer-events: none;
+        }
+
+        .bargain-total-preview {
+            background: linear-gradient(135deg, #e6f3ff 0%, #cce7ff 100%);
+            border: 2px solid #0A84FF;
+            border-radius: 10px;
+            padding: 1rem;
+            text-align: center;
+            margin: 0.75rem 0;
+        }
+
+        .bargain-total-preview-label {
+            font-size: 0.85rem;
+            color: #666;
+            margin-bottom: 0.25rem;
+        }
+
+        .bargain-total-preview-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #0A84FF;
+        }
+
         @media (max-width: 768px) {
             .messaging-container {
                 grid-template-columns: 1fr;
@@ -284,7 +388,6 @@
             }
         }
 
-        /* 圖片訊息樣式 */
         .message-content img {
             transition: transform 0.2s;
         }
@@ -293,13 +396,11 @@
             transform: scale(1.02);
         }
 
-        /* 上傳按鈕 hover 效果 */
         label[for^="imageUpload"]:hover {
             background-color: #f0f8ff !important;
             border-color: #0A84FF !important;
         }
 
-        /* 禁用狀態 */
         button:disabled,
         textarea:disabled {
             opacity: 0.5;
@@ -316,7 +417,7 @@
                     <input
                         type="text"
                         wire:model.live.debounce.300ms="searchTerm"
-                        class="chat-sidebar-search flex-1"
+                        class="flex-1 chat-sidebar-search"
                         placeholder="搜尋名稱或商品">
                 </div>
             </div>
@@ -333,11 +434,15 @@
                         wire:key="conversation-{{ $conversation->id }}"
                         class="chat-item {{ $selectedConversationId === $conversation->id ? 'active' : '' }}">
                         <div class="chat-item-avatar">
-                            {{ substr($otherUser->name, 0, 1) }}
+                            @if($otherUser->profile_photo_url && !str_contains($otherUser->profile_photo_url, 'ui-avatars.com'))
+                                <img src="{{ $otherUser->profile_photo_url }}" alt="{{ $otherUser->last_name }}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
+                            @else
+                                {{ $otherUser->last_name }}
+                            @endif
                         </div>
                         <div class="chat-item-content">
                             <div class="chat-item-header">
-                                <div class="chat-item-name">{{ $otherUser->name }}</div>
+                                <div class="chat-item-name">{{ $otherUser->last_name . $otherUser->first_name }}</div>
                                 <div class="flex items-center gap-2">
                                     @if($unreadCount > 0)
                                         <span class="chat-item-badge">{{ $unreadCount }}</span>
@@ -351,7 +456,7 @@
                                 {{ $conversation->last_message ?? '尚無訊息' }}
                             </div>
                             <div class="chat-item-product">
-                                <i class="fas fa-box mr-1"></i>{{ $conversation->product->name }}
+                                <i class="mr-1 fas fa-box"></i>{{ $conversation->product->name }}
                             </div>
                         </div>
                     </div>
@@ -378,14 +483,14 @@
                     <div style="border-bottom: 1px solid #e5e5ea; padding: 1rem; display: flex; justify-content: space-between; align-items: center; background: white;">
                         <div style="display: flex; align-items: center; gap: 0.75rem;">
                             <div class="chat-item-avatar" style="width: 40px; height: 40px; font-size: 1rem;">
-                                {{ substr($otherUser->name, 0, 1) }}
+                                {{ $otherUser->last_name }}
                             </div>
                             <div>
                                 <h3 style="margin: 0; font-size: 0.95rem; font-weight: 600; color: #000;">
-                                    {{ $otherUser->name }}
+                                     {{ $otherUser->last_name }}
                                 </h3>
                                 <p style="margin: 0; font-size: 0.8rem; color: #666;">
-                                    <i class="fas fa-box mr-1"></i>{{ $selectedConversation->product->name }}
+                                    <i class="mr-1 fas fa-box"></i>{{ $selectedConversation->product->name }}
                                 </p>
                             </div>
                         </div>
@@ -408,7 +513,99 @@
                             </button>
                         </div>
                     </div>
+                    <!-- 🔥 商品資訊卡片 -->
+                    <div style="background: linear-gradient(135deg, #f8f9ff 0%, #f0f4ff 100%); border-bottom: 1px solid #e5e5ea; padding: 1rem;">
+                        <div style="display: flex; gap: 1rem; align-items: center;">
+                            <!-- 商品圖片 -->
+                            <div style="width: 80px; height: 80px; border-radius: 8px; overflow: hidden; background: white; flex-shrink: 0; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                                @if($selectedConversation->product->images->isNotEmpty())
+                                    @php
+                                        $primaryImage = $selectedConversation->product->images->where('is_primary', true)->first();
+                                        $image = $primaryImage ?? $selectedConversation->product->images->first();
+                                    @endphp
+                                    <img src="/storage/{{ $image->image_path }}" alt="{{ $selectedConversation->product->name }}" style="width: 100%; height: 100%; object-fit: cover;">
+                                @else
+                                    <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;">
+                                        <i class="text-2xl text-gray-400 fas fa-image"></i>
+                                    </div>
+                                @endif
+                            </div>
 
+                            <!-- 商品資訊 -->
+                            <div style="flex: 1; min-width: 0;">
+                                <h4 style="margin: 0 0 0.5rem 0; font-size: 1rem; font-weight: 600; color: #333;">
+                                    {{ $selectedConversation->product->name }}
+                                </h4>
+                                <div style="display: flex; gap: 1.5rem; align-items: center; margin-bottom: 0.5rem;">
+                                    <div>
+                                        <span style="font-size: 0.75rem; color: #666;">賣家</span>
+                                        <p style="margin: 0; font-size: 0.85rem; font-weight: 600; color: #0A84FF;">
+                                            {{ $selectedConversation->seller->last_name . $selectedConversation->seller->first_name }}
+                                        </p>
+                                    </div>
+                                    <div>
+                                        <span style="font-size: 0.75rem; color: #666;">原價</span>
+                                        <p style="margin: 0; font-size: 0.85rem; font-weight: 600; color: #999;">
+                                            NT$ {{ number_format($selectedConversation->product->price) }}
+                                        </p>
+                                    </div>
+                                    @if($this->bestPrice['is_bargain'])
+                                        <div>
+                                            <span style="font-size: 0.75rem; color: #666;">
+                                                <i class="mr-1 fas fa-handshake"></i>議價後
+                                            </span>
+                                            <p style="margin: 0; font-size: 0.9rem; font-weight: 700; color: #FF9500;">
+                                                NT$ {{ number_format($this->bestPrice['price']) }} x {{ $this->bestPrice['quantity'] }}
+                                            </p>
+                                        </div>
+                                    @endif
+                                </div>
+
+                                <!-- 🔥 統一的加入購物車/成交按鈕 -->
+                                @if($isBuyer)
+                                    @if($isProductInCart)
+                                        {{-- 🔥 已從此對話加入購物車 --}}
+                                        <a href="{{ route('cart') }}" style="display: inline-block; padding: 0.6rem 1.5rem; background: linear-gradient(135deg, #34C759 0%, #2FA84A 100%); color: white; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 0.9rem; box-shadow: 0 2px 6px rgba(52, 199, 89, 0.3);">
+                                            <i class="mr-1 fas fa-check-circle"></i>
+                                            已成交 - 前往購物車結帳
+                                        </a>
+                                    @else
+                                        @if($this->bestPrice['is_bargain'])
+                                            {{-- 🔥 議價商品：顯示成交確認按鈕 --}}
+                                            <button
+                                                wire:click="addProductToCart"
+                                                wire:confirm="⚠️ 確認成交並加入購物車？
+
+                    ⚠️ 注意：
+                    點擊確認後，此商品將以議價加入購物車並視為成交，此議價將結束。
+                    您可前往購物車完成結帳。
+
+                    確定要繼續嗎？"
+                                                type="button"
+                                                style="padding: 0.6rem 1.5rem; background: linear-gradient(135deg, #FF9500 0%, #FF8C00 100%); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 0.9rem; box-shadow: 0 2px 6px rgba(255, 149, 0, 0.3);">
+                                                <i class="mr-1 fas fa-handshake"></i>
+                                                確認成交並加入購物車
+                                            </button>
+                                            <p style="margin: 0.5rem 0 0 0; font-size: 0.7rem; color: #666;">
+                                                💡 議價成功！點擊按鈕確認成交並結束議價
+                                            </p>
+                                        @else
+                                            {{-- 🔥 無議價：可以繼續議價或回商品頁以原價購買 --}}
+                                            <a
+                                                href="{{ route('products.show', $selectedConversation->product->slug) }}"
+                                                style="display: inline-block; padding: 0.6rem 1.5rem; background: linear-gradient(135deg, #0A84FF 0%, #007AFF 100%); color: white; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 0.9rem; box-shadow: 0 2px 6px rgba(10, 132, 255, 0.3); text-decoration: none;">
+                                                <i class="mr-1 fas fa-shopping-cart"></i>
+                                                前往商品頁購買
+                                            </a>
+                                            <p style="margin: 0.5rem 0 0 0; font-size: 0.7rem; color: #666;">
+                                                💡 可返回商品頁以原價購買，或在下方開始議價
+                                            </p>
+                                        @endif
+                                    @endif
+                                @endif
+                            </div>
+                        </div>
+                    </div>
                     <!-- 訊息區域 -->
                     <div class="chat-messages" id="chatMessages" wire:key="messages-{{ $selectedConversation->id }}">
                         @foreach($this->messages as $message)
@@ -419,12 +616,35 @@
                                         {{ $message->content }}
                                     </div>
                                 </div>
-                           @elseif($message->isBargainMessage())
-                                <!-- 議價訊息 -->
+                            @elseif($message->isBargainMessage())
+                                <!-- 🔥 議價訊息 -->
+                                @php
+                                    $bargain = \App\Models\BargainHistory::find($message->related_message_id);
+
+                                    if ($message->type === 'bargain') {
+                                        $unitPrice = $bargain->buyer_offer ?? $message->bargain_price;
+                                        $quantity = $bargain->buyer_quantity ?? ($message->bargain_quantity ?? 1);
+                                        $total = $bargain->buyer_total ?? ($unitPrice * $quantity);
+                                    } elseif ($message->type === 'bargain_counter') {
+                                        $unitPrice = $bargain->seller_offer ?? $message->bargain_price;
+                                        $quantity = $bargain->seller_quantity ?? ($message->bargain_quantity ?? 1);
+                                        $total = $bargain->seller_total ?? ($unitPrice * $quantity);
+                                    } elseif ($message->type === 'bargain_accept' || $message->type === 'bargain_deal') {
+                                        $unitPrice = $bargain->final_price ?? $message->bargain_price;
+                                        $quantity = $bargain->final_quantity ?? ($message->bargain_quantity ?? 1);
+                                        $total = $bargain->final_total ?? ($unitPrice * $quantity);
+                                    } else {
+                                        $unitPrice = $message->bargain_price;
+                                        $quantity = $message->bargain_quantity ?? 1;
+                                        $total = $unitPrice * $quantity;
+                                    }
+                                @endphp
+
                                 <div class="message-group {{ $message->sender_id === auth()->id() ? 'sent' : 'received' }}" wire:key="message-{{ $message->id }}">
                                     @if($message->sender_id !== auth()->id())
-                                        <div class="message-avatar">{{ substr($message->sender->name, 0, 1) }}</div>
+                                        <div class="message-avatar">{{ $message->sender->last_name }}</div>
                                     @endif
+
                                     <div class="message-content bargain-message-content" style="max-width: 70%;">
                                         <div class="bargain-message">
                                             <div class="bargain-message-header">
@@ -449,79 +669,92 @@
                                                     @endswitch
                                                 </span>
                                             </div>
-                                            @if($message->bargain_price)
-                                                <div class="bargain-message-price">
-                                                    NT$ {{ number_format($message->bargain_price) }}
+
+                                            @if($unitPrice && $message->type !== 'bargain_reject')
+                                                <div class="bargain-details">
+                                                    <div class="bargain-detail-row">
+                                                        <span class="bargain-detail-label">議價單價：</span>
+                                                        <span class="bargain-detail-value">NT$ {{ number_format($unitPrice) }} / 個</span>
+                                                    </div>
+                                                    <div class="bargain-detail-row">
+                                                        <span class="bargain-detail-label">購買數量：</span>
+                                                        <span class="bargain-detail-value">{{ $quantity }} 個</span>
+                                                    </div>
+                                                    <div class="bargain-detail-row total">
+                                                        <span class="bargain-detail-label">議價總額：</span>
+                                                        <span class="bargain-detail-value">NT$ {{ number_format($total) }}</span>
+                                                    </div>
                                                 </div>
                                             @endif
+
                                             <div style="font-size: 0.75rem; color: #999; margin-top: 0.5rem;">
                                                 {{ $message->created_at->format('Y/m/d H:i') }}
                                             </div>
 
-                                            {{-- 賣家收到買家的議價 - 顯示操作按鈕 --}}
+                                            {{-- 賣家收到買家的議價 --}}
                                             @if($this->shouldShowSellerActions($message))
-                                                <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px dashed #FF9500;">
-                                                    {{-- 快速回應按鈕 --}}
+                                                <div style="margin-top: 1rem; padding-top: 1rem; border-top: 2px dashed #FF9500;">
                                                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-bottom: 0.75rem;">
                                                         <button
                                                             wire:click="acceptBargain({{ $message->related_message_id }})"
                                                             type="button"
-                                                            style="padding: 0.6rem 0.75rem; background-color: #34C759; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 0.85rem; white-space: nowrap; display: flex; align-items: center; justify-content: center; gap: 0.4rem;">
-                                                            <i class="fas fa-check"></i>
-                                                            <span>同意</span>
+                                                            style="padding: 0.6rem 0.75rem; background-color: #34C759; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 0.85rem;">
+                                                            <i class="fas fa-check"></i> 接受議價
                                                         </button>
                                                         <button
                                                             wire:click="rejectBargain({{ $message->related_message_id }})"
                                                             type="button"
-                                                            style="padding: 0.6rem 0.75rem; background-color: #FF3B30; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 0.85rem; white-space: nowrap; display: flex; align-items: center; justify-content: center; gap: 0.4rem;">
-                                                            <i class="fas fa-times"></i>
-                                                            <span>拒絕</span>
+                                                            style="padding: 0.6rem 0.75rem; background-color: #FF3B30; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 0.85rem;">
+                                                            <i class="fas fa-times"></i> 拒絕
                                                         </button>
                                                     </div>
 
-                                                    {{-- 反議價輸入 --}}
-                                                    <div style="background: rgba(255, 255, 255, 0.5); padding: 0.75rem; border-radius: 6px;">
-                                                        <p style="margin: 0 0 0.5rem 0; font-size: 0.8rem; color: #333; font-weight: 600;">
-                                                            或提出反議價:
+                                                    <div style="background: rgba(255, 255, 255, 0.7); padding: 0.75rem; border-radius: 8px;">
+                                                        <p style="margin: 0 0 0.75rem 0; font-size: 0.85rem; color: #333; font-weight: 600;">
+                                                            <i class="mr-1 fas fa-reply"></i>或提出反議價：
                                                         </p>
-                                                        <div style="display: flex; gap: 0.4rem; align-items: stretch;">
-                                                            <div style="flex: 1; position: relative;">
-                                                                <span style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: #666; font-size: 0.8rem; pointer-events: none;">NT$</span>
-                                                                <input
-                                                                    type="number"
-                                                                    wire:model="bargainPrice"
-                                                                    placeholder="輸入價格"
-                                                                    style="width: 100%; padding: 0.6rem 0.6rem 0.6rem 2.2rem; border: 1px solid #ddd; border-radius: 6px; font-size: 0.85rem; box-sizing: border-box;">
+
+                                                        <div class="bargain-input-group">
+                                                            <div class="bargain-input-wrapper">
+                                                                <span class="bargain-input-prefix">NT$</span>
+                                                                <input type="number" wire:model.live.debounce.300ms="counterPrice" placeholder="單價" class="bargain-input" min="1" step="1" style="padding-right: 3.5rem;">
+                                                                <span class="bargain-input-suffix">/ 個</span>
                                                             </div>
-                                                            <button
-                                                                wire:click="submitBargain"
-                                                                type="button"
-                                                                style="padding: 0.6rem 1rem; background-color: #0A84FF; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 0.85rem; white-space: nowrap;">
-                                                                <i class="fas fa-paper-plane"></i>
-                                                            </button>
                                                         </div>
+
+                                                        <div class="bargain-input-group">
+                                                            <div class="bargain-input-wrapper">
+                                                                <span class="bargain-input-prefix">x</span>
+                                                                <input type="number" wire:model.live.debounce.300ms="counterQuantity" placeholder="數量" class="bargain-input" min="1" max="{{ $selectedConversation->product->stock > 0 ? $selectedConversation->product->stock : 9999 }}" style="padding-right: 2.5rem;">
+                                                                <span class="bargain-input-suffix">個</span>
+                                                            </div>
+                                                        </div>
+
+                                                        @if($counterPrice && $counterQuantity)
+                                                            <div style="background: #e6f3ff; padding: 0.5rem; border-radius: 6px; text-align: center; margin-bottom: 0.75rem;">
+                                                                <span style="font-size: 0.75rem; color: #666;">反議價總額：</span>
+                                                                <span style="font-size: 1.2rem; font-weight: 700; color: #0A84FF;">
+                                                                    NT$ {{ number_format($this->counterTotal) }}
+                                                                </span>
+                                                            </div>
+                                                        @endif
+
+                                                        <button wire:click="counterBargain({{ $message->related_message_id }})" type="button" style="width: 100%; padding: 0.75rem; background: linear-gradient(135deg, #0A84FF 0%, #007AFF 100%); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 0.9rem;">
+                                                            <i class="mr-2 fas fa-paper-plane"></i>送出反議價
+                                                        </button>
                                                     </div>
                                                 </div>
                                             @endif
 
-                                            {{-- 買家收到賣家的反議價 - 顯示操作按鈕 --}}
+                                            {{-- 買家收到賣家的反議價 --}}
                                             @if($this->shouldShowBuyerActions($message))
-                                                <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px dashed #FF9500;">
-                                                    {{-- 快速回應按鈕 --}}
+                                                <div style="margin-top: 1rem; padding-top: 1rem; border-top: 2px dashed #FF9500;">
                                                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-bottom: 0.5rem;">
-                                                        <button
-                                                            wire:click="confirmDeal({{ $message->related_message_id }})"
-                                                            type="button"
-                                                            style="padding: 0.6rem 0.75rem; background-color: #34C759; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 0.85rem; white-space: nowrap; display: flex; align-items: center; justify-content: center; gap: 0.4rem;">
-                                                            <i class="fas fa-handshake"></i>
-                                                            <span>成交</span>
+                                                        <button wire:click="confirmDeal({{ $message->related_message_id }})" type="button" style="padding: 0.6rem 0.75rem; background-color: #34C759; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 0.85rem;">
+                                                            <i class="fas fa-handshake"></i> 確認成交
                                                         </button>
-                                                        <button
-                                                            wire:click="toggleBargainPanel"
-                                                            type="button"
-                                                            style="padding: 0.6rem 0.75rem; background-color: #FF9500; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 0.85rem; white-space: nowrap; display: flex; align-items: center; justify-content: center; gap: 0.4rem;">
-                                                            <i class="fas fa-comment-dollar"></i>
-                                                            <span>繼續議價</span>
+                                                        <button wire:click="toggleBargainPanel" type="button" style="padding: 0.6rem 0.75rem; background-color: #FF9500; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 0.85rem;">
+                                                            <i class="fas fa-comment-dollar"></i> 繼續議價
                                                         </button>
                                                     </div>
                                                     <p style="margin: 0; font-size: 0.7rem; color: #666; text-align: center; padding: 0.4rem; background: rgba(255, 255, 255, 0.5); border-radius: 4px;">
@@ -530,92 +763,77 @@
                                                 </div>
                                             @endif
 
-                                            {{-- 賣家接受議價後的顯示 --}}
+                                            {{-- 賣家接受議價後 --}}
                                             @if($message->type === 'bargain_accept')
                                                 @php
-                                                    $bargainId = $message->related_message_id;
+                                                    $bargain = \App\Models\BargainHistory::find($message->related_message_id);
                                                 @endphp
+                                                <div style="margin-top: 1rem; padding-top: 1rem; border-top: 2px dashed #34C759;">
+                                                    <div style="padding: 1rem; background: rgba(52, 199, 89, 0.15); border-radius: 10px; text-align: center; border: 1px solid #34C759;">
+                                                        <p style="margin: 0; font-size: 0.9rem; color: #34C759; font-weight: 600;">
+                                                            <i class="mr-1 fas fa-check-circle"></i>
+                                                            @if($isBuyer)
+                                                                賣家已接受您的議價！
+                                                            @else
+                                                                已接受買家議價
+                                                            @endif
+                                                        </p>
 
-                                                @if($bargainId)
-                                                    @if($isBuyer)
-                                                        {{-- 買家：顯示加入購物車按鈕 --}}
-                                                        <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px dashed #34C759;">
-                                                            <div style="padding: 0.5rem; background: rgba(52, 199, 89, 0.1); border-radius: 6px; text-align: center; margin-bottom: 0.75rem;">
-                                                                <p style="margin: 0; font-size: 0.85rem; color: #34C759; font-weight: 600;">
-                                                                    <i class="fas fa-check-circle"></i> 賣家已接受您的議價！
-                                                                </p>
-                                                            </div>
-                                                            <button
-                                                                wire:click="addBargainToCart({{ $bargainId }})"
-                                                                type="button"
-                                                                style="width: 100%; padding: 0.75rem; background: linear-gradient(135deg, #34C759 0%, #2FA84A 100%); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 0.9rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem; transition: transform 0.2s;"
-                                                                onmouseover="this.style.transform='scale(1.02)'"
-                                                                onmouseout="this.style.transform='scale(1)'">
-                                                                <i class="fas fa-shopping-cart"></i>
-                                                                <span>加入購物車</span>
-                                                            </button>
-                                                            <p style="margin: 0.5rem 0 0 0; font-size: 0.7rem; color: #666; text-align: center;">
-                                                                💡 點擊加入購物車即可前往結帳
+                                                        {{-- 🔥 顯示成交狀態 --}}
+                                                        @if($bargain && $bargain->status === 'completed')
+                                                            <p style="margin: 0.5rem 0 0 0; font-size: 0.8rem; color: #34C759; font-weight: 600;">
+                                                                ✅ 買家已確認成交
                                                             </p>
-                                                        </div>
-                                                    @else
-                                                        {{-- 賣家：顯示已接受訊息 --}}
-                                                        <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px dashed #34C759;">
-                                                            <div style="padding: 0.75rem; background: rgba(52, 199, 89, 0.1); border-radius: 8px; text-align: center;">
-                                                                <p style="margin: 0; font-size: 0.85rem; color: #34C759; font-weight: 600;">
-                                                                    <i class="fas fa-check-circle"></i> 已接受買家議價
+                                                        @else
+                                                            @if($isBuyer)
+                                                                <p style="margin: 0.5rem 0 0 0; font-size: 0.8rem; color: #666;">
+                                                                    💡 請至頂部點擊「確認成交」按鈕
                                                                 </p>
-                                                                <p style="margin: 0.5rem 0 0 0; font-size: 0.75rem; color: #666;">
-                                                                    等待買家完成結帳
+                                                            @else
+                                                                <p style="margin: 0.5rem 0 0 0; font-size: 0.8rem; color: #666;">
+                                                                    等待買家確認成交
                                                                 </p>
-                                                            </div>
-                                                        </div>
-                                                    @endif
-                                                @endif
+                                                            @endif
+                                                        @endif
+                                                    </div>
+                                                </div>
                                             @endif
 
-                                            {{-- 成交後的顯示 --}}
+                                            {{-- 成交後 --}}
                                             @if($message->type === 'bargain_deal')
                                                 @php
-                                                    $bargainId = $this->getDealBargainId($message);
+                                                    $bargain = \App\Models\BargainHistory::find($message->related_message_id);
                                                 @endphp
+                                                <div style="margin-top: 1rem; padding-top: 1rem; border-top: 2px dashed #34C759;">
+                                                    <div style="padding: 1rem; background: rgba(52, 199, 89, 0.15); border-radius: 10px; text-align: center; border: 1px solid #34C759;">
+                                                        <p style="margin: 0; font-size: 0.9rem; color: #34C759; font-weight: 600;">
+                                                            <i class="mr-1 fas fa-check-circle"></i> 雙方議價成功！
+                                                        </p>
 
-                                                @if($bargainId)
-                                                    @if($isBuyer)
-                                                        {{-- 買家：顯示加入購物車按鈕 --}}
-                                                        <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px dashed #34C759;">
-                                                            <button
-                                                                wire:click="addBargainToCart({{ $bargainId }})"
-                                                                type="button"
-                                                                style="width: 100%; padding: 0.75rem; background: linear-gradient(135deg, #34C759 0%, #2FA84A 100%); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 0.9rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem; transition: transform 0.2s;"
-                                                                onmouseover="this.style.transform='scale(1.02)'"
-                                                                onmouseout="this.style.transform='scale(1)'">
-                                                                <i class="fas fa-shopping-cart"></i>
-                                                                <span>加入購物車</span>
-                                                            </button>
-                                                            <p style="margin: 0.5rem 0 0 0; font-size: 0.7rem; color: #666; text-align: center;">
-                                                                💡 點擊加入購物車即可前往結帳
+                                                        {{-- 🔥 顯示成交狀態 --}}
+                                                        @if($bargain && $bargain->status === 'completed')
+                                                            <p style="margin: 0.5rem 0 0 0; font-size: 0.8rem; color: #34C759; font-weight: 600;">
+                                                                ✅ 買家已確認成交
                                                             </p>
-                                                        </div>
-                                                    @else
-                                                        {{-- 賣家：顯示等待訊息 --}}
-                                                        <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px dashed #34C759;">
-                                                            <div style="padding: 0.75rem; background: rgba(52, 199, 89, 0.1); border-radius: 8px; text-align: center;">
-                                                                <p style="margin: 0; font-size: 0.85rem; color: #34C759; font-weight: 600;">
-                                                                    <i class="fas fa-check-circle"></i> 交易成功！
+                                                        @else
+                                                            @if($isBuyer)
+                                                                <p style="margin: 0.5rem 0 0 0; font-size: 0.8rem; color: #666;">
+                                                                    💡 請至頂部點擊「確認成交」按鈕
                                                                 </p>
-                                                                <p style="margin: 0.5rem 0 0 0; font-size: 0.75rem; color: #666;">
-                                                                    等待買家完成結帳
+                                                            @else
+                                                                <p style="margin: 0.5rem 0 0 0; font-size: 0.8rem; color: #666;">
+                                                                    等待買家確認成交
                                                                 </p>
-                                                            </div>
-                                                        </div>
-                                                    @endif
-                                                @endif
+                                                            @endif
+                                                        @endif
+                                                    </div>
+                                                </div>
                                             @endif
                                         </div>
                                     </div>
+
                                     @if($message->sender_id === auth()->id())
-                                        <div class="message-avatar">{{ substr($message->sender->name, 0, 1) }}</div>
+                                        <div class="message-avatar">{{ $message->sender->last_name }}</div>
                                     @endif
                                 </div>
 
@@ -623,22 +841,16 @@
                                 <!-- 圖片訊息 -->
                                 <div class="message-group {{ $message->sender_id === auth()->id() ? 'sent' : 'received' }}" wire:key="message-{{ $message->id }}">
                                     @if($message->sender_id !== auth()->id())
-                                        <div class="message-avatar">{{ substr($message->sender->name, 0, 1) }}</div>
+                                        <div class="message-avatar">{{ $message->sender->last_name }}</div>
                                     @endif
                                     <div class="message-content">
                                         <div style="max-width: 300px; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-                                            <img
-                                                src="{{ Storage::url($message->image_path) }}"
-                                                alt="Image"
-                                                style="width: 100%; display: block; cursor: pointer;"
-                                                onclick="window.open('{{ Storage::url($message->image_path) }}', '_blank')">
+                                            <img src="{{ Storage::url($message->image_path) }}" alt="Image" style="width: 100%; display: block; cursor: pointer;" onclick="window.open('{{ Storage::url($message->image_path) }}', '_blank')">
                                         </div>
-                                        <div class="message-time">
-                                            {{ $message->created_at->format('H:i') }}
-                                        </div>
+                                        <div class="message-time">{{ $message->created_at->format('H:i') }}</div>
                                     </div>
                                     @if($message->sender_id === auth()->id())
-                                        <div class="message-avatar">{{ substr($message->sender->name, 0, 1) }}</div>
+                                        <div class="message-avatar">{{ $message->sender->last_name }}</div>
                                     @endif
                                 </div>
 
@@ -646,54 +858,48 @@
                                 <!-- 一般文字訊息 -->
                                 <div class="message-group {{ $message->sender_id === auth()->id() ? 'sent' : 'received' }}" wire:key="message-{{ $message->id }}">
                                     @if($message->sender_id !== auth()->id())
-                                        <div class="message-avatar">{{ substr($message->sender->name, 0, 1) }}</div>
+                                        <div class="message-avatar">{{ $message->sender->last_name }}</div>
                                     @endif
                                     <div class="message-content">
-                                        <div class="message-bubble">
-                                            {{ $message->content }}
-                                        </div>
-                                        <div class="message-time">
-                                            {{ $message->created_at->format('H:i') }}
-                                        </div>
+                                        <div class="message-bubble">{{ $message->content }}</div>
+                                        <div class="message-time">{{ $message->created_at->format('H:i') }}</div>
                                     </div>
                                     @if($message->sender_id === auth()->id())
-                                        <div class="message-avatar">{{ substr($message->sender->name, 0, 1) }}</div>
+                                        <div class="message-avatar">{{ $message->sender->last_name }}</div>
                                     @endif
                                 </div>
                             @endif
                         @endforeach
                     </div>
 
-                    <!-- 議價模式面板 -->
+                    <!-- 🔥 議價面板 -->
                     @if($showBargainPanel)
-                        <div style="border-top: 1px solid #e5e5ea; padding: 1rem; background: linear-gradient(135deg, #f0f8ff 0%, #e6f3ff 100%); max-height: 300px; overflow-y: auto;">
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-                                <h4 style="margin: 0; font-size: 1rem; font-weight: 600; color: #0A84FF;">
+                        <div style="border-top: 1px solid #e5e5ea; padding: 1.25rem; background: linear-gradient(135deg, #f0f8ff 0%, #e6f3ff 100%); max-height: 500px; overflow-y: scroll;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+                                <h4 style="margin: 0; font-size: 1.1rem; font-weight: 600; color: #0A84FF;">
                                     <i class="fas fa-handshake" style="margin-right: 0.5rem;"></i>議價模式
                                 </h4>
-                                <button
-                                    wire:click="toggleBargainPanel"
-                                    type="button"
-                                    style="background: none; border: none; color: #999; cursor: pointer; font-size: 1.2rem;">
+                                <button wire:click="toggleBargainPanel" type="button" style="background: none; border: none; color: #999; cursor: pointer; font-size: 1.3rem;">
                                     <i class="fas fa-times"></i>
                                 </button>
                             </div>
 
-                            <!-- 歷史成交區間 -->
                             @if($this->bargainStats && $this->bargainStats->min_price)
                                 <div style="background: white; padding: 1rem; border-radius: 10px; margin-bottom: 1rem; border: 1px solid #d4e6ff;">
-                                    <p style="margin: 0 0 0.5rem 0; font-size: 0.85rem; color: #666;">📊 歷史成交區間：</p>
+                                    <p style="margin: 0 0 0.75rem 0; font-size: 0.85rem; color: #666; font-weight: 600;">
+                                        <i class="mr-1 fas fa-chart-line"></i>📊 歷史成交區間：
+                                    </p>
                                     <div style="display: flex; gap: 1rem; align-items: center;">
-                                        <div>
-                                            <span style="font-size: 0.8rem; color: #999;">最低價</span>
-                                            <p style="margin: 0; font-size: 1.1rem; font-weight: 600; color: #0A84FF;">
+                                        <div style="flex: 1; text-align: center;">
+                                            <span style="font-size: 0.75rem; color: #999;">最低價</span>
+                                            <p style="margin: 0; font-size: 1.1rem; font-weight: 700; color: #34C759;">
                                                 NT$ {{ number_format($this->bargainStats->min_price) }}
                                             </p>
                                         </div>
-                                        <div style="flex: 1; height: 3px; background: linear-gradient(90deg, #0A84FF, #007AFF); border-radius: 2px;"></div>
-                                        <div>
-                                            <span style="font-size: 0.8rem; color: #999;">最高價</span>
-                                            <p style="margin: 0; font-size: 1.1rem; font-weight: 600; color: #0A84FF;">
+                                        <div style="flex: 2; height: 4px; background: linear-gradient(90deg, #34C759, #0A84FF); border-radius: 2px;"></div>
+                                        <div style="flex: 1; text-align: center;">
+                                            <span style="font-size: 0.75rem; color: #999;">最高價</span>
+                                            <p style="margin: 0; font-size: 1.1rem; font-weight: 700; color: #0A84FF;">
                                                 NT$ {{ number_format($this->bargainStats->max_price) }}
                                             </p>
                                         </div>
@@ -701,70 +907,61 @@
                                 </div>
                             @endif
 
-                            <!-- 只顯示開始議價（主要給買家使用） -->
                             @if($isBuyer)
-                                @if(!$this->currentBargain)
-                                    <!-- 買家發起議價 -->
-                                    <div style="background: white; padding: 1rem; border-radius: 8px; border: 1px solid #e5e5ea;">
-                                        <p style="margin: 0 0 0.75rem 0; font-size: 0.95rem; color: #333; font-weight: 600;">
+                                @if(!$this->currentBargain || $this->currentBargain->status === 'rejected')
+                                    <div style="background: white; padding: 1.25rem; border-radius: 10px; border: 2px solid #0A84FF;">
+                                        <p style="margin: 0 0 1rem 0; font-size: 1rem; color: #333; font-weight: 600;">
                                             <i class="fas fa-tag" style="margin-right: 0.5rem; color: #0A84FF;"></i>開始議價
                                         </p>
-                                        <div style="display: flex; gap: 0.5rem; margin-bottom: 0.75rem; align-items: stretch;">
-                                            <div style="flex: 1; position: relative;">
-                                                <span style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #666; font-size: 0.9rem; pointer-events: none;">NT$</span>
-                                                <input
-                                                    type="number"
-                                                    wire:model="bargainPrice"
-                                                    placeholder="輸入您想要的價格"
-                                                    style="width: 100%; padding: 0.75rem 0.75rem 0.75rem 2.5rem; border: 1px solid #0A84FF; border-radius: 8px; font-size: 0.9rem; box-sizing: border-box;">
+
+                                        <div style="margin-bottom: 0.75rem;">
+                                            <label style="display: block; font-size: 0.85rem; color: #666; margin-bottom: 0.4rem; font-weight: 500;">議價單價</label>
+                                            <div class="bargain-input-wrapper">
+                                                <span class="bargain-input-prefix">NT$</span>
+                                                <input type="number" wire:model.live.debounce.300ms="bargainPrice" placeholder="輸入您想要的單價" class="bargain-input" min="1" step="1" style="padding-right: 3.5rem;">
+                                                <span class="bargain-input-suffix">/ 個</span>
                                             </div>
-                                            <button
-                                                wire:click="submitBargain"
-                                                type="button"
-                                                style="padding: 0.75rem 1.25rem; background-color: #0A84FF; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 0.9rem; white-space: nowrap; transition: background-color 0.2s;"
-                                                onmouseover="this.style.backgroundColor='#0066CC'"
-                                                onmouseout="this.style.backgroundColor='#0A84FF'">
-                                                <i class="fas fa-paper-plane" style="margin-right: 0.5rem;"></i>提交
-                                            </button>
                                         </div>
-                                        <div style="background: #f9f9f9; padding: 0.75rem; border-radius: 6px;">
-                                            <p style="margin: 0 0 0.5rem 0; font-size: 0.8rem; color: #666;">
-                                                💡 <strong>原價：</strong>NT$ {{ number_format($selectedConversation->product->price) }}
-                                            </p>
-                                            <p style="margin: 0; font-size: 0.75rem; color: #999;">
-                                                提示：議價後賣家可以選擇接受、拒絕或反議價
-                                            </p>
+
+                                        <div style="margin-bottom: 0.75rem;">
+                                            <label style="display: block; font-size: 0.85rem; color: #666; margin-bottom: 0.4rem; font-weight: 500;">購買數量</label>
+                                            <div class="bargain-input-wrapper">
+                                                <span class="bargain-input-prefix">x</span>
+                                                <input type="number" wire:model.live.debounce.300ms="bargainQuantity" placeholder="輸入購買數量" class="bargain-input" min="1" max="{{ $selectedConversation->product->stock > 0 ? $selectedConversation->product->stock : 9999 }}" style="padding-right: 2.5rem;">
+                                                <span class="bargain-input-suffix">個</span>
+                                            </div>
+                                            @if($selectedConversation->product->stock > 0)
+                                                <p style="margin: 0.4rem 0 0 0; font-size: 0.75rem; color: #999;">庫存：{{ $selectedConversation->product->stock }} 個</p>
+                                            @endif
+                                        </div>
+
+                                        @if($bargainPrice && $bargainQuantity)
+                                            <div class="bargain-total-preview">
+                                                <div class="bargain-total-preview-label">議價總額</div>
+                                                <div class="bargain-total-preview-value">NT$ {{ number_format($this->bargainTotal) }}</div>
+                                            </div>
+                                        @endif
+
+                                        <button wire:click="submitBargain" type="button" @if(!$bargainPrice || !$bargainQuantity) disabled @endif style="width: 100%; padding: 0.9rem 1.25rem; background: linear-gradient(135deg, #0A84FF 0%, #007AFF 100%); color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: 600; font-size: 1rem; box-shadow: 0 4px 12px rgba(10, 132, 255, 0.3);">
+                                            <i class="fas fa-paper-plane" style="margin-right: 0.5rem;"></i>送出議價
+                                        </button>
+
+                                        <div style="background: #f9f9f9; padding: 0.75rem; border-radius: 6px; margin-top: 0.75rem;">
+                                            <p style="margin: 0; font-size: 0.75rem; color: #666;">💡 提示：議價後賣家可以選擇接受、拒絕或提出反議價</p>
                                         </div>
                                     </div>
                                 @else
-                                    <!-- 議價已完成 -->
-                                    @if($this->currentBargain->status === 'deal')
-                                    <div style="text-align: center; padding: 2rem; color: #28CD41;">
-                                        <i class="fas fa-check-circle" style="font-size: 2rem; margin-bottom: 0.5rem;"></i>
-                                        <p style="margin: 0; font-size: 0.9rem;">議價已完成!</p>
-                                        <p style="margin: 0.5rem 0 0 0; font-size: 0.8rem; color: #666;">
-                                            請在訊息中查看詳情
-                                        </p>
+                                    <div style="text-align: center; padding: 2.5rem 1rem; background: white; border-radius: 10px;">
+                                        <i class="fas fa-hourglass-half" style="font-size: 3rem; margin-bottom: 0.75rem; color: #0A84FF;"></i>
+                                        <p style="margin: 0; font-size: 1.1rem; font-weight: 600; color: #0A84FF;">議價進行中...</p>
+                                        <p style="margin: 0.5rem 0 0 0; font-size: 0.85rem; color: #666;">請在訊息中查看賣家的回覆</p>
                                     </div>
-                                    @else
-                                    <!-- 有進行中的議價 -->
-                                    <div style="text-align: center; padding: 2rem; color: #666;">
-                                        <i class="fas fa-hourglass-half" style="font-size: 2rem; margin-bottom: 0.5rem; color: #0A84FF;"></i>
-                                        <p style="margin: 0; font-size: 0.9rem;">議價進行中... {{  $this->currentBargain->is_deal }}</p>
-                                        <p style="margin: 0.5rem 0 0 0; font-size: 0.8rem; color: #999;">
-                                            請在訊息中查看回覆
-                                        </p>
-                                    </div>
-                                    @endif
                                 @endif
                             @else
-                                <!-- 賣家 -->
-                                <div style="text-align: center; padding: 2rem; color: #999;">
-                                    <i class="fas fa-info-circle" style="font-size: 2rem; margin-bottom: 0.5rem;"></i>
-                                    <p style="margin: 0; font-size: 0.9rem;">等待買家發起議價</p>
-                                    <p style="margin: 0.5rem 0 0 0; font-size: 0.8rem;">
-                                        收到議價時可直接在訊息中回覆
-                                    </p>
+                                <div style="text-align: center; padding: 2.5rem 1rem; background: white; border-radius: 10px;">
+                                    <i class="fas fa-info-circle" style="font-size: 3rem; margin-bottom: 0.75rem; color: #999;"></i>
+                                    <p style="margin: 0; font-size: 1.1rem; font-weight: 600; color: #666;">等待買家發起議價</p>
+                                    <p style="margin: 0.5rem 0 0 0; font-size: 0.85rem; color: #999;">收到議價時可直接在訊息中回覆</p>
                                 </div>
                             @endif
                         </div>
@@ -772,7 +969,6 @@
 
                     <!-- 輸入框 -->
                     <div style="border-top: 1px solid #e5e5ea; padding: 1rem; background: white;">
-                        <!-- 圖片預覽區 -->
                         @if($uploadedImage)
                             <div style="padding: 0.75rem; background: #f9f9f9; border-radius: 8px; margin-bottom: 0.75rem; position: relative;">
                                 <div style="display: flex; align-items: center; gap: 0.75rem;">
@@ -783,70 +979,35 @@
                                         <p style="margin: 0; font-size: 0.85rem; color: #333; font-weight: 600;">已選擇圖片</p>
                                         <p style="margin: 0; font-size: 0.75rem; color: #999;">{{ $uploadedImage->getClientOriginalName() }}</p>
                                     </div>
-                                    <button
-                                        wire:click="$set('uploadedImage', null)"
-                                        type="button"
-                                        style="padding: 0.5rem; background: #FF3B30; color: white; border: none; border-radius: 6px; cursor: pointer;">
+                                    <button wire:click="$set('uploadedImage', null)" type="button" style="padding: 0.5rem; background: #FF3B30; color: white; border: none; border-radius: 6px; cursor: pointer;">
                                         <i class="fas fa-times"></i>
                                     </button>
-                                    <button
-                                        wire:click="sendImage"
-                                        type="button"
-                                        style="padding: 0.5rem 1rem; background: #0A84FF; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 0.5rem;">
-                                        <i class="fas fa-paper-plane"></i>
-                                        <span>發送</span>
+                                    <button wire:click="sendImage" type="button" style="padding: 0.5rem 1rem; background: #0A84FF; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">
+                                        <i class="fas fa-paper-plane"></i> 發送
                                     </button>
                                 </div>
                             </div>
                         @endif
 
-                        <!-- 輸入區域 -->
                         <div style="display: flex; gap: 0.5rem; align-items: flex-end;">
                             <div style="flex: 1; display: flex; gap: 0.5rem; align-items: flex-end;">
-                                <textarea
-                                    wire:model="messageContent"
-                                    wire:keydown.enter.prevent="sendMessage"
-                                    class="chat-input"
-                                    placeholder="輸入訊息..."
-                                    rows="1"
-                                    @if($uploadedImage) disabled @endif></textarea>
+                                <textarea wire:model.live.debounce.300ms="messageContent" wire:keydown.enter.prevent="sendMessage" class="chat-input" placeholder="輸入訊息..." rows="1" @if($uploadedImage) disabled @endif></textarea>
                             </div>
                             <div style="display: flex; gap: 0.25rem;">
-                                <!-- 圖片上傳按鈕 -->
-                                <label
-                                    for="imageUpload-{{ $selectedConversation->id }}"
-                                    style="width: 36px; height: 36px; border-radius: 50%; background: none; border: 1px solid #e5e5ea; color: #0A84FF; cursor: pointer; font-size: 1.1rem; display: flex; align-items: center; justify-content: center; transition: all 0.2s;"
-                                    title="上傳圖片">
+                                <label for="imageUpload-{{ $selectedConversation->id }}" style="width: 36px; height: 36px; border-radius: 50%; background: none; border: 1px solid #e5e5ea; color: #0A84FF; cursor: pointer; font-size: 1.1rem; display: flex; align-items: center; justify-content: center;" title="上傳圖片">
                                     <i class="fas fa-image"></i>
                                 </label>
-                                <input
-                                    type="file"
-                                    id="imageUpload-{{ $selectedConversation->id }}"
-                                    wire:model="uploadedImage"
-                                    accept="image/*"
-                                    style="display: none;">
+                                <input type="file" id="imageUpload-{{ $selectedConversation->id }}" wire:model="uploadedImage" accept="image/*" style="display: none;">
 
-                                <!-- 議價按鈕 -->
-                                <button
-                                    wire:click="toggleBargainPanel"
-                                    type="button"
-                                    @if($uploadedImage) disabled @endif
-                                    style="width: 36px; height: 36px; border-radius: 50%; background: {{ $showBargainPanel ? '#0A84FF' : 'none' }}; border: {{ $showBargainPanel ? 'none' : '1px solid #e5e5ea' }}; color: {{ $showBargainPanel ? 'white' : '#0A84FF' }}; cursor: pointer; font-size: 1.1rem; display: flex; align-items: center; justify-content: center; transition: all 0.2s;"
-                                    title="議價模式">
+                                <button wire:click="toggleBargainPanel" type="button" @if($uploadedImage) disabled @endif style="width: 36px; height: 36px; border-radius: 50%; background: {{ $showBargainPanel ? '#0A84FF' : 'none' }}; border: {{ $showBargainPanel ? 'none' : '1px solid #e5e5ea' }}; color: {{ $showBargainPanel ? 'white' : '#0A84FF' }}; cursor: pointer; font-size: 1.1rem;" title="議價模式">
                                     <i class="fas fa-handshake"></i>
                                 </button>
                             </div>
-                            <!-- 發送按鈕 -->
-                            <button
-                                wire:click="sendMessage"
-                                type="button"
-                                @if($uploadedImage) disabled @endif
-                                style="width: 36px; height: 36px; border-radius: 50%; background-color: #0A84FF; border: none; color: white; cursor: pointer; font-size: 1rem; display: flex; align-items: center; justify-content: center; transition: background-color 0.2s;">
+                            <button wire:click="sendMessage" type="button" @if($uploadedImage) disabled @endif style="width: 36px; height: 36px; border-radius: 50%; background-color: #0A84FF; border: none; color: white; cursor: pointer; font-size: 1rem;">
                                 <i class="fas fa-paper-plane"></i>
                             </button>
                         </div>
 
-                        <!-- Loading 指示器 -->
                         <div wire:loading wire:target="uploadedImage" style="margin-top: 0.5rem;">
                             <div style="display: flex; align-items: center; gap: 0.5rem; color: #0A84FF; font-size: 0.85rem;">
                                 <i class="fas fa-spinner fa-spin"></i>
@@ -856,8 +1017,7 @@
                     </div>
                 </div>
             @else
-                <!-- 空狀態 -->
-                <div class="flex items-center justify-center h-full flex-col gap-4 text-gray-400">
+                <div class="flex flex-col items-center justify-center h-full gap-4 text-gray-400">
                     <div style="width: 150px; height: 150px; background: linear-gradient(135deg, #e8f4f8 0%, #f0f8fc 100%); border-radius: 20px; display: flex; align-items: center; justify-content: center;">
                         <i class="fas fa-comments" style="font-size: 3rem; color: #0A84FF; opacity: 0.3;"></i>
                     </div>
@@ -868,9 +1028,8 @@
         </div>
     </div>
 
-    <!-- Loading Indicator -->
-    <div wire:loading.flex style="width:100%;height:100%;position:fixed;top:0;left:0;z-index:9999;;align-items:center;justify-content:center;background-color:rgba(0, 0, 0, 0.5);" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-        <div class="bg-white rounded-lg p-6 flex flex-col items-center justify-center">
+    <div wire:loading.flex wire:target="selectedConversation" style="width:100%;height:100%;position:fixed;top:0;left:0;z-index:9999;align-items:center;justify-content:center;background-color:rgba(0, 0, 0, 0.5);">
+        <div class="flex flex-col items-center justify-center p-6 bg-white rounded-lg">
             <div class="mx-auto">
                 <img src="{{ asset('images/loading.gif') }}" width="150" />
             </div>
@@ -879,48 +1038,27 @@
     </div>
 
     <script>
-        // 強制滾動到底部函數 - 使用多種方法確保成功
         function scrollToBottom() {
             try {
                 const chatMessages = document.getElementById('chatMessages');
                 if (chatMessages) {
-                    // 方法 1: 直接設置 scrollTop
                     const forceScroll = () => {
                         chatMessages.scrollTop = chatMessages.scrollHeight;
                     };
-
-                    // 方法 2: 使用 scrollIntoView 滾動到最後一個元素
                     const scrollToLastMessage = () => {
                         const messages = chatMessages.querySelectorAll('.message-group, .message-system, .bargain-message');
                         if (messages.length > 0) {
                             messages[messages.length - 1].scrollIntoView({ behavior: 'auto', block: 'end' });
                         }
                     };
-
-                    // 立即執行
                     forceScroll();
                     scrollToLastMessage();
-
-                    // 使用 requestAnimationFrame 確保 DOM 已更新
                     requestAnimationFrame(() => {
                         forceScroll();
                         scrollToLastMessage();
-
-                        // 再次確認 - 多次嘗試
-                        setTimeout(() => {
-                            forceScroll();
-                            scrollToLastMessage();
-                        }, 50);
-
-                        setTimeout(() => {
-                            forceScroll();
-                            scrollToLastMessage();
-                        }, 150);
-
-                        setTimeout(() => {
-                            forceScroll();
-                            scrollToLastMessage();
-                        }, 300);
+                        setTimeout(() => { forceScroll(); scrollToLastMessage(); }, 50);
+                        setTimeout(() => { forceScroll(); scrollToLastMessage(); }, 150);
+                        setTimeout(() => { forceScroll(); scrollToLastMessage(); }, 300);
                     });
                 }
             } catch (error) {
@@ -928,13 +1066,11 @@
             }
         }
 
-        // 頁面載入時滾動
         document.addEventListener('DOMContentLoaded', function() {
             setTimeout(scrollToBottom, 100);
             setTimeout(scrollToBottom, 500);
         });
 
-        // Livewire 更新後滾動
         document.addEventListener('livewire:initialized', () => {
             Livewire.hook('morph.updated', () => {
                 scrollToBottom();
@@ -942,11 +1078,11 @@
         });
     </script>
 </div>
+
 @push('scripts')
 <script>
     console.log('=== 🚀 Script Loading ===');
-    
-    // 🔥 等待 Livewire 完全載入
+
     function waitForLivewire(callback) {
         if (typeof window.Livewire !== 'undefined') {
             console.log('✅ Livewire is ready');
@@ -957,16 +1093,13 @@
         }
     }
 
-    // 等待 Livewire 載入後再執行
     waitForLivewire(() => {
         console.log('=== 🎬 Starting initialization ===');
-        
-        // 初始化時滾動
+
         setTimeout(scrollToBottom, 100);
         setTimeout(scrollToBottom, 500);
         setTimeout(scrollToBottom, 1000);
 
-        // 監聽對話選擇事件
         Livewire.on('conversation-selected', () => {
             console.log('📢 Event: conversation-selected');
             setTimeout(scrollToBottom, 100);
@@ -974,7 +1107,6 @@
             setTimeout(scrollToBottom, 500);
         });
 
-        // 訊息發送後滾動
         Livewire.on('message-sent', () => {
             console.log('📢 Event: message-sent');
             setTimeout(scrollToBottom, 50);
@@ -982,7 +1114,6 @@
             setTimeout(scrollToBottom, 400);
         });
 
-        // 收到即時訊息後滾動
         Livewire.on('message-received', () => {
             console.log('📢 Event: message-received');
             setTimeout(scrollToBottom, 50);
@@ -990,25 +1121,22 @@
             setTimeout(scrollToBottom, 400);
         });
 
-        // 監聽 Livewire 更新
         Livewire.hook('morph.updated', ({ el, component }) => {
             scrollToBottom();
             setTimeout(scrollToBottom, 100);
         });
 
-        // 🔥 WebSocket 即時通訊設置
         console.log('=== 🌐 Setting up WebSocket ===');
-        
+
         const userId = {{ auth()->id() }};
         console.log('👤 Current User ID:', userId);
-        
+
         let currentConversationId = @js($selectedConversationId);
         console.log('💬 Current Conversation ID:', currentConversationId);
-        
+
         let conversationChannel = null;
         let userChannel = null;
 
-        // 🔥 使用 Alpine.js 的方式獲取 Livewire 組件
         function callLivewireMethod(method, ...params) {
             const component = Livewire.find(
                 document.querySelector('[wire\\:id]').getAttribute('wire:id')
@@ -1023,7 +1151,6 @@
             return component.get(property);
         }
 
-        // 等待 Echo 完全初始化
         function waitForEcho(callback) {
             if (typeof window.Echo !== 'undefined' && window.Echo.connector) {
                 console.log('✅ Echo is ready');
@@ -1034,29 +1161,21 @@
             }
         }
 
-        // 初始化 WebSocket 監聽
         waitForEcho(() => {
             console.log('=== 🎧 Starting WebSocket Listeners ===');
-            
-            // 檢查當前連接狀態
+
             console.log('🔌 Socket ID:', window.Echo.socketId());
             console.log('🔌 Connection state:', window.Echo.connector.pusher.connection.state);
 
-            // 訂閱用戶私有頻道
             try {
                 console.log('📡 Subscribing to user channel: user.' + userId);
-                
+
                 userChannel = window.Echo.private(`user.${userId}`)
                     .subscribed(() => {
                         console.log('✅ [User Channel] Successfully subscribed to: user.' + userId);
                     })
                     .listen('.conversation.updated', (e) => {
-                        console.log('📨 [User Channel] ========== EVENT RECEIVED ==========');
                         console.log('📨 [User Channel] Event: conversation.updated');
-                        console.log('📨 [User Channel] Data:', e);
-                        console.log('📨 [User Channel] =====================================');
-                        
-                        // 呼叫 Livewire 方法
                         console.log('🔄 [User Channel] Calling refreshConversations...');
                         try {
                             callLivewireMethod('refreshConversations');
@@ -1071,7 +1190,6 @@
                 console.error('❌ Failed to subscribe to user channel:', error);
             }
 
-            // 訂閱對話頻道的函數
             function subscribeToConversation(conversationId) {
                 if (!conversationId) {
                     console.warn('⚠️ subscribeToConversation called with no conversationId');
@@ -1081,7 +1199,6 @@
                 console.log('=== 📡 Subscribing to Conversation ===');
                 console.log('Conversation ID:', conversationId);
 
-                // 取消訂閱舊頻道
                 if (conversationChannel && currentConversationId) {
                     const oldChannelName = `private-conversation.${currentConversationId}`;
                     console.log('❌ Leaving old channel:', oldChannelName);
@@ -1089,95 +1206,54 @@
                     conversationChannel = null;
                 }
 
-                // 訂閱新對話頻道
                 const channelName = `conversation.${conversationId}`;
                 console.log('📡 Attempting to subscribe to:', channelName);
-                
+
                 try {
                     conversationChannel = window.Echo.private(channelName)
                         .subscribed(() => {
-                            console.log('✅ ========== CHANNEL SUBSCRIBED ==========');
                             console.log('✅ Successfully subscribed to:', channelName);
-                            console.log('✅ Full channel name:', `private-${channelName}`);
-                            console.log('✅ Socket ID:', window.Echo.socketId());
-                            console.log('✅ ==========================================');
                         })
                         .listen('.message.sent', (e) => {
-                            console.log('📨 ========== MESSAGE RECEIVED ==========');
-                            console.log('📨 Channel:', channelName);
-                            console.log('📨 Event: .message.sent');
-                            console.log('📨 Full event data:', e);
-                            console.log('📨 Message:', e.message);
-                            console.log('📨 Sender ID:', e.message?.sender_id);
-                            console.log('📨 Current User ID:', userId);
-                            console.log('📨 Is from other user:', e.message?.sender_id !== userId);
-                            console.log('📨 ========================================');
-                            
-                            // 呼叫 Livewire 方法
+                            console.log('📨 MESSAGE RECEIVED on', channelName);
                             console.log('🔄 Calling refreshMessages...');
                             try {
-                                callLivewireMethod('refreshMessages')
-                                    .then(() => {
-                                        console.log('✅ refreshMessages completed');
-                                    })
-                                    .catch((error) => {
-                                        console.error('❌ refreshMessages failed:', error);
-                                    });
-                                
-                                // 觸發滾動事件
-                                console.log('📜 Dispatching message-received event');
+                                callLivewireMethod('refreshMessages');
                                 Livewire.dispatch('message-received');
                             } catch (error) {
                                 console.error('❌ Failed to call refreshMessages:', error);
                             }
-                            
-                            // 播放提示音
                             playNotificationSound();
                         })
                         .error((error) => {
-                            console.error('❌ ========== CHANNEL ERROR ==========');
-                            console.error('❌ Channel:', channelName);
-                            console.error('❌ Error:', error);
-                            console.error('❌ Error type:', error?.type);
-                            console.error('❌ Error data:', error?.error);
-                            console.error('❌ ====================================');
+                            console.error('❌ Channel error:', error);
                         });
 
                     currentConversationId = conversationId;
-                    console.log('✅ Channel object created, waiting for subscription confirmation...');
-                    
+                    console.log('✅ Channel object created');
+
                 } catch (error) {
                     console.error('❌ Exception while subscribing:', error);
                 }
             }
 
-            // 初始化時訂閱（如果有選中的對話）
             if (currentConversationId) {
                 console.log('🎬 Initial subscription on page load');
                 setTimeout(() => {
                     subscribeToConversation(currentConversationId);
                 }, 500);
-            } else {
-                console.log('⚠️ No conversation selected on page load');
             }
 
-            // 監聽對話變更
             Livewire.on('conversation-selected', () => {
                 console.log('=== 🔔 Conversation Selected Event ===');
-                // 等待 Livewire 更新完成
                 setTimeout(() => {
                     try {
                         const newConversationId = getLivewireProperty('selectedConversationId');
-                        console.log('New conversation ID from Livewire:', newConversationId);
-                        console.log('Current conversation ID:', currentConversationId);
-                        
+                        console.log('New conversation ID:', newConversationId);
+
                         if (newConversationId && newConversationId !== currentConversationId) {
                             console.log('🔀 Switching to new conversation');
                             subscribeToConversation(newConversationId);
-                        } else if (newConversationId === currentConversationId) {
-                            console.log('ℹ️ Same conversation, no need to resubscribe');
-                        } else {
-                            console.warn('⚠️ Invalid conversation ID');
                         }
                     } catch (error) {
                         console.error('❌ Failed to get conversation ID:', error);
@@ -1185,99 +1261,17 @@
                 }, 200);
             });
 
-            // 提示音功能
             function playNotificationSound() {
                 try {
                     const audio = new Audio('/sounds/notification.mp3');
                     audio.volume = 0.3;
-                    audio.play().catch(e => {
-                        console.log('🔇 Cannot play sound:', e.message);
-                    });
+                    audio.play().catch(e => console.log('🔇 Cannot play sound'));
                 } catch (e) {
                     console.log('🔇 Sound not available');
                 }
             }
-
-            // 定期檢查連接狀態
-            setInterval(() => {
-                if (window.Echo && window.Echo.connector) {
-                    const state = window.Echo.connector.pusher.connection.state;
-                    if (state !== 'connected') {
-                        console.warn('⚠️ WebSocket not connected. State:', state);
-                    }
-                }
-            }, 30000); // 每 30 秒檢查一次
         });
 
-        // 🔥 詳細的連接狀態監控
-        setTimeout(() => {
-            console.log('=== 🌐 WebSocket Connection Monitor ===');
-            
-            if (typeof window.Echo !== 'undefined') {
-                console.log('✅ Echo object exists');
-                
-                if (window.Echo.connector && window.Echo.connector.pusher) {
-                    console.log('🔧 Pusher Config:', {
-                        key: window.Echo.connector.pusher.key,
-                        cluster: window.Echo.connector.pusher.config.cluster,
-                        wsHost: window.Echo.connector.pusher.config.wsHost,
-                        wsPort: window.Echo.connector.pusher.config.wsPort,
-                        encrypted: window.Echo.connector.pusher.config.encrypted,
-                    });
-                    
-                    // 監聽所有 Pusher 事件
-                    window.Echo.connector.pusher.connection.bind('connected', () => {
-                        console.log('✅ ========== CONNECTED ==========');
-                        console.log('✅ Socket ID:', window.Echo.socketId());
-                        console.log('✅ ================================');
-                    });
-                    
-                    window.Echo.connector.pusher.connection.bind('disconnected', () => {
-                        console.log('❌ ========== DISCONNECTED ==========');
-                    });
-                    
-                    window.Echo.connector.pusher.connection.bind('error', (err) => {
-                        console.error('❌ ========== CONNECTION ERROR ==========');
-                        console.error('Error:', err);
-                        console.error('========================================');
-                    });
-
-                    window.Echo.connector.pusher.connection.bind('state_change', (states) => {
-                        console.log('🔄 State Change:', states.previous, '→', states.current);
-                    });
-
-                    // 監聽認證
-                    window.Echo.connector.pusher.connection.bind('subscription_succeeded', (data) => {
-                        console.log('✅ ========== SUBSCRIPTION SUCCEEDED ==========');
-                        console.log('Data:', data);
-                        console.log('==============================================');
-                    });
-
-                    window.Echo.connector.pusher.connection.bind('subscription_error', (status, data) => {
-                        console.error('❌ ========== SUBSCRIPTION ERROR ==========');
-                        console.error('Status:', status);
-                        console.error('Data:', data);
-                        console.error('==========================================');
-                    });
-
-                    // 監聽所有傳入的訊息（除錯用）
-                    window.Echo.connector.pusher.bind_global((eventName, data) => {
-                        if (!eventName.startsWith('pusher:')) {
-                            console.log('📥 Global Event:', eventName, data);
-                        }
-                    });
-                    
-                    console.log('✅ All event listeners attached');
-                } else {
-                    console.error('❌ Echo connector not initialized properly');
-                }
-            } else {
-                console.error('❌ Echo is not defined!');
-                console.error('Check if bootstrap.js is loaded');
-            }
-        }, 1000);
-
-        // 通知
         Livewire.on('notify', (event) => {
             const data = event[0];
             const toast = document.createElement('div');
@@ -1292,7 +1286,7 @@
             document.body.appendChild(toast);
             setTimeout(() => toast.remove(), 3000);
         });
-        
+
         console.log('=== ✅ Initialization Complete ===');
     });
 </script>

@@ -34,10 +34,24 @@ class OrderDetailComponent extends Component
 
     public function mount($order)
     {
+        // 🔥 加載訂單和相關的虛寶序號
         $this->order = Order::where('id', $order->id)
             ->where('user_id', auth()->id())
-            ->with(['items.product', 'items.seller'])
+            ->with([
+                'items.product',
+                'items.seller',
+                'productCodes.product' // 🔥 新增：載入序號
+            ])
             ->firstOrFail();
+    }
+
+    // 🔥 新增：獲取按商品分組的序號
+    public function getCodesGroupedByProductProperty()
+    {
+        return $this->order->productCodes()
+            ->with('product')
+            ->get()
+            ->groupBy('product_id');
     }
 
     public function cancelOrder()
@@ -50,28 +64,51 @@ class OrderDetailComponent extends Component
             return;
         }
 
-        $this->order->update([
-            'status' => 'cancelled',
-            'cancelled_by' => auth()->id(),
-            'cancelled_at' => now(),
-        ]);
+        try {
+            \Illuminate\Support\Facades\DB::beginTransaction();
 
-        // 恢復庫存
-        foreach ($this->order->items as $item) {
-            $product = $item->product;
-            if ($product && $product->stock > 0) {
-                $product->increment('stock', $item->quantity);
+            $this->order->update([
+                'status' => 'cancelled',
+                'cancelled_by' => auth()->id(),
+                'cancelled_at' => now(),
+            ]);
+
+            // 🔥 恢復庫存和釋放序號
+            foreach ($this->order->items as $item) {
+                $product = $item->product;
+                if ($product && $product->stock > 0) {
+                    $product->increment('stock', $item->quantity);
+                }
             }
+
+            // 🔥 釋放已分配的序號
+            $this->order->productCodes()->update([
+                'status' => 'available',
+                'order_id' => null,
+                'buyer_id' => null,
+                'sold_at' => null,
+            ]);
+
+            \Illuminate\Support\Facades\DB::commit();
+
+            $this->dispatch('notify', [
+                'type' => 'success',
+                'message' => '訂單已取消，序號已釋放'
+            ]);
+
+            $this->order->refresh();
+
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\DB::rollBack();
+
+            $this->dispatch('notify', [
+                'type' => 'error',
+                'message' => '取消訂單失敗：' . $e->getMessage()
+            ]);
         }
-
-        $this->dispatch('notify', [
-            'type' => 'success',
-            'message' => '訂單已取消'
-        ]);
-
-        $this->order->refresh();
     }
 
+    #[Layout('livewire.layouts.app')]
     public function render()
     {
         return view('livewire.order-detail-component');

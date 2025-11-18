@@ -4,6 +4,7 @@ namespace App\Livewire\Seller;
 
 use App\Models\Product;
 use App\Models\ProductImage;
+use App\Models\ProductCode;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
@@ -28,10 +29,14 @@ class CreateProductManagement extends Component
     public $original_price = '';
     public $stock = 1;
 
+    // 🔥 新增：虛寶序號
+    public $productCodes = ['']; // 序號陣列，預設一個空值
+    public $showCodeInput = true; // 是否顯示序號輸入區
+
     // 圖片
     public $images = [];
     public $newImages = [];
-    public $imagePreviewUrls = []; // 新增：用於存儲預覽 URL
+    public $imagePreviewUrls = [];
 
     // 其他設定
     public $delivery_instructions = '';
@@ -40,7 +45,7 @@ class CreateProductManagement extends Component
     public $delivery_method = 'manual';
     public $auto_publish = true;
 
-    // 選項數據
+    // 選項數據保持不變...
     public $categories = [
         '武器' => '武器',
         '防具' => '防具',
@@ -76,10 +81,74 @@ class CreateProductManagement extends Component
         'both' => '兩者皆可',
     ];
 
+    // 🔥 監聽庫存變化，動態調整序號輸入框數量
+    public function updatedStock($value)
+    {
+        $stock = (int)$value;
+
+        if ($stock <= 0) {
+            // 無限庫存，不需要序號
+            $this->showCodeInput = false;
+            $this->productCodes = [];
+            return;
+        }
+
+        $this->showCodeInput = true;
+        $currentCount = count($this->productCodes);
+
+        if ($stock > $currentCount) {
+            // 增加序號輸入框
+            for ($i = $currentCount; $i < $stock; $i++) {
+                $this->productCodes[] = '';
+            }
+        } elseif ($stock < $currentCount) {
+            // 減少序號輸入框
+            $this->productCodes = array_slice($this->productCodes, 0, $stock);
+        }
+    }
+
+    // 🔥 添加序號
+    public function addCode()
+    {
+        if (count($this->productCodes) < $this->stock) {
+            $this->productCodes[] = '';
+
+            $this->dispatch('notify', [
+                'type' => 'success',
+                'message' => '已新增序號輸入框'
+            ]);
+        } else {
+            $this->dispatch('notify', [
+                'type' => 'warning',
+                'message' => '序號數量已達上限'
+            ]);
+        }
+    }
+
+
+    // 🔥 移除序號
+    public function removeCode($index)
+    {
+        if (count($this->productCodes) > 0) {
+            array_splice($this->productCodes, $index, 1);
+
+            $this->dispatch('notify', [
+                'type' => 'success',
+                'message' => '已移除序號'
+            ]);
+        } else {
+            $this->dispatch('notify', [
+                'type' => 'error',
+                'message' => '至少需要保留一個序號'
+            ]);
+        }
+    }
+
+
     // 驗證規則
     protected function rules()
     {
-        return [
+        $rules = [
             'name' => 'required|min:3|max:255',
             'category' => 'required',
             'game_type' => 'required',
@@ -89,16 +158,36 @@ class CreateProductManagement extends Component
             'original_price' => 'nullable|numeric|min:1',
             'stock' => 'required|integer|min:0',
             'images' => 'nullable|array|max:5',
-            'images.*' => 'nullable|image|max:5120', // 5MB
+            'images.*' => 'nullable|image|max:5120',
             'delivery_instructions' => 'nullable|string',
             'tags' => 'nullable|string',
             'is_negotiable' => 'boolean',
             'delivery_method' => 'required|in:instant,manual,both',
             'auto_publish' => 'boolean',
         ];
+
+        // 🔥 如果需要序號，添加序號驗證
+        if ($this->showCodeInput && $this->stock > 0) {
+            $rules['productCodes'] = 'required|array';
+            $rules['productCodes.*'] = [
+                'required',
+                'string',
+                'min:3',
+                'max:255',
+                'distinct', // 🔥 確保陣列內不重複
+                function ($attribute, $value, $fail) {
+                    // 🔥 檢查資料庫中是否已存在
+                    if (ProductCode::where('code', trim($value))->exists()) {
+                        $fail("序號 {$value} 已存在於系統中");
+                    }
+                },
+            ];
+        }
+
+        return $rules;
     }
 
-    // 自訂錯誤訊息
+
     protected function messages()
     {
         return [
@@ -108,39 +197,36 @@ class CreateProductManagement extends Component
             'category.required' => '請選擇商品類別',
             'game_type.required' => '請選擇遊戲類型',
             'rarity.required' => '請選擇稀有度',
-            'rarity.in' => '稀有度選項無效',
             'description.required' => '商品描述為必填項目',
-            'description.min' => '商品描述至少需要 10 個字元',
             'price.required' => '售價為必填項目',
             'price.numeric' => '售價必須為數字',
             'price.min' => '售價至少為 1',
-            'original_price.numeric' => '原價必須為數字',
-            'original_price.min' => '原價至少為 1',
             'stock.required' => '庫存數量為必填項目',
             'stock.integer' => '庫存數量必須為整數',
             'stock.min' => '庫存數量不可為負數',
-            'images.array' => '圖片格式錯誤',
+
+            // 🔥 序號驗證訊息
+            'productCodes.required' => '請輸入虛寶序號',
+            'productCodes.array' => '序號格式錯誤',
+            'productCodes.*.required' => '序號 :position 不能為空',
+            'productCodes.*.string' => '序號 :position 必須為文字',
+            'productCodes.*.distinct' => '序號 :position 重複，每個序號必須唯一',
+            'productCodes.*.min' => '序號 :position 至少需要 3 個字元',
+            'productCodes.*.max' => '序號 :position 最多 255 個字元',
+
             'images.max' => '最多只能上傳 5 張圖片',
-            'images.*.image' => '檔案必須為圖片格式',
-            'images.*.max' => '圖片大小不可超過 5MB',
             'delivery_method.required' => '請選擇交付方式',
-            'delivery_method.in' => '交付方式選項無效',
         ];
     }
 
-    // 修改：處理新圖片上傳
+    // 圖片相關方法保持不變...
     public function updatedNewImages()
     {
-        // 驗證新圖片
         $this->validate([
             'newImages' => 'nullable|array',
             'newImages.*' => 'image|max:5120',
-        ], [
-            'newImages.*.image' => '檔案必須為圖片格式',
-            'newImages.*.max' => '圖片大小不可超過 5MB',
         ]);
 
-        // 檢查總數量限制
         $totalImages = count($this->images) + count($this->newImages);
         if ($totalImages > 5) {
             $this->dispatch('notify', [
@@ -151,58 +237,29 @@ class CreateProductManagement extends Component
             return;
         }
 
-        // 將新圖片保存到 public disk 用於預覽
         foreach ($this->newImages as $newImage) {
             try {
-                // 保存到臨時目錄用於預覽
                 $tempPath = $newImage->store('temp-products', 'public');
-
-                // 將圖片和預覽路徑都保存
                 $this->images[] = $newImage;
                 $this->imagePreviewUrls[] = $tempPath;
-
-                Log::info('圖片已保存到臨時目錄', ['path' => $tempPath]);
-
             } catch (\Exception $e) {
                 Log::error('圖片上傳失敗', ['error' => $e->getMessage()]);
-                $this->dispatch('notify', [
-                    'type' => 'error',
-                    'message' => '圖片上傳失敗：' . $e->getMessage()
-                ]);
             }
         }
 
-        // 清空暫存
         $this->newImages = [];
-
-        $this->dispatch('notify', [
-            'type' => 'success',
-            'message' => '圖片已新增'
-        ]);
     }
 
     public function removeImage($index)
     {
         try {
-            // 刪除臨時預覽文件
             if (isset($this->imagePreviewUrls[$index])) {
                 Storage::disk('public')->delete($this->imagePreviewUrls[$index]);
-                Log::info('已刪除臨時預覽圖片', ['path' => $this->imagePreviewUrls[$index]]);
                 array_splice($this->imagePreviewUrls, $index, 1);
             }
-
             array_splice($this->images, $index, 1);
-
-            $this->dispatch('notify', [
-                'type' => 'success',
-                'message' => '圖片已移除'
-            ]);
         } catch (\Exception $e) {
             Log::error('移除圖片失敗', ['error' => $e->getMessage()]);
-            $this->dispatch('notify', [
-                'type' => 'error',
-                'message' => '移除失敗：' . $e->getMessage()
-            ]);
         }
     }
 
@@ -212,14 +269,11 @@ class CreateProductManagement extends Component
 
         try {
             DB::beginTransaction();
-
             $product = $this->createProduct('draft', false);
-
             DB::commit();
 
             session()->flash('success', '商品已儲存為草稿');
             return redirect()->route('seller.products.index');
-
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error('儲存草稿失敗', ['error' => $e->getMessage()]);
@@ -229,9 +283,71 @@ class CreateProductManagement extends Component
             ]);
         }
     }
+    // 🔥 新增：檢查是否有空序號
+    public function getHasEmptyCodesProperty()
+    {
+        foreach ($this->productCodes as $code) {
+            if (empty(trim($code))) {
+                return true;
+            }
+        }
+        return false;
+    }
 
+    // 🔥 新增：獲取已填寫的序號數量
+    public function getFilledCodesCountProperty()
+    {
+        $count = 0;
+        foreach ($this->productCodes as $code) {
+            if (!empty(trim($code))) {
+                $count++;
+            }
+        }
+        return $count;
+    }
     public function save()
     {
+        // 🔥 先檢查序號數量是否正確
+        if ($this->showCodeInput && $this->stock > 0) {
+            if (count($this->productCodes) !== (int)$this->stock) {
+                $this->dispatch('notify', [
+                    'type' => 'error',
+                    'message' => "序號數量不符！需要 {$this->stock} 個，目前只有 " . count($this->productCodes) . " 個"
+                ]);
+                return;
+            }
+
+            // 檢查是否有空序號
+            $emptyCount = 0;
+            foreach ($this->productCodes as $code) {
+                if (empty(trim($code))) {
+                    $emptyCount++;
+                }
+            }
+
+            if ($emptyCount > 0) {
+                $this->dispatch('notify', [
+                    'type' => 'error',
+                    'message' => "發現 {$emptyCount} 個空白序號，請填寫完整"
+                ]);
+                return;
+            }
+
+            // 🔥 檢查序號是否與資料庫中的序號重複
+            $codesArray = array_filter(array_map('trim', $this->productCodes));
+            if (!empty($codesArray)) {
+                $duplicateCodes = ProductCode::whereIn('code', $codesArray)->pluck('code')->toArray();
+
+                if (!empty($duplicateCodes)) {
+                    $this->dispatch('notify', [
+                        'type' => 'error',
+                        'message' => '以下序號已存在：' . implode(', ', $duplicateCodes)
+                    ]);
+                    return;
+                }
+            }
+        }
+
         $this->validate();
 
         try {
@@ -247,10 +363,12 @@ class CreateProductManagement extends Component
             $message = $this->auto_publish ? '商品已成功上架' : '商品已儲存';
             session()->flash('success', $message);
             return redirect()->route('seller.products.index');
-
         } catch (\Exception $e) {
             DB::rollBack();
-            Log::error('儲存商品失敗', ['error' => $e->getMessage()]);
+            Log::error('儲存商品失敗', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
             $this->dispatch('notify', [
                 'type' => 'error',
                 'message' => '儲存失敗：' . $e->getMessage()
@@ -284,28 +402,78 @@ class CreateProductManagement extends Component
 
         Log::info('商品已建立', ['product_id' => $product->id]);
 
+        // 🔥 儲存虛寶序號
+        if ($this->showCodeInput && !empty($this->productCodes)) {
+            $this->saveProductCodes($product);
+        }
+
         // 上傳圖片
         if (!empty($this->images)) {
             $this->uploadImages($product);
         }
 
-        // 清理臨時預覽文件
         $this->cleanupTempFiles();
 
         return $product;
+    }
+
+    // 🔥 新增：儲存虛寶序號
+    // 🔥 新增：儲存虛寶序號（加強版）
+    protected function saveProductCodes($product)
+    {
+        $savedCount = 0;
+        $failedCodes = [];
+
+        foreach ($this->productCodes as $code) {
+            $trimmedCode = trim($code);
+            if (!empty($trimmedCode)) {
+                try {
+                    // 🔥 再次檢查是否已存在（雙重保險）
+                    $exists = ProductCode::where('code', $trimmedCode)->exists();
+                    if (!$exists) {
+                        ProductCode::create([
+                            'product_id' => $product->id,
+                            'code' => $trimmedCode,
+                            'status' => 'available',
+                        ]);
+                        $savedCount++;
+
+                        Log::info('虛寶序號已保存', [
+                            'product_id' => $product->id,
+                            'code' => substr($trimmedCode, 0, 5) . '***'
+                        ]);
+                    } else {
+                        $failedCodes[] = $trimmedCode;
+                    }
+                } catch (\Exception $e) {
+                    Log::error('保存虛寶序號失敗', [
+                        'product_id' => $product->id,
+                        'code' => substr($trimmedCode, 0, 5) . '***',
+                        'error' => $e->getMessage()
+                    ]);
+                    $failedCodes[] = $trimmedCode;
+                }
+            }
+        }
+
+        // 🔥 如果有序號保存失敗，拋出異常
+        if (!empty($failedCodes)) {
+            throw new \Exception('以下序號保存失敗或已存在：' . implode(', ', $failedCodes));
+        }
+
+        Log::info('所有虛寶序號已保存', [
+            'product_id' => $product->id,
+            'count' => $savedCount
+        ]);
     }
 
     protected function uploadImages($product)
     {
         foreach ($this->images as $index => $image) {
             try {
-                // 生成唯一檔名
                 $filename = Str::random(40) . '.' . $image->getClientOriginalExtension();
-
-                // 儲存圖片到正式目錄
                 $path = $image->storeAs('products/' . $product->id, $filename, 'public');
 
-                // 建立圖片記錄
                 ProductImage::create([
                     'product_id' => $product->id,
                     'image_path' => $path,
@@ -314,44 +482,22 @@ class CreateProductManagement extends Component
                     'is_primary' => $index === 0,
                     'alt_text' => $product->name,
                 ]);
-
-                Log::info('產品圖片已保存', [
-                    'product_id' => $product->id,
-                    'path' => $path,
-                    'is_primary' => $index === 0
-                ]);
-
             } catch (\Exception $e) {
-                Log::error('上傳產品圖片失敗', [
-                    'product_id' => $product->id,
-                    'index' => $index,
-                    'error' => $e->getMessage()
-                ]);
-                // 繼續處理其他圖片
+                Log::error('上傳產品圖片失敗', ['error' => $e->getMessage()]);
             }
         }
     }
 
-    // 新增：清理臨時文件
     protected function cleanupTempFiles()
     {
         foreach ($this->imagePreviewUrls as $path) {
             try {
                 Storage::disk('public')->delete($path);
-                Log::info('已清理臨時文件', ['path' => $path]);
             } catch (\Exception $e) {
-                Log::warning('清理臨時文件失敗', ['path' => $path, 'error' => $e->getMessage()]);
+                Log::warning('清理臨時文件失敗', ['error' => $e->getMessage()]);
             }
         }
         $this->imagePreviewUrls = [];
-    }
-
-    // 組件銷毀時清理臨時文件
-    public function __destruct()
-    {
-        if (!empty($this->imagePreviewUrls)) {
-            $this->cleanupTempFiles();
-        }
     }
 
     #[Layout('livewire.layouts.seller')]

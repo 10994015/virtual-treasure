@@ -16,7 +16,7 @@
                     </button>
                     <a href="{{ route('seller.products.index') }}"
                         style="background: #3d4045;"
-                        class="inline-flex items-center px-6 py-3 text-white hover:text-gray-800">
+                        class="inline-flex items-center px-6 py-3 text-white rounded-lg hover:bg-gray-700">
                         <i class="mr-2 fas fa-times"></i>取消
                     </a>
                 </div>
@@ -172,17 +172,168 @@
                             </label>
                             <input
                                 type="number"
-                                wire:model="stock"
+                                wire:model.live="stock"
                                 min="0"
                                 class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all @error('stock') border-red-500 @enderror"
                                 placeholder="1">
-                            <p class="mt-1 text-xs text-gray-500">設定為 0 表示無限庫存</p>
                             @error('stock')
                                 <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
                             @enderror
                         </div>
                     </div>
                 </div>
+
+                <!-- 🔥 虛寶序號管理 -->
+                @if($showCodeInput && $stock > 0)
+                    <div class="p-6 bg-white border-2 border-yellow-300 rounded-lg shadow-lg bg-gradient-to-br from-yellow-50 to-orange-50">
+                        <div class="flex items-center justify-between mb-6">
+                            <div class="flex items-center gap-3">
+                                <div class="flex items-center justify-center w-12 h-12 bg-yellow-500 rounded-full">
+                                    <i class="text-xl text-white fas fa-key"></i>
+                                </div>
+                                <div>
+                                    <h2 class="text-xl font-bold text-gray-900">
+                                        虛寶序號填入
+                                    </h2>
+                                    <p class="text-sm text-gray-600">
+                                        需輸入 <span class="font-bold text-yellow-600">{{ $stock }}</span> 個序號
+                                        <span class="ml-2">
+                                            (已填寫 <span class="font-bold {{ $this->filledCodesCount === $stock ? 'text-green-600' : 'text-red-600' }}">{{ $this->filledCodesCount }}</span> 個)
+                                        </span>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <!-- 序號列表 -->
+                        <div class="p-4 mb-6 space-y-3 overflow-y-auto bg-white border border-gray-200 rounded-lg max-h-96">
+                            @if(empty($productCodes))
+                                <div class="py-8 text-center text-gray-400">
+                                    <i class="mb-3 text-4xl fas fa-key"></i>
+                                    <p>尚未輸入任何序號</p>
+                                </div>
+                            @else
+                                @foreach($productCodes as $index => $code)
+                                    <div class="flex items-start gap-3 p-3 transition-all border border-gray-200 rounded-lg bg-gray-50 hover:shadow-md">
+                                        <!-- 序號編號 -->
+                                        <div class="flex items-center justify-center flex-shrink-0 w-10 h-10 font-bold text-white bg-blue-500 rounded-lg">
+                                            {{ $index + 1 }}
+                                        </div>
+
+                                        <!-- 序號輸入框 -->
+                                        <div class="flex-1">
+                                            <input
+                                                type="text"
+                                                wire:model.blur="productCodes.{{ $index }}"
+                                                wire:change="checkCodeDuplicate({{ $index }})"
+                                                wire:keydown.enter.prevent="addCode"
+                                                class="w-full px-4 py-2 text-base font-mono transition-all border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 @error('productCodes.' . $index) border-red-500 @enderror"
+                                                placeholder="輸入虛寶序號 (例如: XXXX-XXXX-XXXX-XXXX)">
+
+                                            @error('productCodes.' . $index)
+                                                <p class="flex items-center gap-1 mt-1 text-sm text-red-500">
+                                                    <i class="fas fa-exclamation-circle"></i>
+                                                    {{ $message }}
+                                                </p>
+                                            @enderror
+
+                                            {{-- 🔥 顯示提示 --}}
+                                            @if(!empty($code) && strlen(trim($code)) >= 3)
+                                                @php
+                                                    $isDuplicate = \App\Models\ProductCode::where('code', trim($code))->exists();
+                                                @endphp
+                                                @if($isDuplicate)
+                                                    <p class="flex items-center gap-1 mt-1 text-sm text-orange-600">
+                                                        <i class="fas fa-exclamation-triangle"></i>
+                                                        此序號已存在於系統中
+                                                    </p>
+                                                @endif
+                                            @endif
+                                        </div>
+
+                                        <!-- 刪除按鈕 -->
+                                        <button
+                                            type="button"
+                                            wire:click="removeCode({{ $index }})"
+                                            class="flex items-center justify-center flex-shrink-0 w-10 h-10 text-red-600 transition-all rounded-lg bg-red-50 hover:bg-red-100 hover:text-red-700"
+                                            title="移除此序號">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
+                                    </div>
+                                @endforeach
+                            @endif
+                        </div>
+
+                       <!-- 新增序號按鈕 -->
+                        @if(count($productCodes) < $stock)
+                            <button
+                                type="button"
+                                wire:click="addCode"
+                                class="w-full px-6 py-3 mb-4 font-semibold text-blue-600 transition-all bg-blue-100 border-2 border-blue-300 border-dashed rounded-lg hover:bg-blue-200 hover:border-blue-400">
+                                <i class="mr-2 fas fa-plus-circle"></i>
+                                新增序號 (還需 {{ $stock - count($productCodes) }} 個)
+                            </button>
+                        @else
+                            @if($this->hasEmptyCodes)
+                                <div class="flex items-center justify-center gap-2 p-3 mb-4 text-red-700 bg-red-100 border-2 border-red-300 rounded-lg">
+                                    <i class="text-xl fas fa-exclamation-triangle"></i>
+                                    <span class="font-semibold">發現空白序號，請填寫完整！</span>
+                                </div>
+                            @else
+                                <div class="flex items-center justify-center gap-2 p-3 mb-4 text-green-700 bg-green-100 border-2 border-green-300 rounded-lg">
+                                    <i class="text-xl fas fa-check-circle"></i>
+                                    <span class="font-semibold">已輸入足夠的序號！</span>
+                                </div>
+                            @endif
+                        @endif
+
+                        <!-- 全局錯誤訊息 -->
+                        @error('productCodes')
+                            <div class="p-3 mb-4 text-red-700 bg-red-100 border-2 border-red-300 rounded-lg">
+                                <i class="mr-2 fas fa-exclamation-triangle"></i>
+                                {{ $message }}
+                            </div>
+                        @enderror
+
+                        <!-- 統計資訊 -->
+                        <div class="grid grid-cols-3 gap-4 mb-6">
+                            <div class="p-4 text-center bg-white border-2 border-gray-200 rounded-lg">
+                                <div class="text-2xl font-bold text-gray-900">{{ $stock }}</div>
+                                <div class="text-sm text-gray-600">需要總數</div>
+                            </div>
+                            <div class="p-4 text-center bg-white border-2 rounded-lg {{ $this->filledCodesCount === $stock ? 'border-green-300 bg-green-50' : 'border-yellow-300 bg-yellow-50' }}">
+                                <div class="text-2xl font-bold {{ $this->filledCodesCount === $stock ? 'text-green-600' : 'text-yellow-600' }}">
+                                    {{ $this->filledCodesCount }}
+                                </div>
+                                <div class="text-sm text-gray-600">已填寫</div>
+                            </div>
+                            <div class="p-4 text-center bg-white border-2 rounded-lg {{ $stock - $this->filledCodesCount === 0 ? 'border-green-300 bg-green-50' : 'border-red-300 bg-red-50' }}">
+                                <div class="text-2xl font-bold {{ $stock - $this->filledCodesCount === 0 ? 'text-green-600' : 'text-red-600' }}">
+                                    {{ $stock - $this->filledCodesCount }}
+                                </div>
+                                <div class="text-sm text-gray-600">還需要</div>
+                            </div>
+                        </div>
+
+                        <!-- 注意事項 -->
+                        <div class="p-4 border-2 border-yellow-300 rounded-lg bg-yellow-50">
+                            <div class="flex items-start gap-3">
+                                <i class="mt-1 text-xl text-yellow-600 fas fa-exclamation-triangle"></i>
+                                <div class="flex-1 text-sm text-yellow-800">
+                                    <p class="mb-2 font-semibold text-yellow-900">⚠️ 重要注意事項：</p>
+                                    <ul class="space-y-1 list-disc list-inside">
+                                        <li><strong>每個序號必須唯一</strong>，不可重複</li>
+                                        <li>序號一旦儲存後<strong>無法修改</strong>，請仔細檢查</li>
+                                        <li>序號數量必須<strong>完全符合</strong>庫存數量（{{ $stock }} 個）</li>
+                                        <li>買家購買後會<strong>自動獲得</strong>對應的序號</li>
+                                        <li>請確保序號<strong>有效且未使用過</strong></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @endif
 
                 <!-- Images -->
                 <div class="p-6 bg-white border border-gray-200 rounded-lg shadow-sm">
@@ -361,7 +512,7 @@
                 <div class="flex flex-col justify-end gap-4 pt-8 border-t sm:flex-row">
                     <a href="{{ route('seller.products.index') }}"
                         style="background: #3d4045"
-                       class="px-6 py-3 text-center text-white transition-colors">
+                       class="px-6 py-3 text-center text-white transition-colors rounded-lg hover:bg-gray-700">
                         <i class="mr-2 fas fa-times"></i>取消
                     </a>
                     <button
@@ -394,8 +545,17 @@
 <script>
     $wire.on('notify', (event) => {
         const data = event[0];
-        // 使用你的通知系統
-        alert(data.message);
+        const toast = document.createElement('div');
+
+        let bgColor = 'bg-blue-500';
+        if (data.type === 'success') bgColor = 'bg-green-500';
+        if (data.type === 'error') bgColor = 'bg-red-500';
+        if (data.type === 'warning') bgColor = 'bg-yellow-500';
+
+        toast.className = `fixed top-4 right-4 ${bgColor} text-white px-6 py-3 rounded-lg shadow-lg z-50 animate-fade-in`;
+        toast.innerHTML = `<i class="fas fa-${data.type === 'success' ? 'check' : 'info'}-circle mr-2"></i>${data.message}`;
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 3000);
     });
 </script>
 @endscript

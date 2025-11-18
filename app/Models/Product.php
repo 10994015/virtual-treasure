@@ -119,7 +119,29 @@ class Product extends Model
 
     public function getIsInStockAttribute()
     {
-        return $this->stock > 0 || $this->stock === 0; // 0 表示無限庫存
+         return $this->stock > 0;
+    }
+    public function getStockStatusAttribute()
+    {
+        if ($this->stock === 0) {
+            return '已售完';
+        } elseif ($this->stock > 10) {
+            return '庫存充足';
+        } else {
+            return "僅剩 {$this->stock} 件";
+        }
+    }
+
+    // 🔥 新增：獲取庫存狀態顏色
+    public function getStockStatusColorAttribute()
+    {
+        if ($this->stock === 0) {
+            return 'text-red-600';
+        } elseif ($this->stock > 10) {
+            return 'text-green-600';
+        } else {
+            return 'text-yellow-600';
+        }
     }
 
     public function getHasUnlimitedStockAttribute()
@@ -127,5 +149,25 @@ class Product extends Model
         return $this->stock === 0;
     }
 
+    public function codes()
+    {
+        return $this->hasMany(ProductCode::class);
+    }
 
+    public function availableCodes()
+    {
+        return $this->hasMany(ProductCode::class)->where('status', 'available');
+    }
+
+    // 獲取可用序號數量
+    public function getAvailableCodesCountAttribute()
+    {
+        return $this->codes()->where('status', 'available')->count();
+    }
+
+    // 檢查是否有足夠的序號
+    public function hasEnoughCodes($quantity)
+    {
+        return $this->availableCodes()->count() >= $quantity;
+    }
 }

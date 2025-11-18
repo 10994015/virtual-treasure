@@ -30,7 +30,7 @@ class LocalFAQService
 4. 加入購物車或立即購買
 
 需要特定商品推薦嗎？歡迎告訴我您玩的遊戲！',
-                
+
                 'how_to_buy' => '💳 **完整購買流程說明**
 
 **步驟一：選擇商品**
@@ -56,7 +56,7 @@ class LocalFAQService
 有任何疑問歡迎隨時詢問！',
             ],
         ],
-        
+
         // 📦 訂單相關
         'orders' => [
             'keywords' => [
@@ -86,7 +86,7 @@ class LocalFAQService
 - ✅ 已完成 - 交易完成
 
 若需查詢特定訂單，請提供訂單編號，我將協助您查詢。',
-                
+
                 'status' => '📊 **訂單狀態詳細說明**
 
 **💰 待付款**
@@ -111,8 +111,8 @@ class LocalFAQService
 如對訂單狀態有疑問，歡迎隨時聯繫客服。',
             ],
         ],
-        
-        // 💳 付款相關  
+
+        // 💳 付款相關
         'payment' => [
             'keywords' => [
                 '付款', '支付', '刷卡', '轉帳', 'ATM', '信用卡', '超商', '繳費',
@@ -150,7 +150,7 @@ class LocalFAQService
 所有交易均採用 SSL 加密技術，確保您的資料安全。
 
 如有付款問題，請告訴我詳細情況，我將協助您處理。',
-                
+
                 'failed' => '⚠️ **付款失敗處理方式**
 
 遇到付款問題時，請依照以下步驟排除：
@@ -179,14 +179,14 @@ class LocalFAQService
 
 **仍無法解決？**
 請聯繫我們的客服團隊：
-📧 Email: support@example.com
+📧 Email: support@cyim.com
 💬 線上客服：週一至週五 09:00-18:00
 📞 客服專線：(02) 1234-5678
 
 我們將盡快協助您完成付款。',
             ],
         ],
-        
+
         // 🔄 退貨退款
         'refund' => [
             'keywords' => [
@@ -229,7 +229,7 @@ class LocalFAQService
 - 審核通過後3-7個工作天內退款
 
 如有任何疑問，歡迎聯繫客服協助。',
-                
+
                 'time' => '⏱️ **退款處理時間說明**
 
 **審核階段：**
@@ -261,7 +261,7 @@ class LocalFAQService
 請聯繫客服，我們將協助您追蹤處理。',
             ],
         ],
-        
+
         // 💬 議價相關
         'bargain' => [
             'keywords' => [
@@ -313,7 +313,7 @@ class LocalFAQService
 歡迎嘗試議價功能，祝您談到好價格！',
             ],
         ],
-        
+
         // 👤 帳號相關
         'account' => [
             'keywords' => [
@@ -351,7 +351,7 @@ class LocalFAQService
 - 使用強度較高的密碼組合
 
 有其他帳號問題嗎？歡迎詢問！',
-                
+
                 'forgot_password' => '🔑 **密碼重設步驟**
 
 請依照以下步驟重設您的密碼：
@@ -386,7 +386,7 @@ class LocalFAQService
 我們將協助您處理。',
             ],
         ],
-        
+
         // 🏪 賣家相關
         'seller' => [
             'keywords' => [
@@ -450,7 +450,7 @@ class LocalFAQService
 有任何問題歡迎詢問，祝您銷售順利！',
             ],
         ],
-        
+
         // 🔧 技術問題
         'technical' => [
             'keywords' => [
@@ -499,7 +499,7 @@ class LocalFAQService
 如上述方法無法解決，請聯繫我們：
 
 📧 **Email支援**
-support@example.com
+support@cyim.com
 請附上問題截圖
 
 💬 **線上客服**
@@ -631,7 +631,7 @@ support@example.com
 
 **已遭遇詐騙？**
 請立即聯繫我們：
-📧 support@example.com
+📧 support@cyim.com
 📞 (02) 1234-5678
 
 越早處理，越能保障您的權益！',
@@ -714,7 +714,7 @@ support@example.com
 我們提供多種客服管道，方便您聯繫：
 
 **📧 Email客服**
-support@example.com
+support@cyim.com
 - 全年無休
 - 24小時內回覆
 - 適合詳細問題說明
@@ -797,7 +797,7 @@ support@example.com
     public function getResponse(string $userMessage): ?array
     {
         $userMessage = mb_strtolower($userMessage);
-        
+
         // 遍歷知識庫
         foreach ($this->knowledgeBase as $category => $data) {
             foreach ($data['keywords'] as $keyword) {
@@ -811,31 +811,31 @@ support@example.com
                 }
             }
         }
-        
+
         return null;
     }
-    
+
     /**
      * 選擇最佳回應
      */
     protected function selectBestResponse(array $responses, string $userMessage): string
     {
         // 怎麼/如何 → 教學類回答
-        if (mb_strpos($userMessage, '怎麼') !== false || 
+        if (mb_strpos($userMessage, '怎麼') !== false ||
             mb_strpos($userMessage, '如何') !== false ||
             mb_strpos($userMessage, '怎樣') !== false) {
             return $responses['how_to_buy'] ?? $responses['how_to'] ?? $responses['default'];
         }
-        
+
         // 狀態/進度查詢
-        if (mb_strpos($userMessage, '狀態') !== false || 
+        if (mb_strpos($userMessage, '狀態') !== false ||
             mb_strpos($userMessage, '進度') !== false ||
             mb_strpos($userMessage, '到哪') !== false) {
             return $responses['status'] ?? $responses['default'];
         }
-        
+
         // 失敗/錯誤處理
-        if (mb_strpos($userMessage, '失敗') !== false || 
+        if (mb_strpos($userMessage, '失敗') !== false ||
             mb_strpos($userMessage, '錯誤') !== false ||
             mb_strpos($userMessage, '不能') !== false ||
             mb_strpos($userMessage, '無法') !== false) {
@@ -854,7 +854,7 @@ support@example.com
             mb_strpos($userMessage, '密碼') !== false) {
             return $responses['forgot_password'] ?? $responses['default'];
         }
-        
+
         return $responses['default'];
     }
 

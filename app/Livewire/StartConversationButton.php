@@ -4,7 +4,9 @@ namespace App\Livewire;
 
 use App\Models\Conversation;
 use App\Models\Message;
+use App\Models\BargainHistory;
 use Livewire\Component;
+use Illuminate\Support\Facades\Log;
 
 class StartConversationButton extends Component
 {
@@ -42,13 +44,53 @@ class StartConversationButton extends Component
             return;
         }
 
-        // 檢查是否已有對話
-        $conversation = Conversation::where('buyer_id', auth()->id())
-            ->where('seller_id', $this->sellerId)
-            ->where('product_id', $this->productId)
-            ->first();
+        try {
+            // 查找所有現有對話
+            $existingConversations = Conversation::where('buyer_id', auth()->id())
+                ->where('seller_id', $this->sellerId)
+                ->where('product_id', $this->productId)
+                ->orderBy('id', 'desc')
+                ->get();
 
-        if (!$conversation) {
+            if ($existingConversations->isNotEmpty()) {
+                foreach ($existingConversations as $conversation) {
+                    // 檢查是否有未完成的議價
+                    $hasIncompleteBargain = BargainHistory::where('conversation_id', $conversation->id)
+                        ->whereNotIn('status', ['completed'])
+                        ->exists();
+
+                    if ($hasIncompleteBargain) {
+                        // 🔥 使用 redirect() 而不是 return
+                        return $this->redirect(route('messages', ['conversationId' => $conversation->id]));
+                    }
+
+                    // 檢查是否有任何議價記錄
+                    $hasAnyBargain = BargainHistory::where('conversation_id', $conversation->id)->exists();
+
+                    if (!$hasAnyBargain) {
+                        return $this->redirect(route('messages', ['conversationId' => $conversation->id]));
+                    }
+                }
+
+                // 所有對話的議價都已完成，創建新對話
+                $conversation = Conversation::create([
+                    'buyer_id' => auth()->id(),
+                    'seller_id' => $this->sellerId,
+                    'product_id' => $this->productId,
+                    'status' => 'active',
+                ]);
+
+                Message::create([
+                    'conversation_id' => $conversation->id,
+                    'sender_id' => auth()->id(),
+                    'type' => 'system',
+                    'content' => '🎉 開始新的議價對話！上次議價已完成，歡迎再次洽談。',
+                ]);
+
+                return $this->redirect(route('messages', ['conversationId' => $conversation->id]));
+            }
+
+            // 沒有現有對話，創建新對話
             $conversation = Conversation::create([
                 'buyer_id' => auth()->id(),
                 'seller_id' => $this->sellerId,
@@ -56,16 +98,24 @@ class StartConversationButton extends Component
                 'status' => 'active',
             ]);
 
-            // 建立歡迎訊息
             Message::create([
                 'conversation_id' => $conversation->id,
                 'sender_id' => $this->sellerId,
                 'type' => 'system',
                 'content' => '您好！感謝您的詢問，有任何問題歡迎提出！',
             ]);
-        }
 
-        return redirect()->route('messages')->with('selectConversation', $conversation->id);
+            return $this->redirect(route('messages', ['conversationId' => $conversation->id]));
+
+        } catch (\Exception $e) {
+            Log::error('Start conversation error: ' . $e->getMessage());
+            Log::error('Stack trace: ' . $e->getTraceAsString());
+
+            $this->dispatch('notify', [
+                'type' => 'error',
+                'message' => '無法建立對話，請稍後再試'
+            ]);
+        }
     }
 
     public function render()

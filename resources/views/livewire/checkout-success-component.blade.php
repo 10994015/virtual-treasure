@@ -98,8 +98,8 @@
                 <div class="mt-8 pt-8 border-t text-center">
                     <p class="text-sm text-gray-500 mb-2">如有任何問題，請聯繫客服</p>
                     <div class="flex items-center justify-center gap-4 text-sm">
-                        <a href="mailto:support@example.com" class="text-blue-600 hover:underline">
-                            <i class="fas fa-envelope mr-1"></i>support@example.com
+                        <a href="mailto:support@cyim.com" class="text-blue-600 hover:underline">
+                            <i class="fas fa-envelope mr-1"></i>support@cyim.com
                         </a>
                         <span class="text-gray-300">|</span>
                         <a href="#" class="text-blue-600 hover:underline">

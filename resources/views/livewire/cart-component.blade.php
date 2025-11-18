@@ -1,134 +1,244 @@
 <div>
     <!-- Header -->
-    <section class="bg-gradient-to-br from-blue-50 to-indigo-100 py-12">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section class="py-12 bg-gradient-to-br from-blue-50 to-indigo-100">
+        <div class="max-w-6xl px-4 mx-auto sm:px-6 lg:px-8">
             <div class="text-center">
-                <h1 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-2">購物車</h1>
+                <h1 class="mb-2 text-3xl font-bold text-gray-900 sm:text-4xl">購物車</h1>
                 <p class="text-lg text-gray-600">確認您的商品並前往結帳</p>
             </div>
         </div>
     </section>
 
     <!-- Cart Content -->
-    <section class="py-12 bg-gray-50 min-h-screen">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section class="min-h-screen py-12 bg-gray-50">
+        <div class="max-w-6xl px-4 mx-auto sm:px-6 lg:px-8">
             @if(empty($cart))
                 <!-- Empty Cart -->
-                <div class="text-center py-16 bg-white rounded-lg shadow-sm border border-gray-200">
-                    <i class="fas fa-shopping-cart text-gray-300 text-6xl mb-4"></i>
-                    <h3 class="text-xl font-semibold text-gray-600 mb-2">購物車是空的</h3>
-                    <p class="text-gray-500 mb-6">快去挑選您喜歡的商品吧！</p>
+                <div class="py-16 text-center bg-white border border-gray-200 rounded-lg shadow-sm">
+                    <i class="mb-4 text-6xl text-gray-300 fas fa-shopping-cart"></i>
+                    <h3 class="mb-2 text-xl font-semibold text-gray-600">購物車是空的</h3>
+                    <p class="mb-6 text-gray-500">快去挑選您喜歡的商品吧！</p>
                     <a
                         href="{{ route('products.index') }}"
-                        class="inline-block px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors">
-                        <i class="fas fa-shopping-bag mr-2"></i>前往商城
+                        class="inline-block px-6 py-3 text-white transition-colors bg-blue-500 rounded-lg hover:bg-blue-600">
+                        <i class="mr-2 fas fa-shopping-bag"></i>前往商城
                     </a>
                 </div>
             @else
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div class="grid grid-cols-1 gap-8 lg:grid-cols-3">
                     <!-- Cart Items -->
                     <div class="lg:col-span-2">
-                        <div class="bg-white rounded-lg shadow-sm border border-gray-200">
-                            <!-- Cart Header -->
-                            <div class="p-4 border-b border-gray-200 flex justify-between items-center">
-                                <h2 class="font-semibold text-gray-900">
-                                    購物車商品 ({{ $cartCount }})
-                                </h2>
-                                <button
-                                    wire:click="clearCart"
-                                    wire:confirm="確定要清空購物車嗎？"
-                                    class="text-sm text-red-500 hover:text-red-700 transition-colors">
-                                    <i class="fas fa-trash mr-1"></i>清空購物車
-                                </button>
-                            </div>
+                        {{-- 🔥 區分議價商品和一般商品 --}}
+                        @php
+                            $bargainItems = collect($cart)->filter(fn($item) =>
+                                isset($item['is_bargain']) && $item['is_bargain']
+                            );
+                            $normalItems = collect($cart)->filter(fn($item) =>
+                                !isset($item['is_bargain']) || !$item['is_bargain']
+                            );
+                        @endphp
 
-                            <!-- Cart Items List -->
-                            <div class="divide-y">
-                                @foreach($cart as $index => $item)
-                                    <div class="p-4 hover:bg-gray-50 transition-colors">
-                                        <div class="flex gap-4">
-                                            <!-- Product Image -->
-                                            <div class="w-24 h-24 flex-shrink-0 bg-gray-100 rounded-lg overflow-hidden">
-                                                @if($item['image'])
-                                                    <img
-                                                        src="{{ $item['image'] }}"
-                                                        alt="{{ $item['name'] }}"
-                                                        class="w-full h-full object-cover">
-                                                @else
-                                                    <div class="w-full h-full flex items-center justify-center">
-                                                        <i class="fas fa-image text-gray-400 text-3xl"></i>
-                                                    </div>
-                                                @endif
-                                            </div>
+                        {{-- 🔥 議價商品區塊 --}}
+                        @if($bargainItems->isNotEmpty())
+                            <div class="p-4 mb-6 border-2 border-orange-300 rounded-lg shadow-sm bg-gradient-to-r from-orange-50 to-yellow-50">
+                                <h3 class="flex items-center mb-4 text-lg font-bold text-orange-800">
+                                    <i class="mr-2 fas fa-handshake"></i>
+                                    議價成交商品
+                                </h3>
 
-                                            <!-- Product Info -->
-                                            <div class="flex-1 min-w-0">
-                                                <div class="flex justify-between items-start mb-2">
-                                                    <h3 class="font-semibold text-gray-900">
-                                                        {{ $item['name'] }}
-                                                    </h3>
-                                                    <button
-                                                        wire:click="removeFromCart({{ $index }})"
-                                                        class="text-red-500 hover:text-red-700 transition-colors ml-4">
-                                                        <i class="fas fa-times"></i>
-                                                    </button>
+                                <div class="space-y-4">
+                                    @foreach($bargainItems as $index => $item)
+                                        @php
+                                            $actualIndex = array_search($item, $cart);
+                                        @endphp
+                                        <div class="p-4 transition-all bg-white border border-orange-200 rounded-lg hover:shadow-md">
+                                            <div class="flex gap-4">
+                                                <!-- Product Image -->
+                                                <div class="flex-shrink-0 w-24 h-24 overflow-hidden bg-gray-100 rounded-lg">
+                                                    @if($item['image'])
+                                                        <img
+                                                            src="{{ $item['image'] }}"
+                                                            alt="{{ $item['name'] }}"
+                                                            class="object-cover w-full h-full">
+                                                    @else
+                                                        <div class="flex items-center justify-center w-full h-full">
+                                                            <i class="text-3xl text-gray-400 fas fa-image"></i>
+                                                        </div>
+                                                    @endif
                                                 </div>
 
-                                                <p class="text-lg font-bold text-blue-600 mb-3">
-                                                    NT$ {{ number_format($item['price']) }}
-                                                </p>
-
-                                                <!-- Quantity Controls -->
-                                                <div class="flex items-center gap-4">
-                                                    <div class="flex items-center border border-gray-300 rounded-lg">
+                                                <!-- Product Info -->
+                                                <div class="flex-1 min-w-0">
+                                                    <div class="flex items-start justify-between mb-2">
+                                                        <div>
+                                                            <h3 class="font-semibold text-gray-900">
+                                                                {{ $item['name'] }}
+                                                            </h3>
+                                                            <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gradient-to-r from-orange-100 to-yellow-100 text-orange-800 border border-orange-300 mt-1">
+                                                                <i class="mr-1 fas fa-handshake"></i>
+                                                                議價成交
+                                                            </span>
+                                                        </div>
                                                         <button
-                                                            wire:click="decreaseQuantity({{ $index }})"
-                                                            class="px-3 py-2 hover:bg-gray-100 transition-colors">
-                                                            <i class="fas fa-minus text-sm"></i>
-                                                        </button>
-                                                        <input
-                                                            type="number"
-                                                            wire:change="updateQuantity({{ $index }}, $event.target.value)"
-                                                            value="{{ $item['quantity'] }}"
-                                                            min="1"
-                                                            max="{{ $item['stock'] }}"
-                                                            class="w-16 text-center border-x border-gray-300 py-2 focus:outline-none">
-                                                        <button
-                                                            wire:click="increaseQuantity({{ $index }})"
-                                                            class="px-3 py-2 hover:bg-gray-100 transition-colors">
-                                                            <i class="fas fa-plus text-sm"></i>
+                                                            wire:click="removeFromCart({{ $actualIndex }})"
+                                                            class="ml-4 text-red-500 transition-colors hover:text-red-700">
+                                                            <i class="fas fa-times"></i>
                                                         </button>
                                                     </div>
 
-                                                    <div class="text-sm text-gray-500">
-                                                        @if($item['stock'] > 0)
-                                                            庫存：{{ $item['stock'] }}
-                                                        @else
-                                                            無限庫存
-                                                        @endif
+                                                    <!-- 🔥 議價價格顯示 -->
+                                                    <div class="mb-3">
+                                                        <p class="text-lg font-bold text-orange-600">
+                                                            NT$ {{ number_format($item['price']) }} / 個
+                                                        </p>
                                                     </div>
-                                                </div>
 
-                                                <!-- Subtotal -->
-                                                <div class="mt-3 text-right">
-                                                    <span class="text-sm text-gray-600">小計：</span>
-                                                    <span class="text-lg font-bold text-gray-900">
-                                                        NT$ {{ number_format($item['price'] * $item['quantity']) }}
-                                                    </span>
+                                                    <!-- 🔥 數量鎖定顯示 -->
+                                                    <div class="flex items-center gap-4 p-3 border border-orange-200 rounded-lg bg-orange-50">
+                                                        <div class="flex items-center gap-2">
+                                                            <i class="text-orange-600 fas fa-lock"></i>
+                                                            <span class="text-2xl font-bold text-orange-700">
+                                                                {{ $item['quantity'] }} 個
+                                                            </span>
+                                                        </div>
+                                                        <span class="px-2 py-1 text-xs font-medium text-orange-700 bg-orange-100 rounded">
+                                                            議價數量已鎖定
+                                                        </span>
+                                                    </div>
+
+                                                    <!-- Subtotal -->
+                                                    <div class="mt-3 text-right">
+                                                        <span class="text-sm text-gray-600">小計：</span>
+                                                        <span class="text-xl font-bold text-orange-600">
+                                                            NT$ {{ number_format($item['price'] * $item['quantity']) }}
+                                                        </span>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-                                @endforeach
+                                    @endforeach
+                                </div>
                             </div>
-                        </div>
+                        @endif
+
+                        {{-- 🔥 一般商品區塊 --}}
+                        @if($normalItems->isNotEmpty())
+                            <div class="bg-white border border-gray-200 rounded-lg shadow-sm">
+                                <!-- Cart Header -->
+                                <div class="flex items-center justify-between p-4 border-b border-gray-200">
+                                    <h2 class="font-semibold text-gray-900">
+                                        <i class="mr-2 fas fa-shopping-cart"></i>
+                                        一般商品 ({{ $normalItems->count() }})
+                                    </h2>
+                                    <button
+                                        wire:click="clearCart"
+                                        wire:confirm="確定要清空購物車嗎？"
+                                        class="text-sm text-red-500 transition-colors hover:text-red-700">
+                                        <i class="mr-1 fas fa-trash"></i>清空購物車
+                                    </button>
+                                </div>
+
+                                <!-- Cart Items List -->
+                                <div class="divide-y">
+                                    @foreach($normalItems as $index => $item)
+                                        @php
+                                            $actualIndex = array_search($item, $cart);
+                                        @endphp
+                                        <div class="p-4 transition-colors hover:bg-gray-50">
+                                            <div class="flex gap-4">
+                                                <!-- Product Image -->
+                                                <div class="flex-shrink-0 w-24 h-24 overflow-hidden bg-gray-100 rounded-lg">
+                                                    @if($item['image'])
+                                                        <img
+                                                            src="{{ $item['image'] }}"
+                                                            alt="{{ $item['name'] }}"
+                                                            class="object-cover w-full h-full">
+                                                    @else
+                                                        <div class="flex items-center justify-center w-full h-full">
+                                                            <i class="text-3xl text-gray-400 fas fa-image"></i>
+                                                        </div>
+                                                    @endif
+                                                </div>
+
+                                                <!-- Product Info -->
+                                                <div class="flex-1 min-w-0">
+                                                    <div class="flex items-start justify-between mb-2">
+                                                        <h3 class="font-semibold text-gray-900">
+                                                            {{ $item['name'] }}
+                                                        </h3>
+                                                        <button
+                                                            wire:click="removeFromCart({{ $actualIndex }})"
+                                                            class="ml-4 text-red-500 transition-colors hover:text-red-700">
+                                                            <i class="fas fa-times"></i>
+                                                        </button>
+                                                    </div>
+
+                                                    <p class="mb-3 text-lg font-bold text-blue-600">
+                                                        NT$ {{ number_format($item['price']) }}
+                                                    </p>
+
+                                                    <!-- Quantity Controls -->
+                                                    <div class="flex items-center gap-4">
+                                                        <div class="flex items-center border border-gray-300 rounded-lg">
+                                                            <button
+                                                                wire:click="decreaseQuantity({{ $actualIndex }})"
+                                                                class="px-3 py-2 transition-colors hover:bg-gray-100">
+                                                                <i class="text-sm fas fa-minus"></i>
+                                                            </button>
+                                                            <input
+                                                                type="number"
+                                                                wire:change="updateQuantity({{ $actualIndex }}, $event.target.value)"
+                                                                value="{{ $item['quantity'] }}"
+                                                                min="1"
+                                                                max="{{ $item['stock'] }}"
+                                                                class="w-16 py-2 text-center border-gray-300 border-x focus:outline-none">
+                                                            <button
+                                                                wire:click="increaseQuantity({{ $actualIndex }})"
+                                                                class="px-3 py-2 transition-colors hover:bg-gray-100">
+                                                                <i class="text-sm fas fa-plus"></i>
+                                                            </button>
+                                                        </div>
+
+                                                        <div class="text-sm text-gray-500">
+                                                            @if($item['stock'] > 0)
+                                                                庫存：{{ $item['stock'] }}
+                                                            @else
+                                                                無限庫存
+                                                            @endif
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- Subtotal -->
+                                                    <div class="mt-3 text-right">
+                                                        <span class="text-sm text-gray-600">小計：</span>
+                                                        <span class="text-lg font-bold text-gray-900">
+                                                            NT$ {{ number_format($item['price'] * $item['quantity']) }}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
+                        @else
+                            {{-- 只有議價商品時的說明 --}}
+                            @if($bargainItems->isNotEmpty())
+                                <div class="p-4 text-center bg-white border border-gray-200 rounded-lg">
+                                    <p class="text-gray-600">
+                                        <i class="mr-2 fas fa-info-circle"></i>
+                                        您也可以繼續購買其他商品
+                                    </p>
+                                </div>
+                            @endif
+                        @endif
 
                         <!-- Continue Shopping -->
                         <div class="mt-4">
                             <a
                                 href="{{ route('products.index') }}"
-                                class="inline-flex items-center text-blue-600 hover:text-blue-700 transition-colors">
-                                <i class="fas fa-arrow-left mr-2"></i>
+                                class="inline-flex items-center text-blue-600 transition-colors hover:text-blue-700">
+                                <i class="mr-2 fas fa-arrow-left"></i>
                                 繼續購物
                             </a>
                         </div>
@@ -136,7 +246,7 @@
 
                     <!-- Order Summary -->
                     <div class="lg:col-span-1">
-                        <div class="bg-white rounded-lg shadow-sm border border-gray-200 sticky top-4">
+                        <div class="sticky bg-white border border-gray-200 rounded-lg shadow-sm top-4">
                             <div class="p-4 border-b border-gray-200">
                                 <h2 class="font-semibold text-gray-900">訂單摘要</h2>
                             </div>
@@ -147,9 +257,8 @@
                                     <span class="font-medium">NT$ {{ number_format($this->subtotal) }}</span>
                                 </div>
 
-
-                                <div class="border-t pt-3">
-                                    <div class="flex justify-between items-center">
+                                <div class="pt-3 border-t">
+                                    <div class="flex items-center justify-between">
                                         <span class="text-lg font-semibold text-gray-900">總計</span>
                                         <span class="text-2xl font-bold text-blue-600">
                                             NT$ {{ number_format($this->total) }}
@@ -159,46 +268,52 @@
 
                                 <button
                                     onclick="window.location='{{ route('checkout') }}'"
-                                    class="w-full px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors font-semibold text-lg">
-                                    <i class="fas fa-lock mr-2"></i>前往結帳
+                                    class="w-full px-6 py-3 text-lg font-semibold text-white transition-colors bg-blue-500 rounded-lg hover:bg-blue-600">
+                                    <i class="mr-2 fas fa-lock"></i>前往結帳
                                 </button>
 
                                 <!-- Security Badge -->
-                                <div class="text-center text-sm text-gray-500 pt-3 border-t">
-                                    <i class="fas fa-shield-alt mr-1"></i>
+                                <div class="pt-3 text-sm text-center text-gray-500 border-t">
+                                    <i class="mr-1 fas fa-shield-alt"></i>
                                     安全加密交易
                                 </div>
                             </div>
                         </div>
 
                         <!-- Virtual Items Info -->
-                        <div class="mt-4 bg-blue-50 border border-blue-200 rounded-lg p-4">
-                            <h3 class="font-medium text-blue-900 mb-2 flex items-center">
-                                <i class="fas fa-info-circle mr-2"></i>
+                        <div class="p-4 mt-4 border border-blue-200 rounded-lg bg-blue-50">
+                            <h3 class="flex items-center mb-2 font-medium text-blue-900">
+                                <i class="mr-2 fas fa-info-circle"></i>
                                 虛寶交易說明
                             </h3>
-                            <ul class="text-sm text-blue-800 space-y-1">
+                            <ul class="space-y-1 text-sm text-blue-800">
                                 <li>• 虛寶商品無需實體配送，免運費</li>
-                                <li>• 完成付款後，賣家將透過遊戲內交易或提供兌換碼</li>
+                                <li>• 完成付款後，賣家將提供兌換碼</li>
                                 <li>• 請確保您的遊戲ID正確</li>
+                                {{-- 🔥 議價商品說明 --}}
+                                @if($bargainItems->isNotEmpty())
+                                    <li class="font-medium text-orange-700">
+                                        • 購物車中包含 {{ $bargainItems->count() }} 件議價成交商品
+                                    </li>
+                                @endif
                             </ul>
                         </div>
 
                         <!-- Payment Methods -->
-                        <div class="mt-4 bg-white rounded-lg shadow-sm border border-gray-200 p-4">
-                            <h3 class="font-medium text-gray-900 mb-3">支援付款方式</h3>
+                        <div class="p-4 mt-4 bg-white border border-gray-200 rounded-lg shadow-sm">
+                            <h3 class="mb-3 font-medium text-gray-900">支援付款方式</h3>
                             <div class="flex flex-wrap gap-2">
-                                <div class="px-3 py-2 bg-gray-50 rounded border border-gray-200 text-sm">
-                                    <i class="fab fa-cc-visa text-blue-600"></i> VISA
+                                <div class="px-3 py-2 text-sm border border-gray-200 rounded bg-gray-50">
+                                    <i class="text-blue-600 fab fa-cc-visa"></i> VISA
                                 </div>
-                                <div class="px-3 py-2 bg-gray-50 rounded border border-gray-200 text-sm">
-                                    <i class="fab fa-cc-mastercard text-red-600"></i> Mastercard
+                                <div class="px-3 py-2 text-sm border border-gray-200 rounded bg-gray-50">
+                                    <i class="text-red-600 fab fa-cc-mastercard"></i> Mastercard
                                 </div>
-                                <div class="px-3 py-2 bg-gray-50 rounded border border-gray-200 text-sm">
-                                    <i class="fas fa-university text-green-600"></i> ATM
+                                <div class="px-3 py-2 text-sm border border-gray-200 rounded bg-gray-50">
+                                    <i class="text-green-600 fas fa-university"></i> ATM
                                 </div>
-                                <div class="px-3 py-2 bg-gray-50 rounded border border-gray-200 text-sm">
-                                    <i class="fas fa-store text-orange-600"></i> 超商付款
+                                <div class="px-3 py-2 text-sm border border-gray-200 rounded bg-gray-50">
+                                    <i class="text-orange-600 fas fa-store"></i> 超商付款
                                 </div>
                             </div>
                         </div>
@@ -210,7 +325,7 @@
 
     <!-- Loading Indicator -->
     <div wire:loading.flex style="width:100%;height:100%;position:fixed;top:0;left:0;z-index:9999;align-items:center;justify-content:center;background-color:rgba(0, 0, 0, 0.5);">
-        <div class="bg-white rounded-lg p-6 flex flex-col items-center justify-center">
+        <div class="flex flex-col items-center justify-center p-6 bg-white rounded-lg">
             <div class="mx-auto">
                 <img src="{{ asset('images/loading.gif') }}" width="150" alt="載入中" />
             </div>

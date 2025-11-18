@@ -27,7 +27,7 @@
             {{ $slot }}
         </main>
 
-        {{-- @include('livewire.components.footer') --}}
+        @include('livewire.components.footer')
 
         @stack('scripts')
 

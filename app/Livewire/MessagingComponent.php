@@ -19,21 +19,242 @@ class MessagingComponent extends Component
 {
     use WithFileUploads;
 
+    public ?int $conversationId = null;
+
     public $selectedConversationId = null;
     public $messageContent = '';
     public $searchTerm = '';
 
-    // 議價相關
+    // 🔥 議價相關（支援數量）
     public $showBargainPanel = false;
     public $bargainPrice = null;
+    public $bargainQuantity = 1;  // 🔥 新增：議價數量
+
+    // 🔥 反議價相關
+    public $counterPrice = null;
+    public $counterQuantity = null;
 
     // 圖片上傳
     public $uploadedImage = null;
 
-    public function mount()
+    public $isProductInCart = false;
+    public $cartItemType = null; // 'original' 或 'bargain'
+
+    public function mount($conversationId = null)
     {
-        //
+         if ($conversationId) {
+            $this->selectConversation($conversationId);
+        }
+
     }
+    protected function checkProductInCart()
+    {
+        if (!$this->selectedConversationId) {
+            $this->isProductInCart = false;
+            $this->cartItemType = null;
+            return;
+        }
+
+        $conversation = $this->selectedConversation;
+        if (!$conversation) {
+            $this->isProductInCart = false;
+            $this->cartItemType = null;
+            return;
+        }
+
+        $cart = [];
+        $cartCookie = request()->cookie('shopping_cart');
+        if ($cartCookie) {
+            $cart = json_decode($cartCookie, true) ?? [];
+        }
+
+        // 🔥 關鍵：只檢查「從這個對話」加入購物車的商品
+        foreach ($cart as $item) {
+            if (isset($item['conversation_id']) && $item['conversation_id'] == $this->selectedConversationId) {
+                $this->isProductInCart = true;
+                $this->cartItemType = isset($item['is_bargain']) && $item['is_bargain'] ? 'bargain' : 'original';
+                return;
+            }
+        }
+
+        // 🔥 沒有找到從此對話加入的商品
+        $this->isProductInCart = false;
+        $this->cartItemType = null;
+    }
+
+
+    public function getBestPriceProperty()
+    {
+        if (!$this->selectedConversation) {
+            return null;
+        }
+
+        $product = $this->selectedConversation->product;
+
+        // 🔥 查找此對話中「未加入購物車」的最新成交或接受的議價
+        $latestDeal = BargainHistory::where('conversation_id', $this->selectedConversationId)
+            ->whereIn('status', ['deal', 'accepted'])
+            ->whereNull('added_to_cart_at') // 🔥 關鍵：排除已加入購物車的
+            ->latest()
+            ->first();
+
+        if ($latestDeal && $latestDeal->final_price && $latestDeal->final_quantity) {
+            return [
+                'price' => $latestDeal->final_price,
+                'quantity' => $latestDeal->final_quantity,
+                'is_bargain' => true,
+                'bargain_id' => $latestDeal->id,
+            ];
+        }
+
+        return [
+            'price' => $product->price,
+            'quantity' => 1,
+            'is_bargain' => false,
+            'bargain_id' => null,
+        ];
+    }
+
+    // 🔥 新增：統一的加入購物車方法
+    public function addProductToCart()
+    {
+        if (!$this->selectedConversationId) {
+            return;
+        }
+
+        try {
+            $conversation = Conversation::with('product.images')->findOrFail($this->selectedConversationId);
+            $product = $conversation->product;
+
+            // 🔥 檢查是否已從此對話加入購物車
+            if ($this->isProductInCart) {
+                $this->dispatch('notify', [
+                    'type' => 'warning',
+                    'message' => '此對話的商品已在購物車中'
+                ]);
+                return redirect()->route('cart');
+            }
+
+            $bestPrice = $this->bestPrice;
+
+            // 檢查庫存
+            if ($product->stock > 0 && $bestPrice['quantity'] > $product->stock) {
+                $this->dispatch('notify', [
+                    'type' => 'error',
+                    'message' => "數量超過庫存！目前庫存：{$product->stock}"
+                ]);
+                return;
+            }
+
+            DB::beginTransaction();
+
+            $cart = [];
+            $cartCookie = request()->cookie('shopping_cart');
+            if ($cartCookie) {
+                $cart = json_decode($cartCookie, true) ?? [];
+            }
+
+            // 取得商品圖片
+            $image = null;
+            if ($product->images->isNotEmpty()) {
+                $primaryImage = $product->images->where('is_primary', true)->first();
+                $image = $primaryImage ? $primaryImage->image_path : $product->images->first()->image_path;
+            }
+
+            // 🔥 建立購物車項目（使用 conversation_id 作為唯一標識）
+            $cartItem = [
+                'id' => $product->id,
+                'name' => $product->name,
+                'price' => $bestPrice['price'],
+                'quantity' => $bestPrice['quantity'],
+                'image' =>  $image,
+                'stock' => $product->stock,
+                'game_type' => $product->game_type,
+                'category' => $product->category,
+                'conversation_id' => $this->selectedConversationId, // 🔥 關鍵：綁定對話ID
+            ];
+
+            // 🔥 如果是議價商品，標記相關資訊
+            if ($bestPrice['is_bargain']) {
+                $cartItem['is_bargain'] = true;
+                $cartItem['bargain_id'] = $bestPrice['bargain_id'];
+                $cartItem['locked_quantity'] = true;
+                $cartItem['locked_price'] = true;
+
+                // 🔥 標記議價已加入購物車（成交）
+                $bargain = BargainHistory::find($bestPrice['bargain_id']);
+                if ($bargain) {
+                    $bargain->update([
+                        'added_to_cart_at' => now(),
+                        'status' => 'completed',
+                        'completed_at' => now(),
+                    ]);
+
+                    // 🔥 發送系統訊息通知成交
+                    Message::create([
+                        'conversation_id' => $this->selectedConversationId,
+                        'sender_id' => auth()->id(),
+                        'type' => 'system',
+                        'content' => sprintf(
+                            '✅ 買家已確認成交並加入購物車！成交價：NT$ %s x %d = NT$ %s。議價已結束。',
+                            number_format($bestPrice['price']),
+                            $bestPrice['quantity'],
+                            number_format($bestPrice['price'] * $bestPrice['quantity'])
+                        ),
+                    ]);
+
+                    // 更新對話最後訊息
+                    $conversation->updateLastMessage('買家已確認成交', auth()->id());
+
+                    // 廣播訊息更新
+                    broadcast(new ConversationUpdated($conversation));
+                }
+            }
+
+            $cart[] = $cartItem;
+
+            cookie()->queue('shopping_cart', json_encode($cart), 43200);
+
+            DB::commit();
+
+            $this->isProductInCart = true;
+            $this->cartItemType = $bestPrice['is_bargain'] ? 'bargain' : 'original';
+
+            $message = $bestPrice['is_bargain']
+                ? sprintf('已確認成交並加入購物車！議價：%d 個 x NT$ %s = NT$ %s',
+                    $bestPrice['quantity'],
+                    number_format($bestPrice['price']),
+                    number_format($bestPrice['price'] * $bestPrice['quantity']))
+                : sprintf('已加入購物車：%d 個 x NT$ %s',
+                    $bestPrice['quantity'],
+                    number_format($bestPrice['price']));
+
+            $this->dispatch('notify', [
+                'type' => 'success',
+                'message' => $message
+            ]);
+
+            $this->dispatch('cart-updated', ['count' => count($cart)]);
+            $this->dispatch('message-sent');
+
+            return redirect()->route('cart');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Add product to cart error: ' . $e->getMessage(), [
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            $this->dispatch('notify', [
+                'type' => 'error',
+                'message' => '加入購物車失敗：' . $e->getMessage()
+            ]);
+        }
+    }
+
+
+
+
 
     #[Computed]
     public function conversations()
@@ -122,6 +343,24 @@ class MessagingComponent extends Component
             ->first();
     }
 
+    // 🔥 新增：計算議價總價
+    public function getBargainTotalProperty()
+    {
+        if (!$this->bargainPrice || !$this->bargainQuantity) {
+            return 0;
+        }
+        return $this->bargainPrice * $this->bargainQuantity;
+    }
+
+    // 🔥 新增：計算反議價總價
+    public function getCounterTotalProperty()
+    {
+        if (!$this->counterPrice || !$this->counterQuantity) {
+            return 0;
+        }
+        return $this->counterPrice * $this->counterQuantity;
+    }
+
     public function isLatestPendingBargain($message)
     {
         $latestBargain = $this->currentBargain;
@@ -202,11 +441,21 @@ class MessagingComponent extends Component
 
             $this->selectedConversationId = $conversationId;
 
+            // 🔥 更新瀏覽器 URL（不重新載入頁面）
+            $this->js("window.history.pushState({}, '', '/messages/{$conversationId}')");
+
             $conversation->markAsRead(auth()->id());
 
+            // 重置議價表單
             $this->showBargainPanel = false;
             $this->bargainPrice = null;
+            $this->bargainQuantity = 1;
+            $this->counterPrice = null;
+            $this->counterQuantity = null;
             $this->uploadedImage = null;
+
+            // 🔥 檢查購物車狀態
+            $this->checkProductInCart();
 
             $this->dispatch('conversation-selected');
 
@@ -220,13 +469,12 @@ class MessagingComponent extends Component
         }
     }
 
-    // 🔥 從前端呼叫此方法來刷新訊息
+
+
     public function refreshMessages()
     {
-        // 刷新訊息列表
         unset($this->messages);
 
-        // 標記為已讀
         if ($this->selectedConversationId) {
             $conversation = Conversation::find($this->selectedConversationId);
             if ($conversation) {
@@ -235,10 +483,8 @@ class MessagingComponent extends Component
         }
     }
 
-    // 🔥 從前端呼叫此方法來刷新對話列表
     public function refreshConversations()
     {
-        // 刷新對話列表
         unset($this->conversations);
     }
 
@@ -289,10 +535,7 @@ class MessagingComponent extends Component
 
             DB::commit();
 
-            // 廣播訊息事件
             broadcast(new NewMessageEvent($message))->toOthers();
-
-            // 廣播對話更新事件
             broadcast(new ConversationUpdated($conversation));
 
             $this->messageContent = '';
@@ -364,10 +607,7 @@ class MessagingComponent extends Component
 
             DB::commit();
 
-            // 廣播訊息事件
             broadcast(new NewMessageEvent($message))->toOthers();
-
-            // 廣播對話更新事件
             broadcast(new ConversationUpdated($conversation));
 
             $this->uploadedImage = null;
@@ -388,89 +628,18 @@ class MessagingComponent extends Component
         }
     }
 
-    public function addBargainToCart($bargainId)
-    {
-        $bargain = BargainHistory::findOrFail($bargainId);
-        if ($bargain->status !== 'deal' && $bargain->status !== 'accepted') {
-            $this->dispatch('notify', [
-                'type' => 'error',
-                'message' => '此議價尚未成交'
-            ]);
-            return;
-        }
-        try {
-            $cart = [];
-            $cartCookie = request()->cookie('shopping_cart');
-            if ($cartCookie) {
-                $cart = json_decode($cartCookie, true) ?? [];
-            }
-
-            $product = $bargain->product;
-
-            $image = null;
-            if ($product->images->isNotEmpty()) {
-                $primaryImage = $product->images->where('is_primary', true)->first();
-                $image = $primaryImage ? $primaryImage->image_path : $product->images->first()->image_path;
-            }
-
-            $existingIndex = null;
-            foreach ($cart as $index => $item) {
-                if ($item['id'] == $product->id) {
-                    $existingIndex = $index;
-                    break;
-                }
-            }
-
-            if ($existingIndex !== null) {
-                $cart[$existingIndex]['price'] = $bargain->final_price;
-                $cart[$existingIndex]['is_bargain'] = true;
-                $cart[$existingIndex]['bargain_id'] = $bargain->id;
-            } else {
-                $cart[] = [
-                    'id' => $product->id,
-                    'name' => $product->name,
-                    'price' => $bargain->final_price,
-                    'quantity' => 1,
-                    'image' => '/storage/' . $image,
-                    'stock' => $product->stock,
-                    'game_type' => $product->game_type,
-                    'category' => $product->category,
-                    'is_bargain' => true,
-                    'bargain_id' => $bargain->id,
-                ];
-            }
-
-            cookie()->queue('shopping_cart', json_encode($cart), 43200);
-
-            $this->dispatch('notify', [
-                'type' => 'success',
-                'message' => '已加入購物車（議價價格）'
-            ]);
-
-            $this->dispatch('cart-updated', ['count' => count($cart)]);
-
-            return redirect()->route('cart');
-
-        } catch (\Exception $e) {
-            Log::error('Add bargain to cart error: ' . $e->getMessage());
-            $this->dispatch('notify', [
-                'type' => 'error',
-                'message' => '加入購物車失敗'
-            ]);
-        }
-    }
-
     public function toggleBargainPanel()
     {
         $this->showBargainPanel = !$this->showBargainPanel;
     }
 
+    // 🔥 更新：提交議價（含數量）
     public function submitBargain()
     {
-        if (!$this->selectedConversationId || !$this->bargainPrice) {
+        if (!$this->selectedConversationId || !$this->bargainPrice || !$this->bargainQuantity) {
             $this->dispatch('notify', [
                 'type' => 'error',
-                'message' => '請輸入議價金額'
+                'message' => '請輸入議價金額和數量'
             ]);
             return;
         }
@@ -483,6 +652,14 @@ class MessagingComponent extends Component
             return;
         }
 
+        if ($this->bargainQuantity <= 0) {
+            $this->dispatch('notify', [
+                'type' => 'error',
+                'message' => '數量必須大於 0'
+            ]);
+            return;
+        }
+
         try {
             $conversation = Conversation::with(['buyer', 'seller', 'product'])->find($this->selectedConversationId);
 
@@ -490,18 +667,41 @@ class MessagingComponent extends Component
                 return;
             }
 
+            $product = $conversation->product;
+
+            // 🔥 檢查庫存
+            if ($product->stock > 0 && $this->bargainQuantity > $product->stock) {
+                $this->dispatch('notify', [
+                    'type' => 'error',
+                    'message' => "數量超過庫存！目前庫存：{$product->stock}"
+                ]);
+                return;
+            }
+
             $isBuyer = $conversation->buyer_id === auth()->id();
 
             DB::beginTransaction();
+
+            // 🔥 計算總價
+            $total = $this->bargainPrice * $this->bargainQuantity;
 
             $bargain = BargainHistory::create([
                 'product_id' => $conversation->product_id,
                 'conversation_id' => $conversation->id,
                 'buyer_id' => $conversation->buyer_id,
                 'seller_id' => $conversation->seller_id,
-                'original_price' => $conversation->product->price,
+                'original_price' => $product->price,
+
+                // 🔥 買家議價資訊
                 'buyer_offer' => $isBuyer ? $this->bargainPrice : null,
+                'buyer_quantity' => $isBuyer ? $this->bargainQuantity : null,
+                'buyer_total' => $isBuyer ? $total : null,
+
+                // 🔥 賣家議價資訊
                 'seller_offer' => !$isBuyer ? $this->bargainPrice : null,
+                'seller_quantity' => !$isBuyer ? $this->bargainQuantity : null,
+                'seller_total' => !$isBuyer ? $total : null,
+
                 'status' => $isBuyer ? 'pending' : 'countered',
                 'round' => $this->getCurrentBargainRound() + 1,
                 'offered_at' => now(),
@@ -513,10 +713,17 @@ class MessagingComponent extends Component
                 'sender_id' => auth()->id(),
                 'type' => $isBuyer ? 'bargain' : 'bargain_counter',
                 'bargain_price' => $this->bargainPrice,
+                'bargain_quantity' => $this->bargainQuantity,  // 🔥 儲存數量到訊息
                 'related_message_id' => $bargain->id,
             ]);
 
-            $messageText = ($isBuyer ? '買家議價：' : '賣家反議價：') . 'NT$ ' . number_format($this->bargainPrice);
+            $messageText = sprintf(
+                '%s：NT$ %s x %d = NT$ %s',
+                $isBuyer ? '買家議價' : '賣家反議價',
+                number_format($this->bargainPrice),
+                $this->bargainQuantity,
+                number_format($total)
+            );
             $conversation->updateLastMessage($messageText, auth()->id());
 
             $otherUser = $conversation->getOtherUser(auth()->id());
@@ -526,13 +733,11 @@ class MessagingComponent extends Component
 
             DB::commit();
 
-            // 廣播訊息事件
             broadcast(new NewMessageEvent($message))->toOthers();
-
-            // 廣播對話更新事件
             broadcast(new ConversationUpdated($conversation));
 
             $this->bargainPrice = null;
+            $this->bargainQuantity = 1;
             $this->showBargainPanel = false;
 
             $this->dispatch('notify', [
@@ -553,6 +758,95 @@ class MessagingComponent extends Component
         }
     }
 
+    // 🔥 新增：反議價（賣家）
+    public function counterBargain($bargainId)
+    {
+        if (!$this->counterPrice || !$this->counterQuantity) {
+            $this->dispatch('notify', [
+                'type' => 'error',
+                'message' => '請輸入反議價金額和數量'
+            ]);
+            return;
+        }
+
+        $bargain = BargainHistory::findOrFail($bargainId);
+
+        if ($bargain->conversation_id !== $this->selectedConversationId) {
+            return;
+        }
+
+        try {
+            $conversation = Conversation::with(['buyer', 'seller', 'product'])->find($this->selectedConversationId);
+            $product = $conversation->product;
+
+            // 檢查庫存
+            if ($product->stock > 0 && $this->counterQuantity > $product->stock) {
+                $this->dispatch('notify', [
+                    'type' => 'error',
+                    'message' => "數量超過庫存！目前庫存：{$product->stock}"
+                ]);
+                return;
+            }
+
+            DB::beginTransaction();
+
+            $total = $this->counterPrice * $this->counterQuantity;
+
+            $bargain->update([
+                'seller_offer' => $this->counterPrice,
+                'seller_quantity' => $this->counterQuantity,
+                'seller_total' => $total,
+                'status' => 'countered',
+                'responded_at' => now(),
+            ]);
+
+            $message = Message::create([
+                'conversation_id' => $this->selectedConversationId,
+                'sender_id' => auth()->id(),
+                'type' => 'bargain_counter',
+                'bargain_price' => $this->counterPrice,
+                'bargain_quantity' => $this->counterQuantity,
+                'related_message_id' => $bargain->id,
+            ]);
+
+            $messageText = sprintf(
+                '賣家反議價：NT$ %s x %d = NT$ %s',
+                number_format($this->counterPrice),
+                $this->counterQuantity,
+                number_format($total)
+            );
+            $conversation->updateLastMessage($messageText, auth()->id());
+
+            $otherUser = $conversation->getOtherUser(auth()->id());
+            if ($otherUser) {
+                $conversation->incrementUnreadCount($otherUser->id);
+            }
+
+            DB::commit();
+
+            broadcast(new NewMessageEvent($message))->toOthers();
+            broadcast(new ConversationUpdated($conversation));
+
+            $this->counterPrice = null;
+            $this->counterQuantity = null;
+
+            $this->dispatch('notify', [
+                'type' => 'success',
+                'message' => '反議價已送出'
+            ]);
+
+            $this->dispatch('message-sent');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Counter bargain error: ' . $e->getMessage());
+            $this->dispatch('notify', [
+                'type' => 'error',
+                'message' => '操作失敗'
+            ]);
+        }
+    }
+
     public function acceptBargain($bargainId)
     {
         $bargain = BargainHistory::findOrFail($bargainId);
@@ -564,11 +858,14 @@ class MessagingComponent extends Component
         try {
             DB::beginTransaction();
 
-            $finalPrice = $bargain->buyer_offer ?? $bargain->seller_offer;
+            $finalPrice = $bargain->buyer_offer;
+            $finalQuantity = $bargain->buyer_quantity;
 
             $bargain->update([
                 'status' => 'accepted',
                 'final_price' => $finalPrice,
+                'final_quantity' => $finalQuantity,
+                'final_total' => $finalPrice * $finalQuantity,
                 'accepted_at' => now(),
             ]);
 
@@ -577,19 +874,26 @@ class MessagingComponent extends Component
                 'sender_id' => auth()->id(),
                 'type' => 'bargain_accept',
                 'bargain_price' => $finalPrice,
+                'bargain_quantity' => $finalQuantity,
                 'related_message_id' => $bargain->id,
             ]);
 
             $conversation = Conversation::with(['buyer', 'seller'])->find($this->selectedConversationId);
-            $conversation->updateLastMessage('已接受議價：NT$ ' . number_format($finalPrice), auth()->id());
+            $messageText = sprintf(
+                '已接受議價：NT$ %s x %d = NT$ %s',
+                number_format($finalPrice),
+                $finalQuantity,
+                number_format($finalPrice * $finalQuantity)
+            );
+            $conversation->updateLastMessage($messageText, auth()->id());
 
             DB::commit();
 
-            // 廣播訊息事件
             broadcast(new NewMessageEvent($message))->toOthers();
-
-            // 廣播對話更新事件
             broadcast(new ConversationUpdated($conversation));
+
+            // 🔥 重新檢查購物車狀態
+            $this->checkProductInCart();
 
             $this->dispatch('notify', [
                 'type' => 'success',
@@ -607,6 +911,7 @@ class MessagingComponent extends Component
             ]);
         }
     }
+
 
     public function rejectBargain($bargainId)
     {
@@ -636,10 +941,7 @@ class MessagingComponent extends Component
 
             DB::commit();
 
-            // 廣播訊息事件
             broadcast(new NewMessageEvent($message))->toOthers();
-
-            // 廣播對話更新事件
             broadcast(new ConversationUpdated($conversation));
 
             $this->dispatch('notify', [
@@ -670,11 +972,14 @@ class MessagingComponent extends Component
         try {
             DB::beginTransaction();
 
-            $finalPrice = $bargain->seller_offer ?? $bargain->buyer_offer;
+            $finalPrice = $bargain->seller_offer;
+            $finalQuantity = $bargain->seller_quantity;
 
             $bargain->update([
                 'status' => 'deal',
                 'final_price' => $finalPrice,
+                'final_quantity' => $finalQuantity,
+                'final_total' => $finalPrice * $finalQuantity,
                 'deal_at' => now(),
             ]);
 
@@ -683,28 +988,40 @@ class MessagingComponent extends Component
                 'sender_id' => auth()->id(),
                 'type' => 'bargain_deal',
                 'bargain_price' => $finalPrice,
+                'bargain_quantity' => $finalQuantity,
                 'related_message_id' => $bargain->id,
             ]);
 
             $conversation = Conversation::with(['buyer', 'seller'])->find($this->selectedConversationId);
-            $conversation->updateLastMessage('議價成交：NT$ ' . number_format($finalPrice), auth()->id());
+            $messageText = sprintf(
+                '議價成交：NT$ %s x %d = NT$ %s',
+                number_format($finalPrice),
+                $finalQuantity,
+                number_format($finalPrice * $finalQuantity)
+            );
+            $conversation->updateLastMessage($messageText, auth()->id());
 
             Message::create([
                 'conversation_id' => $this->selectedConversationId,
                 'sender_id' => auth()->id(),
                 'type' => 'system',
-                'content' => '🎉 恭喜！雙方已達成協議，成交價：NT$ ' . number_format($finalPrice) . '。請前往結帳完成交易。',
+                'content' => sprintf(
+                    '🎉 恭喜！雙方已達成協議，成交價：NT$ %s x %d = NT$ %s。請前往結帳完成交易。',
+                    number_format($finalPrice),
+                    $finalQuantity,
+                    number_format($finalPrice * $finalQuantity)
+                ),
             ]);
 
             DB::commit();
 
-            // 廣播訊息事件
             broadcast(new NewMessageEvent($message))->toOthers();
-
-            // 廣播對話更新事件
             broadcast(new ConversationUpdated($conversation));
 
             $this->showBargainPanel = false;
+
+            // 🔥 重新檢查購物車狀態
+            $this->checkProductInCart();
 
             $this->dispatch('notify', [
                 'type' => 'success',
@@ -722,6 +1039,7 @@ class MessagingComponent extends Component
             ]);
         }
     }
+
 
     protected function getCurrentBargainRound()
     {
@@ -748,6 +1066,16 @@ class MessagingComponent extends Component
                 'type' => 'error',
                 'message' => '清除失敗'
             ]);
+        }
+    }
+    public function getBargainStatus($bargainId)
+    {
+        try {
+            $bargain = BargainHistory::find($bargainId);
+            return $bargain ? $bargain->isAddedToCart() : false;
+        } catch (\Exception $e) {
+            Log::error('Get bargain status error: ' . $e->getMessage());
+            return false;
         }
     }
 

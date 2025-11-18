@@ -20,7 +20,7 @@ class CheckoutSuccessComponent extends Component
         }
     }
 
-    #[Layout('layouts.app')]
+    #[Layout('livewire.layouts.app')]
     public function render()
     {
         return view('livewire.checkout-success-component');

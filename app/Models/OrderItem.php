@@ -114,4 +114,11 @@ class OrderItem extends Model
             'reviewed_at' => now(),
         ]);
     }
+
+    public function productCodes()
+    {
+        return $this->hasMany(ProductCode::class, 'order_id', 'order_id')
+                    ->where('product_id', $this->product_id);
+    }
+
 }

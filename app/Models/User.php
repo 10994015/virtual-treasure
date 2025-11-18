@@ -31,6 +31,7 @@ class User extends Authenticatable
         'is_seller',
         'email',
         'password',
+        'profile_photo_path',
     ];
 
     /**

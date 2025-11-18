@@ -2,7 +2,9 @@
 
 namespace App\Livewire;
 
+use App\Models\BargainHistory;
 use App\Models\Product;
+use Illuminate\Support\Facades\Log;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 
@@ -23,7 +25,6 @@ class CartComponent extends Component
             $this->cart = json_decode($cartCookie, true) ?? [];
             $this->cartCount = count($this->cart);
 
-            // 驗證商品是否仍然可購買
             $this->validateCart();
         }
     }
@@ -44,19 +45,23 @@ class CartComponent extends Component
             $product = $products->get($item['id']);
 
             if (!$product) {
-                // 商品不存在或已下架
                 $hasChanges = true;
                 continue;
             }
 
-            // 更新價格（如果商品價格有變動）
-            if ($item['price'] != $product->price) {
+            // 🔥 議價商品不更新價格
+            $isBargainItem = isset($item['is_bargain']) && $item['is_bargain'] === true;
+
+            // 🔥 一般商品更新價格
+            if (!$isBargainItem && $item['price'] != $product->price) {
                 $item['price'] = $product->price;
                 $hasChanges = true;
             }
 
-            // 檢查庫存
-            if ($product->stock > 0 && $item['quantity'] > $product->stock) {
+            // 🔥 議價商品數量已鎖定，不檢查庫存
+            $isLocked = isset($item['locked_quantity']) && $item['locked_quantity'] === true;
+
+            if (!$isLocked && $product->stock > 0 && $item['quantity'] > $product->stock) {
                 $item['quantity'] = $product->stock;
                 $hasChanges = true;
             }
@@ -77,9 +82,19 @@ class CartComponent extends Component
         }
     }
 
+
     public function updateQuantity($index, $quantity)
     {
         if (!isset($this->cart[$index])) {
+            return;
+        }
+
+        // 🔥 檢查是否為鎖定數量的商品
+        if (isset($this->cart[$index]['locked_quantity']) && $this->cart[$index]['locked_quantity']) {
+            $this->dispatch('notify', [
+                'type' => 'warning',
+                'message' => '議價商品數量已鎖定，無法修改'
+            ]);
             return;
         }
 
@@ -108,6 +123,15 @@ class CartComponent extends Component
             return;
         }
 
+        // 🔥 檢查是否為鎖定數量的商品
+        if (isset($this->cart[$index]['locked_quantity']) && $this->cart[$index]['locked_quantity']) {
+            $this->dispatch('notify', [
+                'type' => 'warning',
+                'message' => '議價商品數量已鎖定，無法修改'
+            ]);
+            return;
+        }
+
         $stock = $this->cart[$index]['stock'];
         $currentQuantity = $this->cart[$index]['quantity'];
 
@@ -129,15 +153,36 @@ class CartComponent extends Component
             return;
         }
 
+        // 🔥 檢查是否為鎖定數量的商品
+        if (isset($this->cart[$index]['locked_quantity']) && $this->cart[$index]['locked_quantity']) {
+            $this->dispatch('notify', [
+                'type' => 'warning',
+                'message' => '議價商品數量已鎖定，無法修改'
+            ]);
+            return;
+        }
+
         if ($this->cart[$index]['quantity'] > 1) {
             $this->cart[$index]['quantity']--;
             $this->saveCartToCookie();
         }
     }
 
-    public function removeFromCart($index)
+   public function removeFromCart($index)
     {
         if (isset($this->cart[$index])) {
+            // 🔥 如果是議價商品，清除加入購物車標記
+            if (isset($this->cart[$index]['bargain_id'])) {
+                try {
+                    $bargain = BargainHistory::find($this->cart[$index]['bargain_id']);
+                    if ($bargain) {
+                        $bargain->update(['added_to_cart_at' => null]);
+                    }
+                } catch (\Exception $e) {
+                    Log::error('Failed to clear bargain cart status: ' . $e->getMessage());
+                }
+            }
+
             unset($this->cart[$index]);
             $this->cart = array_values($this->cart);
             $this->cartCount = count($this->cart);
@@ -153,8 +198,24 @@ class CartComponent extends Component
         }
     }
 
+
+
     public function clearCart()
     {
+        // 🔥 清除所有議價商品的購物車標記
+        foreach ($this->cart as $item) {
+            if (isset($item['bargain_id'])) {
+                try {
+                    $bargain = BargainHistory::find($item['bargain_id']);
+                    if ($bargain) {
+                        $bargain->update(['added_to_cart_at' => null]);
+                    }
+                } catch (\Exception $e) {
+                    Log::error('Failed to clear bargain cart status: ' . $e->getMessage());
+                }
+            }
+        }
+
         $this->cart = [];
         $this->cartCount = 0;
         $this->saveCartToCookie();
@@ -167,9 +228,10 @@ class CartComponent extends Component
         $this->dispatch('cart-updated', ['count' => $this->cartCount]);
     }
 
+
     protected function saveCartToCookie()
     {
-        cookie()->queue('shopping_cart', json_encode($this->cart), 43200); // 30 天
+        cookie()->queue('shopping_cart', json_encode($this->cart), 43200);
     }
 
     public function getSubtotalProperty()
@@ -183,7 +245,7 @@ class CartComponent extends Component
 
     public function getTotalProperty()
     {
-        return $this->subtotal; // 虛寶商品無運費，總計等於小計
+        return $this->subtotal;
     }
 
     #[Layout('livewire.layouts.app')]
