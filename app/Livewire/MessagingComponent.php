@@ -167,7 +167,7 @@ class MessagingComponent extends Component
                 'name' => $product->name,
                 'price' => $bestPrice['price'],
                 'quantity' => $bestPrice['quantity'],
-                'image' =>  $image,
+                'image' =>  '/storage/'.$image,
                 'stock' => $product->stock,
                 'game_type' => $product->game_type,
                 'category' => $product->category,
