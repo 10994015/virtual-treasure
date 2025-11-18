@@ -231,13 +231,6 @@
                                                 class="w-full px-4 py-2 text-base font-mono transition-all border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 @error('productCodes.' . $index) border-red-500 @enderror"
                                                 placeholder="輸入虛寶序號 (例如: XXXX-XXXX-XXXX-XXXX)">
 
-                                            @error('productCodes.' . $index)
-                                                <p class="flex items-center gap-1 mt-1 text-sm text-red-500">
-                                                    <i class="fas fa-exclamation-circle"></i>
-                                                    {{ $message }}
-                                                </p>
-                                            @enderror
-
                                             {{-- 🔥 顯示提示 --}}
                                             @if(!empty($code) && strlen(trim($code)) >= 3)
                                                 @php

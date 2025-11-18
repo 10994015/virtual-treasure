@@ -241,13 +241,13 @@ class EditProductManagement extends Component
     protected function rules()
     {
         $rules = [
-            'name' => 'required|min:3|max:255',
+            'name' => 'required|max:255',
             'category' => 'required',
             'game_type' => 'required',
             'rarity' => 'required|in:common,uncommon,rare,epic,legendary,mythic',
             'description' => 'required',
-            'price' => 'required|numeric|min:1',
-            'original_price' => 'nullable|numeric|min:1',
+            'price' => 'required|numeric|min:0',
+            'original_price' => 'nullable|numeric|min:0',
             'stock' => 'required|integer|min:0',
             'newImages' => 'nullable|array',
             'newImages.*' => 'nullable|image|max:5120',
@@ -283,7 +283,6 @@ class EditProductManagement extends Component
     {
         return [
             'name.required' => '商品名稱為必填項目',
-            'name.min' => '商品名稱至少需要 3 個字元',
             'name.max' => '商品名稱最多 255 個字元',
             'category.required' => '請選擇商品類別',
             'game_type.required' => '請選擇遊戲類型',
@@ -291,7 +290,7 @@ class EditProductManagement extends Component
             'description.required' => '商品描述為必填項目',
             'price.required' => '售價為必填項目',
             'price.numeric' => '售價必須為數字',
-            'price.min' => '售價至少為 1',
+            'price.min' => '售價至少為 0',
             'stock.required' => '庫存數量為必填項目',
             'stock.integer' => '庫存數量必須為整數',
             'stock.min' => '庫存數量不可為負數',

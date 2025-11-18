@@ -149,13 +149,13 @@ class CreateProductManagement extends Component
     protected function rules()
     {
         $rules = [
-            'name' => 'required|min:3|max:255',
+            'name' => 'required|max:255',
             'category' => 'required',
             'game_type' => 'required',
             'rarity' => 'required|in:common,uncommon,rare,epic,legendary,mythic',
             'description' => 'required',
-            'price' => 'required|numeric|min:1',
-            'original_price' => 'nullable|numeric|min:1',
+            'price' => 'required|numeric|min:0',
+            'original_price' => 'nullable|numeric|min:0',
             'stock' => 'required|integer|min:0',
             'images' => 'nullable|array|max:5',
             'images.*' => 'nullable|image|max:5120',
@@ -192,7 +192,6 @@ class CreateProductManagement extends Component
     {
         return [
             'name.required' => '商品名稱為必填項目',
-            'name.min' => '商品名稱至少需要 3 個字元',
             'name.max' => '商品名稱最多 255 個字元',
             'category.required' => '請選擇商品類別',
             'game_type.required' => '請選擇遊戲類型',
@@ -200,7 +199,7 @@ class CreateProductManagement extends Component
             'description.required' => '商品描述為必填項目',
             'price.required' => '售價為必填項目',
             'price.numeric' => '售價必須為數字',
-            'price.min' => '售價至少為 1',
+            'price.min' => '售價至少為 0',
             'stock.required' => '庫存數量為必填項目',
             'stock.integer' => '庫存數量必須為整數',
             'stock.min' => '庫存數量不可為負數',
@@ -466,7 +465,20 @@ class CreateProductManagement extends Component
             'count' => $savedCount
         ]);
     }
+    public function checkCodeDuplicate($index)
+    {
+        if (isset($this->productCodes[$index])) {
+            $code = trim($this->productCodes[$index]);
 
+            if (!empty($code) && strlen($code) >= 3) {
+                $exists = ProductCode::where('code', $code)->exists();
+
+                if ($exists) {
+                    $this->addError("productCodes.{$index}", "此序號已存在於系統中");
+                }
+            }
+        }
+    }
     protected function uploadImages($product)
     {
         foreach ($this->images as $index => $image) {
