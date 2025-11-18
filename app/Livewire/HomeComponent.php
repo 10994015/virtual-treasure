@@ -27,6 +27,7 @@ class HomeComponent extends Component
                 'order_items.product_image',
                 'order_items.seller_id',
                 'products.slug',
+                'products.price',
                 DB::raw('SUM(subtotal) as total_sales'),
                 DB::raw('SUM(quantity) as total_quantity')
             )
@@ -35,7 +36,8 @@ class HomeComponent extends Component
                 'order_items.product_name',
                 'order_items.product_image',
                 'order_items.seller_id',
-                'products.slug'
+                'products.slug',
+                'products.price'
             )
             ->orderBy('total_sales', 'desc')
             ->limit(4)
