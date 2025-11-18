@@ -92,61 +92,25 @@
             </div>
             <div class="grid grid-cols-1 gap-6 mb-12 sm:grid-cols-2 lg:grid-cols-4">
                 <!-- Sample items for demo -->
+                @foreach($topProducts as $product)
                 <div class="p-6 transition-all bg-card-white rounded-system-lg shadow-system hover:shadow-system-lg">
-                    <div class="flex items-center justify-center w-full h-32 mb-4 bg-gradient-to-br from-blue-100 to-blue-200 rounded-system-lg">
-                        <i class="text-3xl fas fa-sword text-system-blue"></i>
+                    <div class="flex items-center justify-center w-full h-48 mb-4 overflow-hidden rounded-system-lg">
+                        @if ($product->product_image)
+                            <img src="{{ $product->product_image }}" alt="{{ $product->product_name }}" class="object-cover w-full h-full">
+                        @else
+                            <div class="flex items-center justify-center w-full h-full bg-gray-200">
+                                <i class="text-gray-400 fas fa-image"></i>
+                            </div>
+                        @endif
                     </div>
-                    <h3 class="mb-2 font-semibold text-gray-900">傳說之劍</h3>
-                    <p class="mb-3 text-sm text-gray-600">稀有武器，攻擊力 +50</p>
+                    <h3 class="mb-2 font-semibold text-gray-900">{{ $product->product_name }}</h3>
+                    <p class="mb-3 text-sm text-gray-600">{{ $product->description }}</p>
                     <div class="flex items-center justify-between">
-                        <span class="text-lg font-bold text-system-blue">NT$ 2,500</span>
-                        <button class="px-3 py-1 text-sm text-white transition-colors bg-system-blue rounded-system hover:bg-blue-600 btn-system">
-                            加入購物車
-                        </button>
+                        <span class="text-lg font-bold text-system-blue">NT$ {{ number_format($product->price, 0) }}</span>
+                        <a href="{{ route('products.show', $product->slug) }}" class="inline-flex items-center px-4 py-2 font-semibold text-white transition-all bg-system-blue rounded-system hover:bg-blue-600 btn-system">查看商品</a>
                     </div>
                 </div>
-
-                <div class="p-6 transition-all bg-card-white rounded-system-lg shadow-system hover:shadow-system-lg">
-                    <div class="flex items-center justify-center w-full h-32 mb-4 bg-gradient-to-br from-purple-100 to-purple-200 rounded-system-lg">
-                        <i class="text-3xl text-purple-600 fas fa-shield"></i>
-                    </div>
-                    <h3 class="mb-2 font-semibold text-gray-900">神聖護盾</h3>
-                    <p class="mb-3 text-sm text-gray-600">史詩防具，防禦力 +40</p>
-                    <div class="flex items-center justify-between">
-                        <span class="text-lg font-bold text-system-blue">NT$ 1,800</span>
-                        <button class="px-3 py-1 text-sm text-white transition-colors bg-system-blue rounded-system hover:bg-blue-600 btn-system">
-                            加入購物車
-                        </button>
-                    </div>
-                </div>
-
-                <div class="p-6 transition-all bg-card-white rounded-system-lg shadow-system hover:shadow-system-lg">
-                    <div class="flex items-center justify-center w-full h-32 mb-4 bg-gradient-to-br from-green-100 to-green-200 rounded-system-lg">
-                        <i class="text-3xl text-green-600 fas fa-flask"></i>
-                    </div>
-                    <h3 class="mb-2 font-semibold text-gray-900">魔法藥水包</h3>
-                    <p class="mb-3 text-sm text-gray-600">恢復藥水組合，HP +200</p>
-                    <div class="flex items-center justify-between">
-                        <span class="text-lg font-bold text-system-blue">NT$ 450</span>
-                        <button class="px-3 py-1 text-sm text-white transition-colors bg-system-blue rounded-system hover:bg-blue-600 btn-system">
-                            加入購物車
-                        </button>
-                    </div>
-                </div>
-
-                <div class="p-6 transition-all bg-card-white rounded-system-lg shadow-system hover:shadow-system-lg">
-                    <div class="flex items-center justify-center w-full h-32 mb-4 bg-gradient-to-br from-yellow-100 to-yellow-200 rounded-system-lg">
-                        <i class="text-3xl text-yellow-600 fas fa-dragon"></i>
-                    </div>
-                    <h3 class="mb-2 font-semibold text-gray-900">飛龍坐騎</h3>
-                    <p class="mb-3 text-sm text-gray-600">稀有坐騎，飛行速度 +30</p>
-                    <div class="flex items-center justify-between">
-                        <span class="text-lg font-bold text-system-blue">NT$ 3,200</span>
-                        <button class="px-3 py-1 text-sm text-white transition-colors bg-system-blue rounded-system hover:bg-blue-600 btn-system">
-                            加入購物車
-                        </button>
-                    </div>
-                </div>
+                @endforeach
             </div>
 
             <div class="text-center">
