@@ -602,7 +602,7 @@
                                             </p>
                                         @else
                                             {{-- 無議價：可以繼續議價或回商品頁以原價購買 --}}
-
+                                            <a
                                                 href="{{ route('products.show', $selectedConversation->product->slug) }}"
                                                 style="display: inline-block; padding: 0.6rem 1.5rem; background: linear-gradient(135deg, #0A84FF 0%, #007AFF 100%); color: white; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 0.9rem; box-shadow: 0 2px 6px rgba(10, 132, 255, 0.3); text-decoration: none;">
                                                 <i class="mr-1 fas fa-shopping-cart"></i>
