@@ -293,7 +293,7 @@ class EnhancedAIChatWidget {
         const contexts = {
             '/': 'home',
             '/index.html': 'home',
-            '/market.html': 'market',
+            '/market.html': 'products',
             '/cart.html': 'cart',
             '/checkout.html': 'checkout',
             '/ai-chat.html': 'chat',

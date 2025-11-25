@@ -314,7 +314,7 @@ class CustomerServiceChat {
                 window.location.href = '/profile';
                 break;
             case 'browse_market':
-                window.location.href = '/market';
+                window.location.href = '/products';
                 break;
             case 'check_balance':
                 this.sendQuickQuery('如何查詢錢包餘額？');

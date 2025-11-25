@@ -16,7 +16,7 @@ class CheckoutSuccessComponent extends Component
         $this->order = Order::where('order_number', $orderNumber)->with('items')->first();
 
         if (!$this->order) {
-            return redirect()->route('market');
+            return redirect()->route('products.index');
         }
     }
 
