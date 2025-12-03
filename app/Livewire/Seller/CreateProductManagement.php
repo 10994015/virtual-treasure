@@ -77,8 +77,6 @@ class CreateProductManagement extends Component
 
     public $deliveryMethods = [
         'instant' => '立即交付',
-        'manual' => '手動交付',
-        'both' => '兩者皆可',
     ];
 
     // 🔥 監聽庫存變化，動態調整序號輸入框數量

@@ -26,8 +26,6 @@ class ProductDetailComponent extends Component
     // 交付方式
     public $deliveryMethods = [
         'instant' => ['icon' => 'bolt', 'label' => '自動發貨', 'desc' => '付款後立即取得'],
-        'manual' => ['icon' => 'handshake', 'label' => '手動交付', 'desc' => '賣家手動交付'],
-        'both' => ['icon' => 'layer-group', 'label' => '混合交付', 'desc' => '自動+手動'],
     ];
 
     public function mount($slug)

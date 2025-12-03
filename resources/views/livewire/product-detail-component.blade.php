@@ -78,7 +78,7 @@
                                     <i class="fas fa-{{ $deliveryMethods[$product->delivery_method]['icon'] ?? 'box' }} text-blue-500 text-xl"></i>
                                     <div>
                                         <div class="font-medium text-gray-900">
-                                            {{ $deliveryMethods[$product->delivery_method]['label'] ?? '手動交付' }}
+                                            {{ $deliveryMethods[$product->delivery_method]['label'] ?? '' }}
                                         </div>
                                         <div class="text-xs text-gray-500">
                                             {{ $deliveryMethods[$product->delivery_method]['desc'] ?? '' }}
@@ -248,7 +248,7 @@
                                     <i class="fas fa-{{ $deliveryMethods[$product->delivery_method]['icon'] ?? 'box' }} text-blue-500 text-2xl"></i>
                                     <div>
                                         <div class="font-medium text-gray-900">
-                                            {{ $deliveryMethods[$product->delivery_method]['label'] ?? '手動交付' }}
+                                            {{ $deliveryMethods[$product->delivery_method]['label'] ?? '' }}
                                         </div>
                                         <div class="text-sm text-gray-500">
                                             {{ $deliveryMethods[$product->delivery_method]['desc'] ?? '' }}

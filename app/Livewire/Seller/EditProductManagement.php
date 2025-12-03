@@ -82,8 +82,6 @@ class EditProductManagement extends Component
 
     public $deliveryMethods = [
         'instant' => '立即交付',
-        'manual' => '手動交付',
-        'both' => '兩者皆可',
     ];
 
     public function mount(Product $product)
