@@ -59,7 +59,7 @@
                                                         <img
                                                             src="{{ $item['image'] }}"
                                                             alt="{{ $item['name'] }}"
-                                                            class="object-contain w-full h-full">
+                                                            class="object-contain w-full">
                                                     @else
                                                         <div class="flex items-center justify-center w-full h-full">
                                                             <i class="text-3xl text-gray-400 fas fa-image"></i>
@@ -152,7 +152,7 @@
                                                         <img
                                                             src="{{ $item['image'] }}"
                                                             alt="{{ $item['name'] }}"
-                                                            class="object-contain w-full h-full">
+                                                            class="object-contain w-full">
                                                     @else
                                                         <div class="flex items-center justify-center w-full h-full">
                                                             <i class="text-3xl text-gray-400 fas fa-image"></i>

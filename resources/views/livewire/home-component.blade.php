@@ -96,7 +96,7 @@
                 <div class="p-6 transition-all bg-card-white rounded-system-lg shadow-system hover:shadow-system-lg">
                     <div class="flex items-center justify-center w-full h-48 mb-4 overflow-hidden rounded-system-lg">
                         @if ($product->product_image)
-                            <img src="{{ $product->product_image }}" alt="{{ $product->product_name }}" class="object-contain w-full h-full">
+                            <img src="{{ $product->product_image }}" alt="{{ $product->product_name }}" class="object-contain w-full">
                         @else
                             <div class="flex items-center justify-center w-full h-full bg-gray-200">
                                 <i class="text-gray-400 fas fa-image"></i>
