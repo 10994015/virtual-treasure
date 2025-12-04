@@ -34,6 +34,8 @@ class ProductManagement extends Component
         '材料' => '材料',
         '皮膚' => '皮膚',
         '坐騎' => '坐騎',
+        '點數卡' => '點數卡',
+        '其他' => '其他',
     ];
 
     public $rarities = [
