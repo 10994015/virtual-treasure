@@ -111,12 +111,12 @@
                                 @if($product->primaryImage)
                                     <img src="{{ $product->primaryImage->image_url }}"
                                          alt="{{ $product->name }}"
-                                         class="object-contain w-full  mx-auto my-auto max-h-48"
+                                         class="max-w-full max-h-full object-contain max-h-48"
                                          style="height: 200px;width:100%" >
                                 @else
                                      <img src="{{ asset('images/no-image.png') }}"
                                          alt="{{ $product->name }}"
-                                         class="object-contain w-full  mx-auto my-auto max-h-48"
+                                         class="max-w-full max-h-full object-contain max-h-48"
                                          style="height: 200px;width:100%" >
                                 @endif
 

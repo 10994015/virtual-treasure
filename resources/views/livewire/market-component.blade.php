@@ -181,11 +181,11 @@
                                                 <img
                                                     src="{{ $product->primaryImage->image_url }}"
                                                     alt="{{ $product->name }}"
-                                                    class="object-contain w-full  mx-auto my-auto">
+                                                    class="max-w-full max-h-full object-contain">
                                             @else
                                                  <img
                                                     src="{{ asset('images/no-image.png') }}"
-                                                    class="object-contain w-full  mx-auto my-auto">
+                                                    class="max-w-full max-h-full object-contain">
                                             @endif
 
                                             <!-- Rarity Badge -->
@@ -262,7 +262,7 @@
                                                     <img
                                                         src="{{ $product->primaryImage->image_url }}"
                                                         alt="{{ $product->name }}"
-                                                        class="object-contain w-full  mx-auto my-auto">
+                                                        class="max-w-full max-h-full object-contain">
                                                 @else
                                                     <div class="flex items-center justify-center w-full h-full">
                                                         <i class="text-4xl text-gray-400 fas fa-image"></i>

@@ -185,7 +185,7 @@
                                         <!-- Product Image -->
                                         <div class="flex-shrink-0 w-24 h-24 overflow-hidden bg-gray-100 rounded">
                                             @if($item->product_image)
-                                                <img src="{{ $item->product_image }}" alt="{{ $item->product_name }}" class="object-contain w-full  mx-auto my-auto">
+                                                <img src="{{ $item->product_image }}" alt="{{ $item->product_name }}" class="max-w-full max-h-full object-contain">
                                             @else
                                                 <div class="flex items-center justify-center w-full h-full">
                                                     <i class="text-2xl text-gray-400 fas fa-image"></i>
