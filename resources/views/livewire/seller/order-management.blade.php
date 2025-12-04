@@ -1,10 +1,10 @@
 <div>
     <!-- Header -->
-    <section class="bg-gradient-to-br from-blue-50 to-indigo-100 py-12">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+    <section class="py-12 bg-gradient-to-br from-blue-50 to-indigo-100">
+        <div class="max-w-6xl px-4 mx-auto sm:px-6 lg:px-8">
+            <div class="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
                 <div>
-                    <h1 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-2">訂單管理</h1>
+                    <h1 class="mb-2 text-3xl font-bold text-gray-900 sm:text-4xl">訂單管理</h1>
                     <p class="text-lg text-gray-600">管理您的訂單和交易</p>
                 </div>
                 <div class="flex gap-3">
@@ -23,25 +23,25 @@
 
     <!-- Filters and Search -->
     <section class="py-8 bg-white shadow-sm">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="max-w-6xl px-4 mx-auto sm:px-6 lg:px-8">
             <div class="space-y-4">
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
                     <!-- 搜尋 -->
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">搜尋訂單</label>
+                        <label class="block mb-2 text-sm font-medium text-gray-700">搜尋訂單</label>
                         <input
                             type="text"
                             wire:model.live.debounce.300ms="searchTerm"
                             placeholder="訂單編號、買家姓名或信箱..."
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all">
+                            class="w-full px-4 py-2 transition-all border border-gray-300 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200">
                     </div>
 
                     <!-- 訂單狀態 -->
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">訂單狀態</label>
+                        <label class="block mb-2 text-sm font-medium text-gray-700">訂單狀態</label>
                         <select
                             wire:model.live="statusFilter"
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all">
+                            class="w-full px-4 py-2 transition-all border border-gray-300 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200">
                             <option value="">全部狀態</option>
                             @foreach($statuses as $value => $label)
                                 <option value="{{ $value }}">{{ $label }}</option>
@@ -51,10 +51,10 @@
 
                     <!-- 付款狀態 -->
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">付款狀態</label>
+                        <label class="block mb-2 text-sm font-medium text-gray-700">付款狀態</label>
                         <select
                             wire:model.live="paymentStatusFilter"
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all">
+                            class="w-full px-4 py-2 transition-all border border-gray-300 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200">
                             <option value="">全部狀態</option>
                             @foreach($paymentStatuses as $value => $label)
                                 <option value="{{ $value }}">{{ $label }}</option>
@@ -64,7 +64,7 @@
                 </div>
 
                 <!-- 篩選資訊 -->
-                <div class="flex justify-between items-center pt-4 border-t">
+                <div class="flex items-center justify-between pt-4 border-t">
                     <div class="text-sm text-gray-600">
                         共 <span class="font-semibold text-blue-600">{{ $totalCount }}</span> 筆訂單
                         @if($showAllOrders && auth()->user()->is_admin)
@@ -73,7 +73,7 @@
                     </div>
                     <button
                         wire:click="clearFilters"
-                        class="px-4 py-2 text-blue-500 hover:text-blue-700 hover:underline transition-colors">
+                        class="px-4 py-2 text-blue-500 transition-colors hover:text-blue-700 hover:underline">
                         清除篩選
                     </button>
                 </div>
@@ -82,21 +82,21 @@
     </section>
 
     <!-- Orders List -->
-    <section class="py-8 bg-gray-50 min-h-screen">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section class="min-h-screen py-8 bg-gray-50">
+        <div class="max-w-6xl px-4 mx-auto sm:px-6 lg:px-8">
             @if($orders->count() > 0)
                 <div class="space-y-4">
                     @foreach($orders as $order)
-                        <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+                        <div class="overflow-hidden bg-white border border-gray-200 rounded-lg shadow-sm">
                             <!-- Order Header -->
-                            <div class="bg-gray-50 px-6 py-4 border-b border-gray-200">
-                                <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                            <div class="px-6 py-4 border-b border-gray-200 bg-gray-50">
+                                <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                                     <div class="flex items-center gap-4">
                                         <div>
                                             <div class="text-sm text-gray-500">訂單編號</div>
                                             <div class="font-semibold text-gray-900">{{ $order->order_number }}</div>
                                         </div>
-                                        <div class="h-10 w-px bg-gray-300"></div>
+                                        <div class="w-px h-10 bg-gray-300"></div>
                                         <div>
                                             <div class="text-sm text-gray-500">下單時間</div>
                                             <div class="text-sm text-gray-900">{{ $order->created_at->format('Y/m/d H:i') }}</div>
@@ -127,8 +127,8 @@
                             <!-- Order Content -->
                             <div class="p-6">
                                 <!-- Buyer Info -->
-                                <div class="mb-4 pb-4 border-b border-gray-200">
-                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                                <div class="pb-4 mb-4 border-b border-gray-200">
+                                    <div class="grid grid-cols-1 gap-4 text-sm md:grid-cols-3">
                                         <div>
                                             <span class="text-gray-500">買家：</span>
                                             <span class="font-medium text-gray-900">{{ $order->buyer_name }}</span>
@@ -145,30 +145,30 @@
                                 </div>
 
                                 <!-- Order Items -->
-                                <div class="space-y-3 mb-4">
+                                <div class="mb-4 space-y-3">
                                     @foreach($order->items as $item)
-                                        <div class="flex gap-4 p-3 bg-gray-50 rounded-lg">
+                                        <div class="flex gap-4 p-3 rounded-lg bg-gray-50">
                                             <!-- Product Image -->
-                                            <div class="w-20 h-20 flex-shrink-0 bg-gray-200 rounded overflow-hidden">
+                                            <div class="flex-shrink-0 w-20 h-20 overflow-hidden bg-gray-200 rounded">
                                                 @if($item->product_image)
-                                                    <img src="{{ $item->product_image }}" alt="{{ $item->product_name }}" class="w-full h-full object-cover">
+                                                    <img src="{{ $item->product_image }}" alt="{{ $item->product_name }}" class="object-contain w-full h-full">
                                                 @else
-                                                    <div class="w-full h-full flex items-center justify-center">
-                                                        <i class="fas fa-image text-gray-400"></i>
+                                                    <div class="flex items-center justify-center w-full h-full">
+                                                        <i class="text-gray-400 fas fa-image"></i>
                                                     </div>
                                                 @endif
                                             </div>
 
                                             <!-- Product Info -->
                                             <div class="flex-1 min-w-0">
-                                                <h4 class="font-medium text-gray-900 mb-1">{{ $item->product_name }}</h4>
-                                                <div class="flex flex-wrap gap-x-4 gap-y-1 text-sm text-gray-600">
-                                                    <span><i class="fas fa-gamepad mr-1"></i>{{ $item->game_type }}</span>
-                                                    <span><i class="fas fa-tag mr-1"></i>{{ $item->product_category }}</span>
+                                                <h4 class="mb-1 font-medium text-gray-900">{{ $item->product_name }}</h4>
+                                                <div class="flex flex-wrap text-sm text-gray-600 gap-x-4 gap-y-1">
+                                                    <span><i class="mr-1 fas fa-gamepad"></i>{{ $item->game_type }}</span>
+                                                    <span><i class="mr-1 fas fa-tag"></i>{{ $item->product_category }}</span>
                                                     <span>數量：{{ $item->quantity }}</span>
                                                     @if($showAllOrders && auth()->user()->is_admin)
                                                         <span class="text-blue-600">
-                                                            <i class="fas fa-user mr-1"></i>
+                                                            <i class="mr-1 fas fa-user"></i>
                                                             賣家：{{ $item->seller->username ?? '-' }}
                                                         </span>
                                                     @endif
@@ -188,10 +188,10 @@
                                             </div>
 
                                             <!-- Price -->
-                                            <div class="text-right flex-shrink-0">
+                                            <div class="flex-shrink-0 text-right">
                                                 <div class="text-sm text-gray-500">單價</div>
                                                 <div class="font-semibold text-gray-900">NT$ {{ number_format($item->price) }}</div>
-                                                <div class="text-sm text-gray-500 mt-1">小計</div>
+                                                <div class="mt-1 text-sm text-gray-500">小計</div>
                                                 <div class="font-bold text-blue-600">NT$ {{ number_format($item->subtotal) }}</div>
                                             </div>
                                         </div>
@@ -199,28 +199,28 @@
                                 </div>
 
                                 <!-- Order Summary & Actions -->
-                                <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 pt-4 border-t border-gray-200">
+                                <div class="flex flex-col gap-4 pt-4 border-t border-gray-200 md:flex-row md:items-center md:justify-between">
                                     <div class="flex gap-2">
                                         <a
                                             href="{{ route('seller.orders.show', $order) }}"
-                                            class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors text-sm">
-                                            <i class="fas fa-eye mr-1"></i>查看詳情
+                                            class="px-4 py-2 text-sm text-white transition-colors bg-blue-500 rounded-lg hover:bg-blue-600">
+                                            <i class="mr-1 fas fa-eye"></i>查看詳情
                                         </a>
 
                                         @if(in_array($order->status, ['pending', 'paid']))
                                             <button
                                                 wire:click="cancelOrder({{ $order->id }})"
                                                 wire:confirm="確定要取消此訂單嗎？"
-                                                class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors text-sm">
-                                                <i class="fas fa-times mr-1"></i>取消訂單
+                                                class="px-4 py-2 text-sm text-white transition-colors bg-red-500 rounded-lg hover:bg-red-600">
+                                                <i class="mr-1 fas fa-times"></i>取消訂單
                                             </button>
                                         @endif
                                     </div>
 
                                     <div class="text-right">
-                                        <div class="text-sm text-gray-500 mb-1">訂單總額</div>
+                                        <div class="mb-1 text-sm text-gray-500">訂單總額</div>
                                         <div class="text-2xl font-bold text-blue-600">NT$ {{ number_format($order->total) }}</div>
-                                        <div class="text-xs text-gray-500 mt-1">
+                                        <div class="mt-1 text-xs text-gray-500">
                                             付款方式：{{ $paymentMethods[$order->payment_method] ?? '-' }}
                                         </div>
                                     </div>
@@ -236,10 +236,10 @@
                 </div>
             @else
                 <!-- Empty State -->
-                <div class="text-center py-16 bg-white rounded-lg shadow-sm border border-gray-200">
-                    <i class="fas fa-receipt text-gray-300 text-6xl mb-4"></i>
-                    <h3 class="text-xl font-semibold text-gray-600 mb-2">沒有找到訂單</h3>
-                    <p class="text-gray-500 mb-6">
+                <div class="py-16 text-center bg-white border border-gray-200 rounded-lg shadow-sm">
+                    <i class="mb-4 text-6xl text-gray-300 fas fa-receipt"></i>
+                    <h3 class="mb-2 text-xl font-semibold text-gray-600">沒有找到訂單</h3>
+                    <p class="mb-6 text-gray-500">
                         @if($searchTerm || $statusFilter || $paymentStatusFilter)
                             請嘗試調整篩選條件
                         @else
@@ -249,7 +249,7 @@
                     @if($searchTerm || $statusFilter || $paymentStatusFilter)
                         <button
                             wire:click="clearFilters"
-                            class="px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors">
+                            class="px-6 py-3 text-white transition-colors bg-blue-500 rounded-lg hover:bg-blue-600">
                             清除所有篩選
                         </button>
                     @endif
@@ -259,8 +259,8 @@
     </section>
 
     <!-- Loading Indicator -->
-    <div wire:loading.flex style="width:100%;height:100%;position:fixed;top:0;left:0;z-index:9999;;align-items:center;justify-content:center;background-color:rgba(0, 0, 0, 0.5);" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-        <div class="bg-white rounded-lg p-6 flex flex-col items-center justify-center">
+    <div wire:loading.flex style="width:100%;height:100%;position:fixed;top:0;left:0;z-index:9999;;align-items:center;justify-content:center;background-color:rgba(0, 0, 0, 0.5);" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+        <div class="flex flex-col items-center justify-center p-6 bg-white rounded-lg">
             <div class="mx-auto">
                 <img src="{{ asset('images/loading.gif') }}" width="150" />
             </div>

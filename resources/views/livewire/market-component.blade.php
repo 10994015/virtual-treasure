@@ -181,11 +181,11 @@
                                                 <img
                                                     src="{{ $product->primaryImage->image_url }}"
                                                     alt="{{ $product->name }}"
-                                                    class="object-cover w-full h-full">
+                                                    class="object-contain w-full h-full">
                                             @else
                                                  <img
                                                     src="{{ asset('images/no-image.png') }}"
-                                                    class="object-cover w-full h-full">
+                                                    class="object-contain w-full h-full">
                                             @endif
 
                                             <!-- Rarity Badge -->
@@ -262,7 +262,7 @@
                                                     <img
                                                         src="{{ $product->primaryImage->image_url }}"
                                                         alt="{{ $product->name }}"
-                                                        class="object-cover w-full h-full">
+                                                        class="object-contain w-full h-full">
                                                 @else
                                                     <div class="flex items-center justify-center w-full h-full">
                                                         <i class="text-4xl text-gray-400 fas fa-image"></i>
@@ -395,7 +395,7 @@
                         <div class="p-4 border-b hover:bg-gray-50">
                             <div class="flex gap-3">
                                 @if($item['image'])
-                                    <img src="{{ $item['image'] }}" alt="{{ $item['name'] }}" class="object-cover w-16 h-16 rounded">
+                                    <img src="{{ $item['image'] }}" alt="{{ $item['name'] }}" class="object-contain w-16 h-16 rounded">
                                 @else
                                     <div class="flex items-center justify-center w-16 h-16 bg-gray-200 rounded">
                                         <i class="text-gray-400 fas fa-image"></i>

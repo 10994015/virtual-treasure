@@ -186,7 +186,7 @@
                                     @foreach($cart as $item)
                                         <div class="flex gap-3">
                                             @if($item['image'])
-                                                <img src="{{ $item['image'] }}" alt="{{ $item['name'] }}" class="object-cover w-16 h-16 rounded">
+                                                <img src="{{ $item['image'] }}" alt="{{ $item['name'] }}" class="object-contain w-16 h-16 rounded">
                                             @else
                                                 <div class="flex items-center justify-center w-16 h-16 bg-gray-200 rounded">
                                                     <i class="text-gray-400 fas fa-image"></i>
