@@ -30,7 +30,7 @@
                             <img
                                 src="/storage/{{ $selectedImage }}"
                                 alt="{{ $product->name }}"
-                                class="object-contain object-center w-full h-full">
+                                class="object-contain w-full  mx-auto my-auto">
                         @else
                             <div class="flex items-center justify-center w-full h-full">
                                 <i class="text-6xl text-gray-400 fas fa-image"></i>
@@ -48,7 +48,7 @@
                                     <img
                                         src="/storage/{{ $image->image_path }}"
                                         alt="{{ $product->name }}"
-                                        class="object-contain object-center w-full h-full">
+                                        class="object-contain w-full  mx-auto my-auto">
                                 </button>
                             @endforeach
                         </div>
@@ -383,7 +383,7 @@
                                         <img
                                             src="/storage/{{ $relatedImage->image_path }}"
                                             alt="{{ $relatedProduct->name }}"
-                                            class="object-contain object-center w-full h-full transition-transform duration-300 group-hover:scale-110">
+                                            class="object-contain w-full  mx-auto my-auto transition-transform duration-300 group-hover:scale-110">
                                     @else
                                         <div class="flex items-center justify-center w-full h-full">
                                             <i class="text-4xl text-gray-400 fas fa-image"></i>
