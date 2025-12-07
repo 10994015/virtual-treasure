@@ -378,62 +378,12 @@
                                     @foreach($images as $index => $image)
                                         <div class="image-preview-item">
                                             <div class="image-preview-wrapper">
-                                              <!-- 圖片預覽 -->
-                                                @if(!empty($images))
-                                                    <div class="image-preview-container">
-                                                        <div class="image-preview-header">
-                                                            <p class="image-count">已選擇 {{ count($images) }} 張圖片</p>
-                                                            <p class="image-hint">點擊圖片右上角 ✕ 移除</p>
-                                                        </div>
-                                                        <div class="image-preview-grid">
-                                                            @foreach($images as $index => $image)
-                                                                <div class="image-preview-item">
-                                                                    <div class="image-preview-wrapper">
-                                                                        <!-- 🔥 使用 Base64 方式，100% 可靠 -->
-                                                                        <img
-                                                                            src="data:image/{{ $image->getClientOriginalExtension() }};base64,{{ base64_encode(file_get_contents($image->getRealPath())) }}"
-                                                                            alt="預覽圖 {{ $index + 1 }}"
-                                                                            class="preview-image">
+                                                <!-- 🔥 使用 Base64 方式，100% 可靠 -->
+                                                <img
+                                                    src="data:image/{{ $image->getClientOriginalExtension() }};base64,{{ base64_encode(file_get_contents($image->getRealPath())) }}"
+                                                    alt="預覽圖 {{ $index + 1 }}"
+                                                    class="preview-image">
 
-                                                                        <!-- 刪除按鈕 -->
-                                                                        <button
-                                                                            type="button"
-                                                                            wire:click="removeImage({{ $index }})"
-                                                                            wire:loading.attr="disabled"
-                                                                            wire:target="removeImage"
-                                                                            class="image-remove-btn"
-                                                                            title="移除圖片">
-                                                                            <svg class="remove-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path>
-                                                                            </svg>
-                                                                        </button>
-
-                                                                        <!-- 主圖標籤 -->
-                                                                        @if($index === 0)
-                                                                            <div class="primary-badge">
-                                                                                <svg class="star-icon" fill="currentColor" viewBox="0 0 20 20">
-                                                                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
-                                                                                </svg>
-                                                                                主圖
-                                                                            </div>
-                                                                        @endif
-
-                                                                        <!-- 圖片順序 -->
-                                                                        <div class="image-order-badge">
-                                                                            {{ $index + 1 }}
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            @endforeach
-                                                        </div>
-                                                        <div class="image-info-box">
-                                                            <svg class="info-icon" fill="currentColor" viewBox="0 0 20 20">
-                                                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
-                                                            </svg>
-                                                            <p class="info-text">第一張圖片將作為商品主圖顯示。點擊圖片右上角的紅色 ✕ 按鈕可移除圖片。</p>
-                                                        </div>
-                                                    </div>
-                                                @endif
                                                 <!-- 刪除按鈕 -->
                                                 <button
                                                     type="button"
