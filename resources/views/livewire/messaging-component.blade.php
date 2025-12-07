@@ -500,7 +500,7 @@
                         </div>
                         <div style="display: flex; gap: 1rem;">
                             <a
-                                href="{{ route('products.show', $selectedConversation->product->slug) }}"
+                                href="{{ route('products.show', $selectedConversation->product->slug ?? '') }}"
                                 class="chat-header-action"
                                 title="查看商品"
                                 style="background: none; border: none; color: #0A84FF; cursor: pointer; font-size: 1.1rem; text-decoration: none;">
@@ -539,7 +539,7 @@
                             <div style="flex: 1; min-width: 0;">
                                 <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 0.5rem;">
                                     <h4 style="margin: 0; font-size: 1rem; font-weight: 600; color: #333;">
-                                        {{ $selectedConversation->product->name }}
+                                        {{ $selectedConversation->product->name ?? '' }}
                                     </h4>
 
                                     {{-- 🔥 歷史價格按鈕 --}}
@@ -561,7 +561,7 @@
                                     <div>
                                         <span style="font-size: 0.75rem; color: #666;">原價</span>
                                         <p style="margin: 0; font-size: 0.85rem; font-weight: 600; color: #999;">
-                                            NT$ {{ number_format($selectedConversation->product->price) }}
+                                            NT$ {{ number_format($selectedConversation->product->price ?? 0) }}
                                         </p>
                                     </div>
                                     @if($this->bestPrice['is_bargain'])
