@@ -494,7 +494,7 @@
                                      {{ $otherUser->last_name }}
                                 </h3>
                                 <p style="margin: 0; font-size: 0.8rem; color: #666;">
-                                    <i class="mr-1 fas fa-box"></i>{{ $selectedConversation->product->name }}
+                                    <i class="mr-1 fas fa-box"></i>{{ $selectedConversation->product->name ?? '' }}
                                 </p>
                             </div>
                         </div>
