@@ -379,10 +379,17 @@
                                         <div class="image-preview-item">
                                             <div class="image-preview-wrapper">
                                                 <!-- 圖片 -->
-                                                <img
-                                                    src="{{ $image->temporaryUrl() }}"
-                                                    alt="預覽圖 {{ $index + 1 }}"
-                                                    class="preview-image">
+                                               @if(method_exists($image, 'temporaryUrl'))
+                                                    <img
+                                                        src="{{ $image->temporaryUrl() }}"
+                                                        class="preview-image"
+                                                        onerror="this.onerror=null; this.src='{{ asset('images/no-image.png') }}';">
+                                                @else
+                                                    <!-- 備用方案：使用 data URL -->
+                                                    <img
+                                                        src="data:image/png;base64,{{ base64_encode(file_get_contents($image->getRealPath())) }}"
+                                                        class="preview-image">
+                                                @endif
 
                                                 <!-- 刪除按鈕 -->
                                                 <button
