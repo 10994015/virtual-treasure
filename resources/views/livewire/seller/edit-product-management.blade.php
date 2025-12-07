@@ -464,11 +464,7 @@
                                     @foreach($newImages as $index => $image)
                                         <div class="image-preview-item">
                                             <div class="image-preview-wrapper">
-                                                <img
-                                                    src="{{ $image->temporaryUrl() }}"
-                                                    alt="新增圖片 {{ $index + 1 }}"
-                                                    class="preview-image">
-
+                                               <img src="data:image/{{ $image->getClientOriginalExtension() }};base64,{{ base64_encode(file_get_contents($image->getRealPath())) }}" ...>
                                                 <button
                                                     type="button"
                                                     wire:click="removeNewImage({{ $index }})"
