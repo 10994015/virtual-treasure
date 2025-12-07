@@ -186,7 +186,7 @@
                                     @foreach($cart as $item)
                                         <div class="flex gap-3">
                                             @if($item['image'])
-                                                <img src="{{ $item['image'] }}" alt="{{ $item['name'] }}" class="object-contain w-16 h-16 rounded">
+                                                <img src="{{ $item['image'] }}" alt="{{ $item['name'] }}" onerror="this.onerror=null; this.src='/storage/{{ $item['image'] }}';" class="object-contain w-16 h-16 rounded">
                                             @else
                                                 <div class="flex items-center justify-center w-16 h-16 bg-gray-200 rounded">
                                                     <i class="text-gray-400 fas fa-image"></i>
@@ -195,7 +195,7 @@
 
                                             <div class="flex-1 min-w-0">
                                                 <h4 class="text-sm font-medium text-gray-900 truncate">{{ $item['name'] }}</h4>
-                   storage                             <p class="text-xs text-gray-500">
+                                                <p class="text-xs text-gray-500">
                                                     @switch($item['trade_type'] ?? 'in_game')
                                                         @case('code')
                                                             <i class="mr-1 fas fa-key"></i>兌換碼交易

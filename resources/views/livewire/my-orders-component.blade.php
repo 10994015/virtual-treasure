@@ -134,16 +134,19 @@
                                     @foreach($order->items as $item)
                                         <div class="flex gap-4 p-3 rounded-lg bg-gray-50">
                                             <!-- Product Image -->
-                                            <div class="flex-shrink-0 w-20 h-20 overflow-hidden bg-gray-200 rounded">
+                                            <div class="flex items-center justify-center flex-shrink-0 w-20 h-20 overflow-hidden bg-gray-200 rounded">
                                                 @if($item->product_image)
-                                                    <img src="{{ $item->product_image }}" alt="{{ $item->product_name }}" class="max-w-full max-h-full object-contain">
+                                                    <img
+                                                        src="{{ $item->product_image }}"
+                                                        onerror="this.onerror=null; this.src='/storage/{{ $item->product_image }}';"
+                                                        alt="{{ $item->product_name }}"
+                                                        class="object-contain w-full h-full">
                                                 @else
                                                     <div class="flex items-center justify-center w-full h-full">
                                                         <i class="text-gray-400 fas fa-image"></i>
                                                     </div>
                                                 @endif
                                             </div>
-
                                             <!-- Product Info -->
                                             <div class="flex-1 min-w-0">
                                                 <h4 class="mb-1 font-medium text-gray-900 truncate">{{ $item->product_name }}</h4>

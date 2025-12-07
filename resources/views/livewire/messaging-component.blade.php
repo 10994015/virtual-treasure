@@ -456,7 +456,7 @@
                                 {{ $conversation->last_message ?? '尚無訊息' }}
                             </div>
                             <div class="chat-item-product">
-                                <i class="mr-1 fas fa-box"></i>{{ $conversation->product->name }}
+                                <i class="mr-1 fas fa-box"></i>{{ $conversation->product->name ?? '' }}
                             </div>
                         </div>
                     </div>
@@ -483,7 +483,11 @@
                     <div style="border-bottom: 1px solid #e5e5ea; padding: 1rem; display: flex; justify-content: space-between; align-items: center; background: white;">
                         <div style="display: flex; align-items: center; gap: 0.75rem;">
                             <div class="chat-item-avatar" style="width: 40px; height: 40px; font-size: 1rem;">
-                                {{ $otherUser->last_name }}
+                                @if($otherUser->profile_photo_url && !str_contains($otherUser->profile_photo_url, 'ui-avatars.com'))
+                                    <img src="{{ $otherUser->profile_photo_url }}" alt="{{ $otherUser->last_name }}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
+                                @else
+                                    {{ $otherUser->last_name }}
+                                @endif
                             </div>
                             <div>
                                 <h3 style="margin: 0; font-size: 0.95rem; font-weight: 600; color: #000;">
@@ -542,7 +546,7 @@
                                     <button
                                         wire:click="togglePriceHistoryModal"
                                         type="button"
-                                        style="padding: 0.4rem 0.75rem; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 0.75rem; font-weight: 600; white-space: nowrap; box-shadow: 0 2px 4px rgba(102, 126, 234, 0.3);">
+                                        style="padding: 0.4rem 0.75rem; background: #0A84FF; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 0.75rem; font-weight: 600; white-space: nowrap; box-shadow: 0 2px 4px rgba(102, 126, 234, 0.3);">
                                         <i class="mr-1 fas fa-chart-line"></i>歷史價格
                                     </button>
                                 </div>
@@ -885,32 +889,32 @@
 
                     <!-- 🔥 議價面板 -->
                     @if($showBargainPanel)
-                        <div style="border-top: 1px solid #e5e5ea; padding: 1.25rem; background: linear-gradient(135deg, #f0f8ff 0%, #e6f3ff 100%); max-height: 500px; overflow-y: scroll;">
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
-                                <h4 style="margin: 0; font-size: 1.1rem; font-weight: 600; color: #0A84FF;">
-                                    <i class="fas fa-handshake" style="margin-right: 0.5rem;"></i>議價模式
+                        <div style="border-top: 1px solid #e5e5ea; padding: 1rem; background: linear-gradient(135deg, #f0f8ff 0%, #e6f3ff 100%);">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                                <h4 style="margin: 0; font-size: 0.95rem; font-weight: 600; color: #0A84FF;">
+                                    <i class="fas fa-handshake" style="margin-right: 0.4rem;"></i>議價模式
                                 </h4>
-                                <button wire:click="toggleBargainPanel" type="button" style="background: none; border: none; color: #999; cursor: pointer; font-size: 1.3rem;">
+                                <button wire:click="toggleBargainPanel" type="button" style="background: none; border: none; color: #999; cursor: pointer; font-size: 1.1rem;">
                                     <i class="fas fa-times"></i>
                                 </button>
                             </div>
 
                             @if($this->bargainStats && $this->bargainStats->min_price)
-                                <div style="background: white; padding: 1rem; border-radius: 10px; margin-bottom: 1rem; border: 1px solid #d4e6ff;">
-                                    <p style="margin: 0 0 0.75rem 0; font-size: 0.85rem; color: #666; font-weight: 600;">
+                                <div style="background: white; padding: 0.75rem; border-radius: 8px; margin-bottom: 0.75rem; border: 1px solid #d4e6ff;">
+                                    <p style="margin: 0 0 0.5rem 0; font-size: 0.75rem; color: #666; font-weight: 600;">
                                         <i class="mr-1 fas fa-chart-line"></i>📊 歷史成交區間：
                                     </p>
-                                    <div style="display: flex; gap: 1rem; align-items: center;">
+                                    <div style="display: flex; gap: 0.75rem; align-items: center;">
                                         <div style="flex: 1; text-align: center;">
-                                            <span style="font-size: 0.75rem; color: #999;">最低價</span>
-                                            <p style="margin: 0; font-size: 1.1rem; font-weight: 700; color: #34C759;">
+                                            <span style="font-size: 0.7rem; color: #999;">最低價</span>
+                                            <p style="margin: 0; font-size: 0.95rem; font-weight: 700; color: #34C759;">
                                                 NT$ {{ number_format($this->bargainStats->min_price) }}
                                             </p>
                                         </div>
-                                        <div style="flex: 2; height: 4px; background: linear-gradient(90deg, #34C759, #0A84FF); border-radius: 2px;"></div>
+                                        <div style="flex: 2; height: 3px; background: linear-gradient(90deg, #34C759, #0A84FF); border-radius: 2px;"></div>
                                         <div style="flex: 1; text-align: center;">
-                                            <span style="font-size: 0.75rem; color: #999;">最高價</span>
-                                            <p style="margin: 0; font-size: 1.1rem; font-weight: 700; color: #0A84FF;">
+                                            <span style="font-size: 0.7rem; color: #999;">最高價</span>
+                                            <p style="margin: 0; font-size: 0.95rem; font-weight: 700; color: #0A84FF;">
                                                 NT$ {{ number_format($this->bargainStats->max_price) }}
                                             </p>
                                         </div>
@@ -920,59 +924,59 @@
 
                             @if($isBuyer)
                                 @if(!$this->currentBargain || $this->currentBargain->status === 'rejected')
-                                    <div style="background: white; padding: 1.25rem; border-radius: 10px; border: 2px solid #0A84FF;">
-                                        <p style="margin: 0 0 1rem 0; font-size: 1rem; color: #333; font-weight: 600;">
-                                            <i class="fas fa-tag" style="margin-right: 0.5rem; color: #0A84FF;"></i>開始議價
+                                    <div style="background: white; padding: 1rem; border-radius: 8px; border: 2px solid #0A84FF;">
+                                        <p style="margin: 0 0 0.75rem 0; font-size: 0.9rem; color: #333; font-weight: 600;">
+                                            <i class="fas fa-tag" style="margin-right: 0.4rem; color: #0A84FF;"></i>開始議價
                                         </p>
 
-                                        <div style="margin-bottom: 0.75rem;">
-                                            <label style="display: block; font-size: 0.85rem; color: #666; margin-bottom: 0.4rem; font-weight: 500;">議價單價</label>
+                                        <div style="margin-bottom: 0.6rem;">
+                                            <label style="display: block; font-size: 0.75rem; color: #666; margin-bottom: 0.3rem; font-weight: 500;">議價單價</label>
                                             <div class="bargain-input-wrapper">
                                                 <span class="bargain-input-prefix">NT$</span>
-                                                <input type="number" wire:model.live.debounce.300ms="bargainPrice" placeholder="輸入您想要的單價" class="bargain-input" min="1" step="1" style="padding-right: 3.5rem;">
+                                                <input type="number" wire:model.live.debounce.300ms="bargainPrice" placeholder="  輸入您想要的單價" class="bargain-input" min="1" step="1" style="padding: 0.6rem 0.6rem 0.6rem 2.2rem; font-size: 0.85rem;">
                                                 <span class="bargain-input-suffix">/ 個</span>
                                             </div>
                                         </div>
 
-                                        <div style="margin-bottom: 0.75rem;">
-                                            <label style="display: block; font-size: 0.85rem; color: #666; margin-bottom: 0.4rem; font-weight: 500;">購買數量</label>
+                                        <div style="margin-bottom: 0.6rem;">
+                                            <label style="display: block; font-size: 0.75rem; color: #666; margin-bottom: 0.3rem; font-weight: 500;">購買數量</label>
                                             <div class="bargain-input-wrapper">
                                                 <span class="bargain-input-prefix">x</span>
-                                                <input type="number" wire:model.live.debounce.300ms="bargainQuantity" placeholder="輸入購買數量" class="bargain-input" min="1" max="{{ $selectedConversation->product->stock > 0 ? $selectedConversation->product->stock : 9999 }}" style="padding-right: 2.5rem;">
+                                                <input type="number" wire:model.live.debounce.300ms="bargainQuantity" placeholder="輸入購買數量" class="bargain-input" min="1" max="{{ $selectedConversation->product->stock > 0 ? $selectedConversation->product->stock : 9999 }}" style="padding: 0.6rem 0.6rem 0.6rem 2.2rem; font-size: 0.85rem;">
                                                 <span class="bargain-input-suffix">個</span>
                                             </div>
                                             @if($selectedConversation->product->stock > 0)
-                                                <p style="margin: 0.4rem 0 0 0; font-size: 0.75rem; color: #999;">庫存：{{ $selectedConversation->product->stock }} 個</p>
+                                                <p style="margin: 0.3rem 0 0 0; font-size: 0.7rem; color: #999;">庫存：{{ $selectedConversation->product->stock }} 個</p>
                                             @endif
                                         </div>
 
                                         @if($bargainPrice && $bargainQuantity)
-                                            <div class="bargain-total-preview">
-                                                <div class="bargain-total-preview-label">議價總額</div>
-                                                <div class="bargain-total-preview-value">NT$ {{ number_format($this->bargainTotal) }}</div>
+                                            <div style="background: linear-gradient(135deg, #e6f3ff 0%, #cce7ff 100%); border: 2px solid #0A84FF; border-radius: 8px; padding: 0.75rem; text-align: center; margin: 0.6rem 0;">
+                                                <div style="font-size: 0.75rem; color: #666; margin-bottom: 0.2rem;">議價總額</div>
+                                                <div style="font-size: 1.5rem; font-weight: 700; color: #0A84FF;">NT$ {{ number_format($this->bargainTotal) }}</div>
                                             </div>
                                         @endif
 
-                                        <button wire:click="submitBargain" type="button" @if(!$bargainPrice || !$bargainQuantity) disabled @endif style="width: 100%; padding: 0.9rem 1.25rem; background: linear-gradient(135deg, #0A84FF 0%, #007AFF 100%); color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: 600; font-size: 1rem; box-shadow: 0 4px 12px rgba(10, 132, 255, 0.3);">
-                                            <i class="fas fa-paper-plane" style="margin-right: 0.5rem;"></i>送出議價
+                                        <button wire:click="submitBargain" type="button" @if(!$bargainPrice || !$bargainQuantity) disabled @endif style="width: 100%; padding: 0.75rem 1rem; background: linear-gradient(135deg, #0A84FF 0%, #007AFF 100%); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 0.9rem; box-shadow: 0 3px 10px rgba(10, 132, 255, 0.3);">
+                                            <i class="fas fa-paper-plane" style="margin-right: 0.4rem;"></i>送出議價
                                         </button>
 
-                                        <div style="background: #f9f9f9; padding: 0.75rem; border-radius: 6px; margin-top: 0.75rem;">
-                                            <p style="margin: 0; font-size: 0.75rem; color: #666;">💡 提示：議價後賣家可以選擇接受、拒絕或提出反議價</p>
+                                        <div style="background: #f9f9f9; padding: 0.6rem; border-radius: 6px; margin-top: 0.6rem;">
+                                            <p style="margin: 0; font-size: 0.7rem; color: #666;">💡 提示：議價後賣家可以選擇接受、拒絕或提出反議價</p>
                                         </div>
                                     </div>
                                 @else
-                                    <div style="text-align: center; padding: 2.5rem 1rem; background: white; border-radius: 10px;">
-                                        <i class="fas fa-hourglass-half" style="font-size: 3rem; margin-bottom: 0.75rem; color: #0A84FF;"></i>
-                                        <p style="margin: 0; font-size: 1.1rem; font-weight: 600; color: #0A84FF;">議價進行中...</p>
-                                        <p style="margin: 0.5rem 0 0 0; font-size: 0.85rem; color: #666;">請在訊息中查看賣家的回覆</p>
+                                    <div style="text-align: center; padding: 2rem 1rem; background: white; border-radius: 8px;">
+                                        <i class="fas fa-hourglass-half" style="font-size: 2.5rem; margin-bottom: 0.6rem; color: #0A84FF;"></i>
+                                        <p style="margin: 0; font-size: 1rem; font-weight: 600; color: #0A84FF;">議價進行中...</p>
+                                        <p style="margin: 0.4rem 0 0 0; font-size: 0.8rem; color: #666;">請在訊息中查看賣家的回覆</p>
                                     </div>
                                 @endif
                             @else
-                                <div style="text-align: center; padding: 2.5rem 1rem; background: white; border-radius: 10px;">
-                                    <i class="fas fa-info-circle" style="font-size: 3rem; margin-bottom: 0.75rem; color: #999;"></i>
-                                    <p style="margin: 0; font-size: 1.1rem; font-weight: 600; color: #666;">等待買家發起議價</p>
-                                    <p style="margin: 0.5rem 0 0 0; font-size: 0.85rem; color: #999;">收到議價時可直接在訊息中回覆</p>
+                                <div style="text-align: center; padding: 2rem 1rem; background: white; border-radius: 8px;">
+                                    <i class="fas fa-info-circle" style="font-size: 2.5rem; margin-bottom: 0.6rem; color: #999;"></i>
+                                    <p style="margin: 0; font-size: 1rem; font-weight: 600; color: #666;">等待買家發起議價</p>
+                                    <p style="margin: 0.4rem 0 0 0; font-size: 0.8rem; color: #999;">收到議價時可直接在訊息中回覆</p>
                                 </div>
                             @endif
                         </div>
@@ -1054,7 +1058,7 @@
             <div
                 style="background: white; border-radius: 16px; max-width: 600px; width: 100%; max-height: 80vh; overflow: hidden; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3); display: flex; flex-direction: column;">
                 {{-- 標題 --}}
-                <div style="padding: 1.5rem; border-bottom: 2px solid #f0f0f0; display: flex; justify-content: space-between; align-items: center; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                <div style="padding: 1.5rem; border-bottom: 2px solid #f0f0f0; display: flex; justify-content: space-between; align-items: center; background: #027CFF">
                     <h3 style="margin: 0; font-size: 1.3rem; font-weight: 700; color: white; display: flex; align-items: center; gap: 0.5rem;">
                         <i class="fas fa-chart-line"></i>
                         歷史成交價格

@@ -31,7 +31,7 @@
                             @foreach($order->items as $item)
                                 <div class="flex items-center gap-3 text-sm">
                                     @if($item->product_image)
-                                        <img src="{{ $item->product_image }}" alt="{{ $item->product_name }}" class="object-contain w-12 h-12 rounded">
+                                        <img src="{{ $item->product_image }}" onerror="this.onerror=null; this.src='/storage/{{ $item->product_image }}';" alt="{{ $item->product_name }}" class="object-contain w-12 h-12 rounded">
                                     @else
                                         <div class="flex items-center justify-center w-12 h-12 bg-gray-200 rounded">
                                             <i class="text-gray-400 fas fa-image"></i>

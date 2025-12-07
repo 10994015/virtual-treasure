@@ -176,16 +176,16 @@
                                     <!-- Grid View -->
                                     <div class="transition-shadow duration-300 bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-lg">
                                         <!-- Product Image -->
-                                        <div class="relative h-48 overflow-hidden bg-gray-100 rounded-t-lg">
+                                        <div class="relative flex items-center justify-center h-48 overflow-hidden bg-gray-100 rounded-t-lg">
                                             @if($product->primaryImage)
                                                 <img
                                                     src="{{ $product->primaryImage->image_url }}"
                                                     alt="{{ $product->name }}"
-                                                    class="max-w-full max-h-full object-contain">
+                                                    class="object-contain w-full h-full">
                                             @else
-                                                 <img
+                                                <img
                                                     src="{{ asset('images/no-image.png') }}"
-                                                    class="max-w-full max-h-full object-contain">
+                                                    class="object-contain w-full h-full">
                                             @endif
 
                                             <!-- Rarity Badge -->
@@ -257,12 +257,12 @@
                                     <div class="transition-shadow duration-300 bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-lg">
                                         <div class="flex gap-4 p-4">
                                             <!-- Product Image -->
-                                            <div class="flex-shrink-0 w-32 h-32 overflow-hidden bg-gray-100 rounded-lg">
+                                            <div class="flex items-center justify-center flex-shrink-0 w-32 h-32 overflow-hidden bg-gray-100 rounded-lg">
                                                 @if($product->primaryImage)
                                                     <img
                                                         src="{{ $product->primaryImage->image_url }}"
                                                         alt="{{ $product->name }}"
-                                                        class="max-w-full max-h-full object-contain">
+                                                        class="object-contain w-full h-full">
                                                 @else
                                                     <div class="flex items-center justify-center w-full h-full">
                                                         <i class="text-4xl text-gray-400 fas fa-image"></i>
@@ -394,13 +394,13 @@
                     @foreach($cart as $index => $item)
                         <div class="p-4 border-b hover:bg-gray-50">
                             <div class="flex gap-3">
-                                @if($item['image'])
-                                    <img src="{{ $item['image'] }}" alt="{{ $item['name'] }}" class="object-contain w-16 h-16 rounded">
-                                @else
-                                    <div class="flex items-center justify-center w-16 h-16 bg-gray-200 rounded">
+                               <div class="flex items-center justify-center flex-shrink-0 w-16 h-16 overflow-hidden bg-gray-100 rounded">
+                                    @if($item['image'])
+                                        <img src="{{ $item['image'] }}" alt="{{ $item['name'] }}" class="object-contain w-full h-full">
+                                    @else
                                         <i class="text-gray-400 fas fa-image"></i>
-                                    </div>
-                                @endif
+                                    @endif
+                                </div>
 
                                 <div class="flex-1 min-w-0">
                                     <h4 class="text-sm font-medium text-gray-900 truncate">{{ $item['name'] }}</h4>

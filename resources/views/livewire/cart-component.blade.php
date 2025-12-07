@@ -54,12 +54,13 @@
                                         <div class="p-4 transition-all bg-white border border-orange-200 rounded-lg hover:shadow-md">
                                             <div class="flex gap-4">
                                                 <!-- Product Image -->
-                                                <div class="flex-shrink-0 w-24 h-24 overflow-hidden bg-gray-100 rounded-lg">
+                                                <div class="flex items-center justify-center flex-shrink-0 w-24 h-24 overflow-hidden bg-gray-100 rounded-lg">
                                                     @if($item['image'])
                                                         <img
                                                             src="{{ $item['image'] }}"
                                                             alt="{{ $item['name'] }}"
-                                                            class="object-contain w-full mx-auto my-auto">
+                                                            onerror="this.onerror=null; this.src='/storage/{{ $item['image'] }}';"
+                                                            class="object-contain w-full h-full">
                                                     @else
                                                         <div class="flex items-center justify-center w-full h-full">
                                                             <i class="text-3xl text-gray-400 fas fa-image"></i>
@@ -147,12 +148,13 @@
                                         <div class="p-4 transition-colors hover:bg-gray-50">
                                             <div class="flex gap-4">
                                                 <!-- Product Image -->
-                                                <div class="flex-shrink-0 w-24 h-24 overflow-hidden bg-gray-100 rounded-lg">
+                                                <div class="flex items-center justify-center flex-shrink-0 w-24 h-24 overflow-hidden bg-gray-100 rounded-lg">
                                                     @if($item['image'])
                                                         <img
                                                             src="{{ $item['image'] }}"
                                                             alt="{{ $item['name'] }}"
-                                                            class="object-contain w-full mx-auto my-auto">
+                                                            onerror="this.onerror=null; this.src='/storage/{{ $item['image'] }}';"
+                                                            class="object-contain w-full h-full">
                                                     @else
                                                         <div class="flex items-center justify-center w-full h-full">
                                                             <i class="text-3xl text-gray-400 fas fa-image"></i>

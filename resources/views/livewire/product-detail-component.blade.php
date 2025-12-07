@@ -25,12 +25,12 @@
                 <!-- Left Column - Images -->
                 <div>
                     <!-- Main Image -->
-                    <div class="mb-4 overflow-hidden bg-gray-100 rounded-lg aspect-square">
+                    <div class="flex items-center justify-center mb-4 overflow-hidden bg-gray-100 rounded-lg aspect-square">
                         @if($selectedImage)
                             <img
                                 src="/storage/{{ $selectedImage }}"
                                 alt="{{ $product->name }}"
-                                class="max-w-full max-h-full object-contain">
+                                class="object-contain w-full h-full">
                         @else
                             <div class="flex items-center justify-center w-full h-full">
                                 <i class="text-6xl text-gray-400 fas fa-image"></i>
@@ -44,11 +44,11 @@
                             @foreach($product->images as $image)
                                 <button
                                     wire:click="selectImage('{{ $image->image_path }}')"
-                                    class="aspect-square bg-gray-100 rounded-lg overflow-hidden border-2 {{ $selectedImage === $image->image_path ? 'border-blue-500' : 'border-transparent' }} hover:border-blue-300 transition-all">
+                                    class="aspect-square bg-gray-100 rounded-lg overflow-hidden border-2 flex items-center justify-center {{ $selectedImage === $image->image_path ? 'border-blue-500' : 'border-transparent' }} hover:border-blue-300 transition-all">
                                     <img
                                         src="/storage/{{ $image->image_path }}"
                                         alt="{{ $product->name }}"
-                                        class="max-w-full max-h-full object-contain">
+                                        class="object-contain w-full h-full">
                                 </button>
                             @endforeach
                         </div>
@@ -374,7 +374,7 @@
                         <a href="{{ route('products.show', $relatedProduct->slug) }}" class="group">
                             <div class="overflow-hidden transition-all bg-white border border-gray-200 rounded-lg hover:shadow-lg">
                                 <!-- Image -->
-                                <div class="overflow-hidden bg-gray-100 aspect-square">
+                                <div class="flex items-center justify-center overflow-hidden bg-gray-100 aspect-square">
                                     @php
                                         $relatedImage = $relatedProduct->images->where('is_primary', true)->first()
                                                      ?? $relatedProduct->images->first();
@@ -383,7 +383,7 @@
                                         <img
                                             src="/storage/{{ $relatedImage->image_path }}"
                                             alt="{{ $relatedProduct->name }}"
-                                            class="max-w-full max-h-full object-contain transition-transform duration-300 group-hover:scale-110">
+                                            class="object-contain max-w-full max-h-full transition-transform duration-300 group-hover:scale-110">
                                     @else
                                         <div class="flex items-center justify-center w-full h-full">
                                             <i class="text-4xl text-gray-400 fas fa-image"></i>
