@@ -663,17 +663,8 @@ class MessagingComponent extends Component
 
             DB::commit();
 
-            try {
-                if (request()->header('X-Socket-ID')) {
-                    broadcast(new NewMessageEvent($message))->toOthers();
-                } else {
-                    broadcast(new NewMessageEvent($message));
-                }
-                broadcast(new ConversationUpdated($conversation));
-            } catch (\Exception $e) {
-                Log::error('Broadcast error: ' . $e->getMessage());
-                // 即使廣播失敗，訊息仍然已儲存
-            }
+            broadcast(new NewMessageEvent($message))->toOthers();
+            broadcast(new ConversationUpdated($conversation));
 
             $this->uploadedImage = null;
             $this->dispatch('message-sent');
