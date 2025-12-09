@@ -353,7 +353,7 @@
                                     <div class="flex items-center space-x-3">
                                         <div class="flex items-center justify-center w-10 h-10 overflow-hidden bg-blue-100 rounded-lg">
                                             @if(isset($product['product_image']) && $product['product_image'])
-                                                <img src="{{ $product['product_image'] }}" alt="{{ $product['product_name'] }}" class="object-cover w-full h-full">
+                                                <img src="{{ $product['product_image'] }}" onerror="this.onerror=null; this.src='/storage/{{ $product['product_image'] }}';" alt="{{ $product['product_name'] }}" class="object-cover w-full h-full">
                                             @else
                                                 <i class="text-blue-600 fas fa-box"></i>
                                             @endif
