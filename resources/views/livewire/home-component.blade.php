@@ -1,28 +1,96 @@
 <div>
     <!-- Hero Section -->
-    <section class="py-24 bg-gradient-to-br from-blue-50 to-indigo-100 sm:py-32">
-        <div class="max-w-6xl px-4 mx-auto text-center sm:px-6 lg:px-8">
-            <div class="max-w-3xl mx-auto">
-                <h1 class="mb-6 text-4xl font-bold text-gray-900 sm:text-6xl lg:text-7xl">
-                    虛擬寶物
-                    <span class="text-system-blue">交易平台</span>
-                </h1>
-                <p class="max-w-2xl mx-auto mb-8 text-lg leading-relaxed text-gray-600 sm:text-xl">
-                    使用 AI 智能技術，讓您的遊戲交易更加安全、透明、高效
-                </p>
-                <div class="flex flex-col justify-center gap-4 sm:flex-row">
-                    <a href="{{ route('products.index') }}" class="inline-flex items-center px-8 py-4 font-semibold text-white transition-all bg-system-blue rounded-system-lg hover:bg-blue-600 btn-system shadow-system">
-                        <i class="mr-2 fas fa-shopping-bag"></i>
-                        探索市場
-                    </a>
-                    <button onclick="openChat()" class="inline-flex items-center px-8 py-4 font-semibold transition-all border-2 border-system-blue text-system-blue rounded-system-lg hover:bg-system-blue hover:text-white btn-system">
-                        <i class="mr-2 fas fa-robot"></i>
-                        AI 客服
-                    </button>
-                </div>
+   <style>
+    .homebg {
+        position: relative;
+    }
+
+    .homebg::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: url('/images/homebg.jpg') no-repeat center center fixed;
+        background-size: cover;
+        opacity: 0.9;
+        z-index: -1;
+        filter: brightness(0.4) contrast(1.1); /* 加暗背景圖片 */
+    }
+
+    /* 標題文字陰影 - 更強烈 */
+    .homebg h1 {
+        color: white !important;
+        text-shadow:
+            2px 2px 4px rgba(0, 0, 0, 0.8),
+            0 0 10px rgba(0, 0, 0, 0.5);
+    }
+
+    /* 標題中的藍色文字也改為白色 */
+    .homebg h1 span {
+        color: white !important;
+        text-shadow:
+            2px 2px 4px rgba(0, 0, 0, 0.8),
+            0 0 10px rgba(0, 0, 0, 0.5);
+    }
+
+    /* 段落文字陰影 */
+    .homebg p {
+        color: white !important;
+        text-shadow:
+            1px 1px 3px rgba(0, 0, 0, 0.8),
+            0 0 8px rgba(0, 0, 0, 0.4);
+    }
+
+    /* 第一個按鈕陰影增強 */
+    .homebg .btn-system {
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    }
+
+    .homebg .btn-system:hover {
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+        transform: translateY(-2px);
+    }
+
+    /* 第二個按鈕 - 空心樣式 */
+    .homebg .btn-outline {
+        background: transparent !important;
+        border: 2px solid #3b82f6;
+        color: white !important;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    }
+
+    .homebg .btn-outline:hover {
+        background: #3b82f6 !important;
+        color: white !important;
+        box-shadow: 0 15px 35px rgba(59, 130, 246, 0.4);
+        transform: translateY(-2px);
+    }
+</style>
+<section class="py-24 to-indigo-100 sm:py-32 homebg">
+    <div class="max-w-6xl px-4 mx-auto text-center sm:px-6 lg:px-8">
+        <div class="max-w-3xl mx-auto">
+            <h1 class="mb-6 text-4xl font-bold sm:text-6xl lg:text-7xl">
+                虛擬寶物
+                <span>交易平台</span>
+            </h1>
+            <p class="max-w-2xl mx-auto mb-8 text-lg leading-relaxed sm:text-xl">
+                使用 AI 智能技術，讓您的遊戲交易更加安全、透明、高效
+            </p>
+            <div class="flex flex-col justify-center gap-4 sm:flex-row">
+                <a href="{{ route('products.index') }}" class="inline-flex items-center px-8 py-4 font-semibold text-white transition-all bg-system-blue rounded-system-lg hover:bg-blue-600 btn-system shadow-system">
+                    <i class="mr-2 fas fa-shopping-bag"></i>
+                    探索市場
+                </a>
+                <button onclick="openChat()" class="inline-flex items-center px-8 py-4 font-semibold transition-all rounded-system-lg btn-outline">
+                    <i class="mr-2 fas fa-robot"></i>
+                    AI 客服
+                </button>
             </div>
         </div>
-    </section>
+    </div>
+</section>
 
     <!-- Features Section -->
     <section class="py-20 bg-card-white">
