@@ -1,13 +1,49 @@
 <div>
     <!-- Header -->
-    <section class="py-12 bg-gradient-to-br from-blue-50 to-indigo-100">
-        <div class="max-w-6xl px-4 mx-auto sm:px-6 lg:px-8">
-            <div class="text-center">
-                <h1 class="mb-2 text-3xl font-bold text-gray-900 sm:text-4xl">購物車</h1>
-                <p class="text-lg text-gray-600">確認您的商品並前往結帳</p>
-            </div>
+    <style>
+    .cartbg {
+        position: relative;
+    }
+
+    .cartbg::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: url('/images/banner.jpg') no-repeat center center;
+        background-size: cover;
+        opacity: 0.9;
+        z-index: -1;
+        filter: brightness(0.4) contrast(1.1); /* 加暗背景圖片 */
+    }
+
+    /* 標題文字陰影 */
+    .cartbg h1 {
+        color: white !important;
+        text-shadow:
+            2px 2px 4px rgba(0, 0, 0, 0.8),
+            0 0 10px rgba(0, 0, 0, 0.5);
+    }
+
+    /* 段落文字陰影 */
+    .cartbg p {
+        color: white !important;
+        text-shadow:
+            1px 1px 3px rgba(0, 0, 0, 0.8),
+            0 0 8px rgba(0, 0, 0, 0.4);
+    }
+</style>
+
+<section class="py-12 cartbg">
+    <div class="max-w-6xl px-4 mx-auto sm:px-6 lg:px-8">
+        <div class="text-center">
+            <h1 class="mb-2 text-3xl font-bold sm:text-4xl">購物車</h1>
+            <p class="text-lg">確認您的商品並前往結帳</p>
         </div>
-    </section>
+    </div>
+</section>
 
     <!-- Cart Content -->
     <section class="min-h-screen py-12 bg-gray-50">

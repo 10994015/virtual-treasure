@@ -1,18 +1,62 @@
 <div>
     <!-- Market Header -->
-    <section class="py-16 bg-gradient-to-br from-blue-50 to-indigo-100">
-        <div class="max-w-6xl px-4 mx-auto text-center sm:px-6 lg:px-8">
-            <div class="max-w-3xl mx-auto">
-                <h1 class="mb-6 text-4xl font-bold text-gray-900 sm:text-5xl lg:text-6xl">
-                    虛擬寶物
-                    <span class="text-blue-600">市場</span>
-                </h1>
-                <p class="mb-8 text-lg leading-relaxed text-gray-600 sm:text-xl">
-                    探索數千種遊戲虛擬物品，找到您心儀的寶物
-                </p>
-            </div>
+    <style>
+    .marketbg {
+        position: relative;
+    }
+
+    .marketbg::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: url('/images/banner.jpg') no-repeat center center;
+        background-size: cover;
+        opacity: 0.9;
+        z-index: -1;
+        filter: brightness(0.4) contrast(1.1); /* 加暗背景圖片 */
+    }
+
+    /* 標題文字陰影 */
+    .marketbg h1 {
+        color: white !important;
+        text-shadow:
+            2px 2px 4px rgba(0, 0, 0, 0.8),
+            0 0 10px rgba(0, 0, 0, 0.5);
+    }
+
+    /* 標題中的藍色文字也改為白色 */
+    .marketbg h1 span {
+        color: white !important;
+        text-shadow:
+            2px 2px 4px rgba(0, 0, 0, 0.8),
+            0 0 10px rgba(0, 0, 0, 0.5);
+    }
+
+    /* 段落文字陰影 */
+    .marketbg p {
+        color: white !important;
+        text-shadow:
+            1px 1px 3px rgba(0, 0, 0, 0.8),
+            0 0 8px rgba(0, 0, 0, 0.4);
+    }
+</style>
+
+<section class="py-16 marketbg">
+    <div class="max-w-6xl px-4 mx-auto text-center sm:px-6 lg:px-8">
+        <div class="max-w-3xl mx-auto">
+            <h1 class="mb-6 text-4xl font-bold sm:text-5xl lg:text-6xl">
+                虛擬寶物
+                <span>市場</span>
+            </h1>
+            <p class="mb-8 text-lg leading-relaxed sm:text-xl">
+                探索數千種遊戲虛擬物品，找到您心儀的寶物
+            </p>
         </div>
-    </section>
+    </div>
+</section>
 
     <!-- Market Content -->
     <section class="py-12 bg-gray-50">
